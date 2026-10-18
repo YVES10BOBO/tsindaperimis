@@ -75,12 +75,14 @@ class Lesson {
 }
 
 class LessonSection {
-  const LessonSection(this.heading, this.body, {this.sign, this.signLabel});
+  const LessonSection(this.heading, this.body,
+      {this.sign, this.signLabel, this.imagePath});
 
   final String heading;
   final String body;
   final SignType? sign;
   final String? signLabel;
+  final String? imagePath;
 }
 
 class Question {
@@ -93,6 +95,7 @@ class Question {
     required this.explanation,
     this.sign,
     this.signLabel,
+    this.imagePath,
     this.isExamQuestion = true,
   });
 
@@ -104,6 +107,7 @@ class Question {
   final String explanation;
   final SignType? sign;
   final String? signLabel;
+  final String? imagePath;
   final bool isExamQuestion;
 
   String get correctAnswer => options[correctIndex];
@@ -148,6 +152,7 @@ class Question {
       explanation: remappedExplanation,
       sign: sign,
       signLabel: signLabel,
+      imagePath: imagePath,
       isExamQuestion: isExamQuestion,
     );
   }

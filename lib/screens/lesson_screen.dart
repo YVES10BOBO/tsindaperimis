@@ -47,7 +47,8 @@ class LessonScreen extends StatelessWidget {
               Icon(category.icon, color: category.color, size: 18),
               SizedBox(width: 6),
               Text(category.title,
-                  style: TextStyle(color: category.color, fontWeight: FontWeight.w600)),
+                  style: TextStyle(
+                      color: category.color, fontWeight: FontWeight.w600)),
               Spacer(),
               Text('Iminota ${lesson.minutes}',
                   style: TextStyle(color: AppColors.muted, fontSize: 13)),
@@ -55,7 +56,8 @@ class LessonScreen extends StatelessWidget {
           ),
           if (isExtraLesson(lesson)) ...<Widget>[
             SizedBox(height: 12),
-            Align(alignment: Alignment.centerLeft, child: ExtraKnowledgeBadge()),
+            Align(
+                alignment: Alignment.centerLeft, child: ExtraKnowledgeBadge()),
           ],
           SizedBox(height: 16),
           for (final LessonSection s in lesson.sections)
@@ -65,15 +67,24 @@ class LessonScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    if (s.sign != null) ...<Widget>[
-                      Center(child: RoadSign(type: s.sign!, size: 104, label: s.signLabel)),
+                    if (s.sign != null || s.imagePath != null) ...<Widget>[
+                      Center(
+                          child: RoadSignVisual(
+                              type: s.sign,
+                              imagePath: s.imagePath,
+                              size: 104,
+                              label: s.signLabel)),
                       SizedBox(height: 14),
                     ],
                     Text(s.heading,
-                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w800)),
                     SizedBox(height: 6),
                     Text(s.body,
-                        style: TextStyle(fontSize: 15.5, height: 1.55, color: AppColors.bodyText)),
+                        style: TextStyle(
+                            fontSize: 15.5,
+                            height: 1.55,
+                            color: AppColors.bodyText)),
                   ],
                 ),
               ),
@@ -88,7 +99,9 @@ class LessonScreen extends StatelessWidget {
                   Icon(Icons.check_circle, color: AppColors.success),
                   SizedBox(width: 10),
                   Text('Warangije iri somo',
-                      style: TextStyle(color: AppColors.success, fontWeight: FontWeight.w700)),
+                      style: TextStyle(
+                          color: AppColors.success,
+                          fontWeight: FontWeight.w700)),
                 ],
               ),
             )

@@ -2,6 +2,53 @@ import 'package:flutter/material.dart';
 
 import '../core/app_colors.dart';
 import '../data/models.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+/// Shows an uploaded road-sign photo when available and falls back to the
+/// built-in vector illustration when offline or when loading fails.
+class RoadSignVisual extends StatelessWidget {
+  const RoadSignVisual({
+    super.key,
+    this.type,
+    this.imagePath,
+    this.size = 96,
+    this.label,
+  });
+
+  final SignType? type;
+  final String? imagePath;
+  final double size;
+  final String? label;
+
+  @override
+  Widget build(BuildContext context) {
+    final path = imagePath?.trim();
+    if (path != null && path.isNotEmpty) {
+      try {
+        final url = Supabase.instance.client.storage
+            .from('road-signs')
+            .getPublicUrl(path);
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.network(
+            url,
+            width: size,
+            height: size,
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) => _fallback(),
+          ),
+        );
+      } catch (_) {
+        // Supabase may not be configured in bundled/offline-only builds.
+      }
+    }
+    return _fallback();
+  }
+
+  Widget _fallback() => type == null
+      ? SizedBox(width: size, height: size)
+      : RoadSign(type: type!, size: size, label: label);
+}
 
 /// Ishushanya ibimenyetso by'umuhanda hakoreshejwe code (nta mafoto akenewe).
 /// Nyuma ushobora kubisimbuza amafoto nyayo (assets) y'ibimenyetso byemewe.
@@ -13,14 +60,24 @@ class RoadSign extends StatelessWidget {
   final String? label;
 
   static const List<Offset> _octagon = <Offset>[
-    Offset(0.3, 0), Offset(0.7, 0), Offset(1, 0.3), Offset(1, 0.7),
-    Offset(0.7, 1), Offset(0.3, 1), Offset(0, 0.7), Offset(0, 0.3),
+    Offset(0.3, 0),
+    Offset(0.7, 0),
+    Offset(1, 0.3),
+    Offset(1, 0.7),
+    Offset(0.7, 1),
+    Offset(0.3, 1),
+    Offset(0, 0.7),
+    Offset(0, 0.3),
   ];
   static const List<Offset> _triangleUp = <Offset>[
-    Offset(0.5, 0.05), Offset(0.96, 0.9), Offset(0.04, 0.9),
+    Offset(0.5, 0.05),
+    Offset(0.96, 0.9),
+    Offset(0.04, 0.9),
   ];
   static const List<Offset> _triangleDown = <Offset>[
-    Offset(0.04, 0.1), Offset(0.96, 0.1), Offset(0.5, 0.95),
+    Offset(0.04, 0.1),
+    Offset(0.96, 0.1),
+    Offset(0.5, 0.95),
   ];
 
   @override
@@ -35,7 +92,8 @@ class RoadSign extends StatelessWidget {
     switch (type) {
       case SignType.stop:
         return CustomPaint(
-          painter: _PolyPainter(_octagon, AppColors.signRed, Colors.white, size * 0.04),
+          painter: _PolyPainter(
+              _octagon, AppColors.signRed, Colors.white, size * 0.04),
           child: Center(
             child: Text('STOP',
                 style: TextStyle(
@@ -47,7 +105,8 @@ class RoadSign extends StatelessWidget {
         );
       case SignType.giveWay:
         return CustomPaint(
-          painter: _PolyPainter(_triangleDown, Colors.white, AppColors.signRed, size * 0.09),
+          painter: _PolyPainter(
+              _triangleDown, Colors.white, AppColors.signRed, size * 0.09),
         );
       case SignType.noEntry:
         return _circle(
@@ -71,8 +130,10 @@ class RoadSign extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(Icons.directions_car, color: AppColors.signRed, size: size * 0.3),
-              Icon(Icons.directions_car, color: AppColors.signBlack, size: size * 0.3),
+              Icon(Icons.directions_car,
+                  color: AppColors.signRed, size: size * 0.3),
+              Icon(Icons.directions_car,
+                  color: AppColors.signBlack, size: size * 0.3),
             ],
           ),
         );
@@ -157,8 +218,10 @@ class RoadSign extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(Icons.arrow_downward, color: AppColors.signRed, size: size * 0.38),
-              Icon(Icons.arrow_upward, color: AppColors.signBlack, size: size * 0.38),
+              Icon(Icons.arrow_downward,
+                  color: AppColors.signRed, size: size * 0.38),
+              Icon(Icons.arrow_upward,
+                  color: AppColors.signBlack, size: size * 0.38),
             ],
           ),
         );
@@ -167,8 +230,10 @@ class RoadSign extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(Icons.arrow_downward, color: AppColors.signBlack, size: size * 0.34),
-              Icon(Icons.arrow_upward, color: AppColors.signBlack, size: size * 0.34),
+              Icon(Icons.arrow_downward,
+                  color: AppColors.signBlack, size: size * 0.34),
+              Icon(Icons.arrow_upward,
+                  color: AppColors.signBlack, size: size * 0.34),
             ],
           ),
         );
@@ -181,7 +246,8 @@ class RoadSign extends StatelessWidget {
         );
       case SignType.children:
         return _warning(
-          Icon(Icons.escalator_warning, color: AppColors.signBlack, size: size * 0.38),
+          Icon(Icons.escalator_warning,
+              color: AppColors.signBlack, size: size * 0.38),
         );
       case SignType.aheadOnly:
         return _mandatory(Icons.arrow_upward);
@@ -198,11 +264,14 @@ class RoadSign extends StatelessWidget {
       case SignType.noPedestrians:
         return _prohibitedIcon(Icons.directions_walk);
       case SignType.roadWorks:
-        return _warning(Icon(Icons.construction, color: AppColors.signBlack, size: size * 0.38));
+        return _warning(Icon(Icons.construction,
+            color: AppColors.signBlack, size: size * 0.38));
       case SignType.trafficSignalsAhead:
-        return _warning(Icon(Icons.traffic, color: AppColors.signBlack, size: size * 0.38));
+        return _warning(
+            Icon(Icons.traffic, color: AppColors.signBlack, size: size * 0.38));
       case SignType.pedestriansAhead:
-        return _warning(Icon(Icons.directions_walk, color: AppColors.signBlack, size: size * 0.38));
+        return _warning(Icon(Icons.directions_walk,
+            color: AppColors.signBlack, size: size * 0.38));
       case SignType.parking:
         return Container(
           alignment: Alignment.center,
@@ -212,7 +281,9 @@ class RoadSign extends StatelessWidget {
           ),
           child: Text('P',
               style: TextStyle(
-                  color: Colors.white, fontWeight: FontWeight.w900, fontSize: size * 0.6)),
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                  fontSize: size * 0.6)),
         );
       case SignType.pedestrianCrossing:
         return Container(
@@ -222,14 +293,15 @@ class RoadSign extends StatelessWidget {
           ),
           padding: EdgeInsets.all(size * 0.1),
           child: CustomPaint(
-            painter: _PolyPainter(
-                const <Offset>[Offset(0.5, 0.02), Offset(1, 0.95), Offset(0, 0.95)],
-                Colors.white,
-                null,
-                0),
+            painter: _PolyPainter(const <Offset>[
+              Offset(0.5, 0.02),
+              Offset(1, 0.95),
+              Offset(0, 0.95)
+            ], Colors.white, null, 0),
             child: Align(
               alignment: const Alignment(0, 0.45),
-              child: Icon(Icons.directions_walk, color: AppColors.signBlack, size: size * 0.4),
+              child: Icon(Icons.directions_walk,
+                  color: AppColors.signBlack, size: size * 0.4),
             ),
           ),
         );
@@ -244,7 +316,9 @@ class RoadSign extends StatelessWidget {
       decoration: BoxDecoration(
         color: fill,
         shape: BoxShape.circle,
-        border: border == null ? null : Border.all(color: border, width: size * 0.1),
+        border: border == null
+            ? null
+            : Border.all(color: border, width: size * 0.1),
       ),
       child: child,
     );
@@ -273,7 +347,8 @@ class RoadSign extends StatelessWidget {
 
   Widget _warning(Widget child) {
     return CustomPaint(
-      painter: _PolyPainter(_triangleUp, Colors.white, AppColors.signRed, size * 0.09),
+      painter: _PolyPainter(
+          _triangleUp, Colors.white, AppColors.signRed, size * 0.09),
       child: Align(alignment: const Alignment(0, 0.4), child: child),
     );
   }
@@ -364,7 +439,8 @@ class _SpeedBumpPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _SpeedBumpPainter oldDelegate) => oldDelegate.color != color;
+  bool shouldRepaint(covariant _SpeedBumpPainter oldDelegate) =>
+      oldDelegate.color != color;
 }
 
 class _SlashPainter extends CustomPainter {

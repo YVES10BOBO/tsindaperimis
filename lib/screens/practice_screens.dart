@@ -39,7 +39,8 @@ class PracticeHomeScreen extends StatelessWidget {
           SizedBox(height: 6),
           Text(
             'Ibibazo 20 bivanze kuri buri nshuro. Uhita ubona niba ari cyo n\'impamvu yacyo.',
-            style: TextStyle(color: AppColors.muted, fontSize: 14.5, height: 1.4),
+            style:
+                TextStyle(color: AppColors.muted, fontSize: 14.5, height: 1.4),
           ),
           SizedBox(height: 18),
           AppCard(
@@ -49,7 +50,9 @@ class PracticeHomeScreen extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 IconBadge(
-                    icon: Icons.shuffle, color: AppColors.primary, background: Colors.white),
+                    icon: Icons.shuffle,
+                    color: AppColors.primary,
+                    background: Colors.white),
                 SizedBox(width: 14),
                 Expanded(
                   child: Column(
@@ -57,9 +60,13 @@ class PracticeHomeScreen extends StatelessWidget {
                     children: <Widget>[
                       Text('Ibibazo bivanze',
                           style: TextStyle(
-                              color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800)),
-                      Text('Ibibazo ${repo.allQuestions.length} byo mu byiciro byose',
-                          style: TextStyle(color: Color(0xFFDBEAFE), fontSize: 13)),
+                              color: Colors.white,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w800)),
+                      Text(
+                          'Ibibazo ${repo.allQuestions.length} byo mu byiciro byose',
+                          style: TextStyle(
+                              color: Color(0xFFDBEAFE), fontSize: 13)),
                     ],
                   ),
                 ),
@@ -71,20 +78,26 @@ class PracticeHomeScreen extends StatelessWidget {
           AppCard(
             color: AppColors.purpleSoft,
             borderColor: AppColors.purpleBorder,
-            onTap: () => _start(context, 'Ibibazo byo mu kizamini', repo.examQuestions),
+            onTap: () =>
+                _start(context, 'Ibibazo byo mu kizamini', repo.examQuestions),
             child: Row(
               children: <Widget>[
                 IconBadge(
-                    icon: Icons.assignment_turned_in, color: Colors.white, background: AppColors.purple),
+                    icon: Icons.assignment_turned_in,
+                    color: Colors.white,
+                    background: AppColors.purple),
                 SizedBox(width: 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text('Ibibazo byo mu kizamini gusa',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
-                      Text('Ibibazo ${repo.examQuestions.length}, hatarimo ubumenyi bw\'inyongera',
-                          style: TextStyle(color: AppColors.muted, fontSize: 13)),
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w800)),
+                      Text(
+                          'Ibibazo ${repo.examQuestions.length}, hatarimo ubumenyi bw\'inyongera',
+                          style:
+                              TextStyle(color: AppColors.muted, fontSize: 13)),
                     ],
                   ),
                 ),
@@ -97,21 +110,26 @@ class PracticeHomeScreen extends StatelessWidget {
             color: AppColors.errorSoft,
             borderColor: AppColors.errorBorder,
             onTap: wrong.isEmpty
-                ? () => showComingSoon(context, 'Nta kibazo wakoze nabi kugeza ubu.')
+                ? () => showComingSoon(
+                    context, 'Nta kibazo wakoze nabi kugeza ubu.')
                 : () => _start(context, 'Amakosa yawe', wrong),
             child: Row(
               children: <Widget>[
                 IconBadge(
-                    icon: Icons.replay, color: Colors.white, background: AppColors.error),
+                    icon: Icons.replay,
+                    color: Colors.white,
+                    background: AppColors.error),
                 SizedBox(width: 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text('Subiramo amakosa yawe',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w800)),
                       Text('Ibibazo ${wrong.length} wakoze nabi',
-                          style: TextStyle(color: AppColors.muted, fontSize: 13)),
+                          style:
+                              TextStyle(color: AppColors.muted, fontSize: 13)),
                     ],
                   ),
                 ),
@@ -131,17 +149,23 @@ class PracticeHomeScreen extends StatelessWidget {
                 onTap: () => _start(context, c.title, repo.questionsFor(c.id)),
                 child: Row(
                   children: <Widget>[
-                    IconBadge(icon: c.icon, color: c.color, background: AppColors.tint(c.color, c.softColor), size: 40),
+                    IconBadge(
+                        icon: c.icon,
+                        color: c.color,
+                        background: AppColors.tint(c.color, c.softColor),
+                        size: 40),
                     SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(c.title,
-                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.w700)),
                           SizedBox(height: 2),
                           Text('Ibibazo ${repo.questionsFor(c.id).length}',
-                              style: TextStyle(fontSize: 12.5, color: AppColors.muted)),
+                              style: TextStyle(
+                                  fontSize: 12.5, color: AppColors.muted)),
                         ],
                       ),
                     ),
@@ -162,7 +186,8 @@ const int practiceSessionSize = 20;
 /// Umurongo w'uduce tugaragaza iterambere (amabara 3 gusa):
 /// icyatsi = byo, umutuku = si byo, ikijuju = ibitarakorwa.
 class SegmentedProgress extends StatelessWidget {
-  const SegmentedProgress({super.key, required this.results, required this.current});
+  const SegmentedProgress(
+      {super.key, required this.results, required this.current});
 
   /// true = byo, false = si byo, null = ntikirasubizwa
   final List<bool?> results;
@@ -224,8 +249,8 @@ class _PracticeQuizScreenState extends State<PracticeQuizScreen> {
   }
 
   void _newSession() {
-    _questions =
-        ContentRepository.instance.shuffledQuestions(widget.source, limit: widget.count);
+    _questions = ContentRepository.instance
+        .shuffledQuestions(widget.source, limit: widget.count);
     _answers = List<int?>.filled(_questions.length, null);
     _index = 0;
     _finished = false;
@@ -244,7 +269,9 @@ class _PracticeQuizScreenState extends State<PracticeQuizScreen> {
 
   List<bool?> get _results => <bool?>[
         for (int i = 0; i < _questions.length; i++)
-          _answers[i] == null ? null : _answers[i] == _questions[i].correctIndex,
+          _answers[i] == null
+              ? null
+              : _answers[i] == _questions[i].correctIndex,
       ];
 
   void _choose(int i) {
@@ -271,10 +298,15 @@ class _PracticeQuizScreenState extends State<PracticeQuizScreen> {
       context: context,
       builder: (BuildContext ctx) => AlertDialog(
         title: const Text('Kuva mu myitozo?'),
-        content: Text('Umaze gusubiza ibibazo $_answeredCount kuri ${_questions.length}.'),
+        content: Text(
+            'Umaze gusubiza ibibazo $_answeredCount kuri ${_questions.length}.'),
         actions: <Widget>[
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Komeza')),
-          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Va mo')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Komeza')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('Va mo')),
         ],
       ),
     );
@@ -323,7 +355,8 @@ class _PracticeQuizScreenState extends State<PracticeQuizScreen> {
             padding: const EdgeInsets.only(left: 12, right: 16),
             child: Center(
               child: Text('$_answeredCount/$total',
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+                  style: const TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.w800)),
             ),
           ),
         ],
@@ -340,7 +373,8 @@ class _PracticeQuizScreenState extends State<PracticeQuizScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text('Ikibazo ${_index + 1} kuri $total',
-                            style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w800, fontSize: 15)),
                         if (!isExamQuestion(_q)) ...<Widget>[
                           const SizedBox(height: 4),
                           const ExtraKnowledgeBadge(compact: true),
@@ -349,18 +383,21 @@ class _PracticeQuizScreenState extends State<PracticeQuizScreen> {
                         Text(widget.title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: AppColors.muted, fontSize: 12.5)),
+                            style: TextStyle(
+                                color: AppColors.muted, fontSize: 12.5)),
                       ],
                     ),
                   ),
                   IconButton(
                     tooltip: 'Umva ikibazo',
                     icon: const Icon(Icons.volume_up_outlined),
-                    onPressed: () => showComingSoon(context, 'Amajwi azongerwamo vuba.'),
+                    onPressed: () =>
+                        showComingSoon(context, 'Amajwi azongerwamo vuba.'),
                   ),
                   IconButton(
                     tooltip: 'Bika ikibazo',
-                    icon: Icon(bookmarked ? Icons.bookmark : Icons.bookmark_border,
+                    icon: Icon(
+                        bookmarked ? Icons.bookmark : Icons.bookmark_border,
                         color: bookmarked ? AppColors.primary : null),
                     onPressed: () => state.toggleQuestionBookmark(_q.id),
                   ),
@@ -371,15 +408,22 @@ class _PracticeQuizScreenState extends State<PracticeQuizScreen> {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
                 children: <Widget>[
-                  if (_q.sign != null) ...<Widget>[
+                  if (_q.sign != null || _q.imagePath != null) ...<Widget>[
                     AppCard(
                       child: Center(
-                          child: RoadSign(type: _q.sign!, size: 120, label: _q.signLabel)),
+                          child: RoadSignVisual(
+                              type: _q.sign,
+                              imagePath: _q.imagePath,
+                              size: 120,
+                              label: _q.signLabel)),
                     ),
                     const SizedBox(height: 16),
                   ],
                   Text(_q.text,
-                      style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w700, height: 1.4)),
+                      style: const TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.w700,
+                          height: 1.4)),
                   const SizedBox(height: 16),
                   for (int i = 0; i < _q.options.length; i++)
                     OptionTile(
@@ -401,7 +445,9 @@ class _PracticeQuizScreenState extends State<PracticeQuizScreen> {
                 onPressed: answered ? _next : null,
                 child: Text(!answered
                     ? 'Hitamo igisubizo'
-                    : (_index + 1 >= total ? 'Reba uko wakoze' : 'Ikibazo gikurikira')),
+                    : (_index + 1 >= total
+                        ? 'Reba uko wakoze'
+                        : 'Ikibazo gikurikira')),
               ),
             ),
           ],
@@ -446,17 +492,23 @@ class _PracticeQuizScreenState extends State<PracticeQuizScreen> {
             const SizedBox(height: 18),
             Text(good ? 'Wakoze neza!' : 'Komeza witoze!',
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w800)),
+                style:
+                    const TextStyle(fontSize: 26, fontWeight: FontWeight.w800)),
             const SizedBox(height: 16),
             Row(
               children: <Widget>[
                 Expanded(
                   child: StatTile(
-                      value: '$correct', label: 'Wasubije neza', color: AppColors.success),
+                      value: '$correct',
+                      label: 'Wasubije neza',
+                      color: AppColors.success),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: StatTile(value: '$wrong', label: 'Wakoze nabi', color: AppColors.error),
+                  child: StatTile(
+                      value: '$wrong',
+                      label: 'Wakoze nabi',
+                      color: AppColors.error),
                 ),
               ],
             ),
@@ -478,7 +530,8 @@ class _PracticeQuizScreenState extends State<PracticeQuizScreen> {
             OutlinedButton.icon(
               onPressed: () => setState(_newSession),
               icon: const Icon(Icons.refresh),
-              label: Text('Ibindi bibazo ${widget.count < widget.source.length ? widget.count : widget.source.length}'),
+              label: Text(
+                  'Ibindi bibazo ${widget.count < widget.source.length ? widget.count : widget.source.length}'),
             ),
             const SizedBox(height: 4),
             TextButton(
@@ -509,7 +562,8 @@ class _FeedbackCard extends StatelessWidget {
           Row(
             children: <Widget>[
               Icon(isRight ? Icons.check_circle : Icons.cancel,
-                  color: isRight ? AppColors.success : AppColors.error, size: 20),
+                  color: isRight ? AppColors.success : AppColors.error,
+                  size: 20),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -519,14 +573,16 @@ class _FeedbackCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
-                    color: isRight ? AppColors.successText : AppColors.errorText,
+                    color:
+                        isRight ? AppColors.successText : AppColors.errorText,
                   ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 6),
-          Text(question.explanation, style: TextStyle(height: 1.5, color: AppColors.bodyText)),
+          Text(question.explanation,
+              style: TextStyle(height: 1.5, color: AppColors.bodyText)),
         ],
       ),
     );
@@ -569,7 +625,10 @@ class _PracticeReviewScreenState extends State<PracticeReviewScreen> {
   @override
   Widget build(BuildContext context) {
     final int total = widget.questions.length;
-    final int right = <int>[for (int i = 0; i < total; i++) if (_isRight(i)) i].length;
+    final int right = <int>[
+      for (int i = 0; i < total; i++)
+        if (_isRight(i)) i
+    ].length;
     final List<int> shown = <int>[
       for (int i = 0; i < total; i++)
         if (_filter == _ReviewFilter.all ||
@@ -590,17 +649,20 @@ class _PracticeReviewScreenState extends State<PracticeReviewScreen> {
                 ChoiceChip(
                   label: Text('Byose ($total)'),
                   selected: _filter == _ReviewFilter.all,
-                  onSelected: (_) => setState(() => _filter = _ReviewFilter.all),
+                  onSelected: (_) =>
+                      setState(() => _filter = _ReviewFilter.all),
                 ),
                 ChoiceChip(
                   label: Text('Wakoze nabi (${total - right})'),
                   selected: _filter == _ReviewFilter.wrong,
-                  onSelected: (_) => setState(() => _filter = _ReviewFilter.wrong),
+                  onSelected: (_) =>
+                      setState(() => _filter = _ReviewFilter.wrong),
                 ),
                 ChoiceChip(
                   label: Text('Wasubije neza ($right)'),
                   selected: _filter == _ReviewFilter.right,
-                  onSelected: (_) => setState(() => _filter = _ReviewFilter.right),
+                  onSelected: (_) =>
+                      setState(() => _filter = _ReviewFilter.right),
                 ),
               ],
             ),
@@ -627,34 +689,50 @@ class _PracticeReviewScreenState extends State<PracticeReviewScreen> {
                             Row(
                               children: <Widget>[
                                 Text('Ikibazo ${i + 1}',
-                                    style: TextStyle(color: AppColors.muted, fontSize: 13)),
+                                    style: TextStyle(
+                                        color: AppColors.muted, fontSize: 13)),
                                 if (!isExamQuestion(q)) ...<Widget>[
                                   const SizedBox(width: 8),
-                                  const Flexible(child: ExtraKnowledgeBadge(compact: true)),
+                                  const Flexible(
+                                      child:
+                                          ExtraKnowledgeBadge(compact: true)),
                                 ],
                                 const Spacer(),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: ok ? AppColors.successSoft : AppColors.errorSoft,
+                                    color: ok
+                                        ? AppColors.successSoft
+                                        : AppColors.errorSoft,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(ok ? 'Byo' : 'Si byo',
                                       style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w700,
-                                          color: ok ? AppColors.success : AppColors.error)),
+                                          color: ok
+                                              ? AppColors.success
+                                              : AppColors.error)),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 8),
-                            if (q.sign != null) ...<Widget>[
-                              Center(child: RoadSign(type: q.sign!, size: 80, label: q.signLabel)),
+                            if (q.sign != null ||
+                                q.imagePath != null) ...<Widget>[
+                              Center(
+                                  child: RoadSignVisual(
+                                      type: q.sign,
+                                      imagePath: q.imagePath,
+                                      size: 80,
+                                      label: q.signLabel)),
                               const SizedBox(height: 10),
                             ],
                             Text(q.text,
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.w700, fontSize: 16, height: 1.4)),
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 16,
+                                    height: 1.4)),
                             const SizedBox(height: 12),
                             for (int o = 0; o < q.options.length; o++)
                               OptionTile(
@@ -664,7 +742,8 @@ class _PracticeReviewScreenState extends State<PracticeReviewScreen> {
                               ),
                             const SizedBox(height: 2),
                             Text(q.explanation,
-                                style: TextStyle(color: AppColors.bodyText, height: 1.5)),
+                                style: TextStyle(
+                                    color: AppColors.bodyText, height: 1.5)),
                           ],
                         ),
                       );

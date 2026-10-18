@@ -48,22 +48,28 @@ class ContentRepository {
         final dir = await getDatabasesPath();
         _db = await openDatabase(
           p.join(dir, 'amategeko_content.db'),
-          version: 2,
+          version: 3,
           onCreate: (db, _) async {
             await db.execute(
                 'CREATE TABLE categories (id TEXT PRIMARY KEY, title TEXT, subtitle TEXT, icon_code INTEGER, icon_font TEXT, icon_package TEXT, color INTEGER, soft_color INTEGER, sort_order INTEGER)');
             await db.execute(
                 'CREATE TABLE lessons (id TEXT PRIMARY KEY, category_id TEXT, title TEXT, minutes INTEGER, sort_order INTEGER, is_extra INTEGER)');
             await db.execute(
-                'CREATE TABLE sections (id TEXT PRIMARY KEY, lesson_id TEXT, position INTEGER, heading TEXT, body TEXT, sign_type TEXT, sign_label TEXT)');
+                'CREATE TABLE sections (id TEXT PRIMARY KEY, lesson_id TEXT, position INTEGER, heading TEXT, body TEXT, sign_type TEXT, sign_label TEXT, image_path TEXT)');
             await db.execute(
-                'CREATE TABLE questions (id TEXT PRIMARY KEY, category_id TEXT, prompt TEXT, explanation TEXT, sign_type TEXT, sign_label TEXT, is_exam_question INTEGER, sort_order INTEGER)');
+                'CREATE TABLE questions (id TEXT PRIMARY KEY, category_id TEXT, prompt TEXT, explanation TEXT, sign_type TEXT, sign_label TEXT, image_path TEXT, is_exam_question INTEGER, sort_order INTEGER)');
             await db.execute(
                 'CREATE TABLE options (id TEXT PRIMARY KEY, question_id TEXT, position INTEGER, option_text TEXT, is_correct INTEGER)');
             await _createProgressTables(db);
           },
           onUpgrade: (db, oldVersion, _) async {
             if (oldVersion < 2) await _createProgressTables(db);
+            if (oldVersion < 3) {
+              await db
+                  .execute('ALTER TABLE sections ADD COLUMN image_path TEXT');
+              await db
+                  .execute('ALTER TABLE questions ADD COLUMN image_path TEXT');
+            }
           },
         );
         await _seedSqliteIfEmpty();
@@ -371,6 +377,7 @@ class ContentRepository {
                   'explanation': q.explanation,
                   'sign': q.sign?.name,
                   'signLabel': q.signLabel,
+                  'imagePath': q.imagePath,
                   'isExamQuestion': q.isExamQuestion,
                 })
             .toList(),
@@ -392,6 +399,7 @@ class ContentRepository {
             explanation: q['explanation'] as String,
             sign: _sign(q['sign'] as String?),
             signLabel: q['signLabel'] as String?,
+            imagePath: q['imagePath'] as String?,
             isExamQuestion: q['isExamQuestion'] as bool,
           );
         }).toList(),
@@ -436,7 +444,8 @@ class ContentRepository {
               'heading': s.heading,
               'body': s.body,
               'sign_type': s.sign?.name,
-              'sign_label': s.signLabel
+              'sign_label': s.signLabel,
+              'image_path': s.imagePath
             });
           }
         }
@@ -450,6 +459,7 @@ class ContentRepository {
           'explanation': q.explanation,
           'sign_type': q.sign?.name,
           'sign_label': q.signLabel,
+          'image_path': q.imagePath,
           'is_exam_question': q.isExamQuestion ? 1 : 0,
           'sort_order': qi
         });
@@ -482,7 +492,8 @@ class ContentRepository {
             .map((s) => LessonSection(
                 s['heading'] as String, s['body'] as String,
                 sign: _sign(s['sign_type'] as String?),
-                signLabel: s['sign_label'] as String?))
+                signLabel: s['sign_label'] as String?,
+                imagePath: s['image_path'] as String?))
             .toList();
         return Lesson(
             id: l['id'] as String,
@@ -515,6 +526,7 @@ class ContentRepository {
           correctIndex: correct < 0 ? 0 : correct,
           sign: _sign(q['sign_type'] as String?),
           signLabel: q['sign_label'] as String?,
+          imagePath: q['image_path'] as String?,
           isExamQuestion: q['is_exam_question'] == 1);
     }).toList();
   }
@@ -577,7 +589,8 @@ class ContentRepository {
                               .map<LessonSection>((s) => LessonSection(
                                   s['heading'] as String, s['body'] as String,
                                   sign: _sign(s['sign_type'] as String?),
-                                  signLabel: s['sign_label'] as String?))
+                                  signLabel: s['sign_label'] as String?,
+                                  imagePath: s['image_path'] as String?))
                               .toList(),
                         ))
                     .toList(),
@@ -596,6 +609,7 @@ class ContentRepository {
             correctIndex: correct < 0 ? 0 : correct,
             sign: _sign(q['sign_type'] as String?),
             signLabel: q['sign_label'] as String?,
+            imagePath: q['image_path'] as String?,
             isExamQuestion: q['is_exam_question'] as bool? ?? true);
       }).toList();
       if (hydratedCategories.isNotEmpty && hydratedQuestions.isNotEmpty) {
@@ -664,7 +678,8 @@ class ContentRepository {
               'heading': s.heading,
               'body': s.body,
               'sign_type': s.sign?.name,
-              'sign_label': s.signLabel
+              'sign_label': s.signLabel,
+              'image_path': s.imagePath
             });
           }
         }
@@ -678,6 +693,7 @@ class ContentRepository {
           'explanation': q.explanation,
           'sign_type': q.sign?.name,
           'sign_label': q.signLabel,
+          'image_path': q.imagePath,
           'is_exam_question': q.isExamQuestion ? 1 : 0,
           'sort_order': qi
         });

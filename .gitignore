@@ -33,6 +33,10 @@ migrate_working_dir/
 /build/
 /coverage/
 /supabase.local.json
+/admin-dashboard/.env.local
+/admin-dashboard/node_modules/
+/admin-dashboard/.next/
+/admin-dashboard/tsconfig.tsbuildinfo
 
 # Symbolication related
 app.*.symbols

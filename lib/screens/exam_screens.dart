@@ -24,7 +24,9 @@ void startExam(BuildContext context, {bool replace = false}) {
       ContentRepository.instance.buildExam(ExamConfig.questionCount);
   if (questions.length < ExamConfig.questionCount) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Ongeramo ibibazo byemejwe mbere yo gutangira ikizamini.')),
+      const SnackBar(
+          content:
+              Text('Ongeramo ibibazo byemejwe mbere yo gutangira ikizamini.')),
     );
     return;
   }
@@ -56,7 +58,8 @@ class ExamIntroScreen extends StatelessWidget {
           SizedBox(height: 6),
           Text(
             'Gisa n\'ikizamini nyirizina: usubiza ibibazo byose, amanota n\'ibisubizo ukabibona urangije.',
-            style: TextStyle(color: AppColors.muted, fontSize: 14.5, height: 1.4),
+            style:
+                TextStyle(color: AppColors.muted, fontSize: 14.5, height: 1.4),
           ),
           SizedBox(height: 18),
           AppCard(
@@ -65,21 +68,32 @@ class ExamIntroScreen extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 IconBadge(
-                    icon: Icons.assignment, color: Colors.white, background: AppColors.purple, size: 56),
+                    icon: Icons.assignment,
+                    color: Colors.white,
+                    background: AppColors.purple,
+                    size: 56),
                 SizedBox(height: 16),
                 Row(
                   children: <Widget>[
-                    Expanded(child: _ExamFact(value: '${ExamConfig.questionCount}', label: 'Ibibazo')),
-                    Expanded(child: _ExamFact(value: '${ExamConfig.durationMinutes}', label: 'Iminota')),
                     Expanded(
                         child: _ExamFact(
-                            value: '${ExamConfig.passScore}/${ExamConfig.questionCount}',
+                            value: '${ExamConfig.questionCount}',
+                            label: 'Ibibazo')),
+                    Expanded(
+                        child: _ExamFact(
+                            value: '${ExamConfig.durationMinutes}',
+                            label: 'Iminota')),
+                    Expanded(
+                        child: _ExamFact(
+                            value:
+                                '${ExamConfig.passScore}/${ExamConfig.questionCount}',
                             label: 'Gutsinda')),
                   ],
                 ),
                 SizedBox(height: 16),
                 ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.purple),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.purple),
                   onPressed: () => startExam(context),
                   icon: Icon(Icons.play_arrow),
                   label: Text('Tangira ikizamini'),
@@ -92,13 +106,18 @@ class ExamIntroScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text('Amabwiriza', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+                Text('Amabwiriza',
+                    style:
+                        TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
                 SizedBox(height: 8),
-                _Rule('Ibibazo bitoranywa mu bibazwa mu kizamini gusa (nta bumenyi bw\'inyongera bwa mekanike).'),
+                _Rule(
+                    'Ibibazo bitoranywa mu bibazwa mu kizamini gusa (nta bumenyi bw\'inyongera bwa mekanike).'),
                 _Rule('Ushobora gusimbuka ikibazo ukazakigarukaho.'),
-                _Rule('Ikimenyetso "Uzagaruka" kigufasha kwibuka ibibazo ushidikanya.'),
+                _Rule(
+                    'Ikimenyetso "Uzagaruka" kigufasha kwibuka ibibazo ushidikanya.'),
                 _Rule('Igihe nikirangira, ikizamini kirangira ubwacyo.'),
-                _Rule('Imiterere y\'ikizamini ni iy\'urugero: igenzure n\'amabwiriza ya Polisi.'),
+                _Rule(
+                    'Imiterere y\'ikizamini ni iy\'urugero: igenzure n\'amabwiriza ya Polisi.'),
               ],
             ),
           ),
@@ -133,7 +152,8 @@ class _ExamFact extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Text(value, style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
+        Text(value,
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
         SizedBox(height: 2),
         Text(label, style: TextStyle(color: AppColors.muted, fontSize: 13)),
       ],
@@ -155,7 +175,8 @@ class _Rule extends StatelessWidget {
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(top: 2),
-            child: Icon(Icons.check_circle_outline, size: 18, color: AppColors.primary),
+            child: Icon(Icons.check_circle_outline,
+                size: 18, color: AppColors.primary),
           ),
           SizedBox(width: 8),
           Expanded(child: Text(text, style: TextStyle(height: 1.4))),
@@ -177,7 +198,9 @@ class ExamHistoryTile extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       radius: 14,
       onTap: () => Navigator.of(context).push(
-        MaterialPageRoute<void>(builder: (_) => ExamResultScreen(result: result, fromHistory: true)),
+        MaterialPageRoute<void>(
+            builder: (_) =>
+                ExamResultScreen(result: result, fromHistory: true)),
       ),
       child: Row(
         children: <Widget>[
@@ -185,7 +208,8 @@ class ExamHistoryTile extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
           SizedBox(width: 14),
           Expanded(
-            child: Text('${formatDate(result.date)} · ${formatDuration(result.timeUsed)}',
+            child: Text(
+                '${formatDate(result.date)} · ${formatDuration(result.timeUsed)}',
                 style: TextStyle(color: AppColors.muted, fontSize: 13)),
           ),
           Container(
@@ -221,7 +245,8 @@ class ExamScreen extends StatefulWidget {
 class _ExamScreenState extends State<ExamScreen> {
   static Duration _limit = Duration(minutes: ExamConfig.durationMinutes);
 
-  late final List<int?> _answers = List<int?>.filled(widget.questions.length, null);
+  late final List<int?> _answers =
+      List<int?>.filled(widget.questions.length, null);
   final Set<int> _flagged = <int>{};
   int _index = 0;
   Duration _left = _limit;
@@ -277,8 +302,10 @@ class _ExamScreenState extends State<ExamScreen> {
             ? 'Usigaje ibibazo $missing utasubije. Ushaka gusoza?'
             : 'Wasubije ibibazo byose. Ushaka gusoza?'),
         actions: <Widget>[
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('Oya')),
-          TextButton(onPressed: () => Navigator.pop(ctx, true), child: Text('Soza')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false), child: Text('Oya')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, true), child: Text('Soza')),
         ],
       ),
     );
@@ -292,8 +319,10 @@ class _ExamScreenState extends State<ExamScreen> {
         title: Text('Kuva mu kizamini?'),
         content: Text('Ibisubizo byawe ntibizabikwa.'),
         actions: <Widget>[
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('Guma')),
-          TextButton(onPressed: () => Navigator.pop(ctx, true), child: Text('Va mo')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false), child: Text('Guma')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, true), child: Text('Va mo')),
         ],
       ),
     );
@@ -368,29 +397,32 @@ class _ExamScreenState extends State<ExamScreen> {
           icon: Icon(Icons.close),
           onPressed: _confirmExit,
         ),
-        title: Text('Ikibazo ${_index + 1} / $total', style: TextStyle(fontSize: 17)),
+        title: Text('Ikibazo ${_index + 1} / $total',
+            style: TextStyle(fontSize: 17)),
         actions: <Widget>[
           Center(
             child: Container(
-            margin: EdgeInsets.only(right: 12),
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: lowTime ? AppColors.error : AppColors.primaryDark,
-              borderRadius: BorderRadius.circular(12),
+              margin: EdgeInsets.only(right: 12),
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: lowTime ? AppColors.error : AppColors.primaryDark,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(Icons.timer_outlined, color: Colors.white, size: 18),
+                  SizedBox(width: 6),
+                  Text(formatDuration(_left),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                          fontFeatures: <FontFeature>[
+                            FontFeature.tabularFigures()
+                          ])),
+                ],
+              ),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Icon(Icons.timer_outlined, color: Colors.white, size: 18),
-                SizedBox(width: 6),
-                Text(formatDuration(_left),
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w800,
-                        fontFeatures: <FontFeature>[FontFeature.tabularFigures()])),
-              ],
-            ),
-          ),
           ),
         ],
       ),
@@ -399,24 +431,36 @@ class _ExamScreenState extends State<ExamScreen> {
           children: <Widget>[
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
-              child: AppProgressBar(value: _answeredCount / total, color: AppColors.purple),
+              child: AppProgressBar(
+                  value: _answeredCount / total, color: AppColors.purple),
             ),
             Expanded(
               child: ListView(
                 padding: EdgeInsets.fromLTRB(20, 16, 20, 16),
                 children: <Widget>[
-                  if (q.sign != null) ...<Widget>[
-                    AppCard(child: Center(child: RoadSign(type: q.sign!, size: 112, label: q.signLabel))),
+                  if (q.sign != null || q.imagePath != null) ...<Widget>[
+                    AppCard(
+                        child: Center(
+                            child: RoadSignVisual(
+                                type: q.sign,
+                                imagePath: q.imagePath,
+                                size: 112,
+                                label: q.signLabel))),
                     SizedBox(height: 16),
                   ],
                   Text(q.text,
-                      style: TextStyle(fontSize: 19, fontWeight: FontWeight.w700, height: 1.4)),
+                      style: TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.w700,
+                          height: 1.4)),
                   SizedBox(height: 16),
                   for (int i = 0; i < q.options.length; i++)
                     OptionTile(
                       letter: optionLetter(i),
                       text: q.options[i],
-                      state: _answers[_index] == i ? OptionState.selected : OptionState.neutral,
+                      state: _answers[_index] == i
+                          ? OptionState.selected
+                          : OptionState.neutral,
                       onTap: () => setState(() => _answers[_index] = i),
                     ),
                 ],
@@ -446,7 +490,8 @@ class _ExamScreenState extends State<ExamScreen> {
                   SizedBox(width: 8),
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: _index == 0 ? null : () => setState(() => _index--),
+                      onPressed:
+                          _index == 0 ? null : () => setState(() => _index--),
                       child: Text('Ibanza'),
                     ),
                   ),
@@ -454,9 +499,12 @@ class _ExamScreenState extends State<ExamScreen> {
                   Expanded(
                     child: ElevatedButton(
                       style: last
-                          ? ElevatedButton.styleFrom(backgroundColor: AppColors.purple)
+                          ? ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.purple)
                           : null,
-                      onPressed: last ? _confirmSubmit : () => setState(() => _index++),
+                      onPressed: last
+                          ? _confirmSubmit
+                          : () => setState(() => _index++),
                       child: Text(last ? 'Soza' : 'Ikurikira'),
                     ),
                   ),
@@ -508,9 +556,11 @@ class _NavCell extends StatelessWidget {
           color: bg,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-              color: current ? AppColors.purple : AppColors.border, width: current ? 2 : 1),
+              color: current ? AppColors.purple : AppColors.border,
+              width: current ? 2 : 1),
         ),
-        child: Text('$number', style: TextStyle(fontWeight: FontWeight.w700, color: fg)),
+        child: Text('$number',
+            style: TextStyle(fontWeight: FontWeight.w700, color: fg)),
       ),
     );
   }
@@ -530,7 +580,8 @@ class _Legend extends StatelessWidget {
         Container(
           width: 12,
           height: 12,
-          decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(3)),
+          decoration: BoxDecoration(
+              color: color, borderRadius: BorderRadius.circular(3)),
         ),
         SizedBox(width: 6),
         Text(label, style: TextStyle(fontSize: 13, color: AppColors.muted)),
@@ -543,7 +594,8 @@ class _Legend extends StatelessWidget {
 // Ibisubizo
 // =====================================================================
 class ExamResultScreen extends StatelessWidget {
-  const ExamResultScreen({super.key, required this.result, this.fromHistory = false});
+  const ExamResultScreen(
+      {super.key, required this.result, this.fromHistory = false});
 
   final ExamResult result;
   final bool fromHistory;
@@ -600,9 +652,11 @@ class ExamResultScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text('Uko witwaye mu byiciro',
-                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+                    style:
+                        TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
                 SizedBox(height: 12),
-                for (final MapEntry<String, List<int>> e in byCat.entries) ...<Widget>[
+                for (final MapEntry<String, List<int>> e
+                    in byCat.entries) ...<Widget>[
                   Row(
                     children: <Widget>[
                       Expanded(child: Text(repo.categoryById(e.key).title)),
@@ -613,7 +667,9 @@ class ExamResultScreen extends StatelessWidget {
                   SizedBox(height: 6),
                   AppProgressBar(
                     value: e.value[0] / e.value[1],
-                    color: e.value[0] / e.value[1] >= 0.6 ? AppColors.success : AppColors.warning,
+                    color: e.value[0] / e.value[1] >= 0.6
+                        ? AppColors.success
+                        : AppColors.warning,
                   ),
                   SizedBox(height: 12),
                 ],
@@ -624,7 +680,8 @@ class ExamResultScreen extends StatelessWidget {
           if (wrong > 0)
             ElevatedButton.icon(
               onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(builder: (_) => ExamReviewScreen(result: result)),
+                MaterialPageRoute<void>(
+                    builder: (_) => ExamReviewScreen(result: result)),
               ),
               icon: Icon(Icons.fact_check_outlined),
               label: Text('Reba amakosa yawe ($wrong)'),
@@ -674,17 +731,26 @@ class ExamReviewScreen extends StatelessWidget {
                 Text('Ikibazo ${i + 1}',
                     style: TextStyle(color: AppColors.muted, fontSize: 13)),
                 SizedBox(height: 6),
-                if (q.sign != null) ...<Widget>[
-                  RoadSign(type: q.sign!, size: 72, label: q.signLabel),
+                if (q.sign != null || q.imagePath != null) ...<Widget>[
+                  RoadSignVisual(
+                      type: q.sign,
+                      imagePath: q.imagePath,
+                      size: 72,
+                      label: q.signLabel),
                   SizedBox(height: 8),
                 ],
                 Text(q.text,
-                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, height: 1.4)),
+                    style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                        height: 1.4)),
                 SizedBox(height: 10),
                 _AnswerLine(
                   icon: Icons.cancel,
                   color: AppColors.error,
-                  text: given == null ? 'Ntiwasubije' : 'Wasubije: ${q.options[given]}',
+                  text: given == null
+                      ? 'Ntiwasubije'
+                      : 'Wasubije: ${q.options[given]}',
                 ),
                 SizedBox(height: 6),
                 _AnswerLine(
@@ -705,7 +771,8 @@ class ExamReviewScreen extends StatelessWidget {
 }
 
 class _AnswerLine extends StatelessWidget {
-  const _AnswerLine({required this.icon, required this.color, required this.text});
+  const _AnswerLine(
+      {required this.icon, required this.color, required this.text});
 
   final IconData icon;
   final Color color;
@@ -718,7 +785,9 @@ class _AnswerLine extends StatelessWidget {
       children: <Widget>[
         Icon(icon, color: color, size: 20),
         SizedBox(width: 8),
-        Expanded(child: Text(text, style: TextStyle(color: color, fontWeight: FontWeight.w600))),
+        Expanded(
+            child: Text(text,
+                style: TextStyle(color: color, fontWeight: FontWeight.w600))),
       ],
     );
   }

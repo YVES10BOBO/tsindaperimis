@@ -18,3 +18,7 @@ flutter run --dart-define-from-file=supabase.local.json
 The publishable key is safe to ship in the app because row-level security only allows reading published content. Never put a service-role key in Flutter.
 
 Until the project is configured and the content tables are populated, the app uses its bundled data and caches it in SQLite on supported mobile platforms. On startup it refreshes that cache from Supabase when published categories and questions are available. Images belong in the public `road-signs` Storage bucket; store each image's object path in the matching `image_path` column.
+
+## Admin dashboard
+
+See [`../admin-dashboard/README.md`](../admin-dashboard/README.md) for setup. Run `migrations/202610190001_admin_access.sql`, create an email/password user in Supabase Auth, then add that user's ID to `public.admin_users` from the SQL Editor. Never give ordinary learners an admin membership.
