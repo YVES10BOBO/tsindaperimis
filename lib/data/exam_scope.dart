@@ -20,5 +20,6 @@ const Set<String> extraLessonIds = <String>{
   'modoka-8', // Bateri, lisansi n'ibindi
 };
 
-bool isExamQuestion(Question q) => !extraQuestionIds.contains(q.id);
-bool isExtraLesson(Lesson l) => extraLessonIds.contains(l.id);
+bool isExamQuestion(Question q) =>
+    q.isExamQuestion && !extraQuestionIds.contains(q.id);
+bool isExtraLesson(Lesson l) => l.isExtra || extraLessonIds.contains(l.id);

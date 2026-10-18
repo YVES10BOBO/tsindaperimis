@@ -1,11 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../data/content_repository.dart';
 import '../data/models.dart';
 
 /// Imiterere ya app (umukoresha, iterambere, ibyo yabitse).
-/// Ubu ibikwa muri memory; intambwe ikurikira ni kubibika muri SQLite.
 class AppState extends ChangeNotifier {
+  AppState() {
+    _restoreProgress();
+  }
+
   String? _userName;
   bool _isGuest = true;
   bool notificationsOn = true;
@@ -19,7 +24,8 @@ class AppState extends ChangeNotifier {
   int avatarColor = 0;
 
   // ---------- Imiterere y'amabara ----------
-  ThemeMode themeMode = ThemeMode.light; // Light ni yo ibanza; umukoresha ashobora guhindura
+  ThemeMode themeMode =
+      ThemeMode.light; // Light ni yo ibanza; umukoresha ashobora guhindura
 
   final Set<String> completedLessons = <String>{};
   final Set<String> bookmarkedLessons = <String>{};
@@ -28,6 +34,33 @@ class AppState extends ChangeNotifier {
   final Map<String, int> answeredByCategory = <String, int>{};
   final Map<String, int> correctByCategory = <String, int>{};
   final List<ExamResult> examResults = <ExamResult>[];
+
+  Future<void> _restoreProgress() async {
+    try {
+      final saved = await ContentRepository.instance.loadProgress();
+      completedLessons
+          .addAll((saved['completedLessons'] as List<String>?) ?? []);
+      bookmarkedLessons
+          .addAll((saved['bookmarkedLessons'] as List<String>?) ?? []);
+      bookmarkedQuestions
+          .addAll((saved['bookmarkedQuestions'] as List<String>?) ?? []);
+      wrongQuestions.addAll((saved['wrongQuestions'] as List<String>?) ?? []);
+      answeredByCategory
+          .addAll((saved['answeredByCategory'] as Map<String, int>?) ?? {});
+      correctByCategory
+          .addAll((saved['correctByCategory'] as Map<String, int>?) ?? {});
+      examResults.addAll((saved['examResults'] as List<ExamResult>?) ?? []);
+      if (saved.isNotEmpty) notifyListeners();
+    } catch (error) {
+      debugPrint('Could not restore local progress: $error');
+    }
+  }
+
+  void _persist(Future<void> operation) {
+    unawaited(operation.catchError((Object error) {
+      debugPrint('Could not save local progress: $error');
+    }));
+  }
 
   bool get isGuest => _isGuest;
   String get displayName => _userName ?? 'Mushyitsi';
@@ -88,6 +121,7 @@ class AppState extends ChangeNotifier {
 
   void completeLesson(String id) {
     completedLessons.add(id);
+    _persist(ContentRepository.instance.saveCompletedLesson(id, true));
     notifyListeners();
   }
 
@@ -100,22 +134,32 @@ class AppState extends ChangeNotifier {
 
   void toggleLessonBookmark(String id) {
     if (!bookmarkedLessons.remove(id)) bookmarkedLessons.add(id);
+    _persist(ContentRepository.instance
+        .saveBookmark('lesson', id, bookmarkedLessons.contains(id)));
     notifyListeners();
   }
 
   void toggleQuestionBookmark(String id) {
     if (!bookmarkedQuestions.remove(id)) bookmarkedQuestions.add(id);
+    _persist(ContentRepository.instance
+        .saveBookmark('question', id, bookmarkedQuestions.contains(id)));
     notifyListeners();
   }
 
   // ---------- Ibisubizo ----------
-  void recordAnswer(Question q, bool correct, {bool notify = true}) {
-    answeredByCategory[q.categoryId] = (answeredByCategory[q.categoryId] ?? 0) + 1;
+  void recordAnswer(Question q, bool correct,
+      {bool notify = true, bool persist = true}) {
+    answeredByCategory[q.categoryId] =
+        (answeredByCategory[q.categoryId] ?? 0) + 1;
     if (correct) {
-      correctByCategory[q.categoryId] = (correctByCategory[q.categoryId] ?? 0) + 1;
+      correctByCategory[q.categoryId] =
+          (correctByCategory[q.categoryId] ?? 0) + 1;
       wrongQuestions.remove(q.id);
     } else {
       wrongQuestions.add(q.id);
+    }
+    if (persist) {
+      _persist(ContentRepository.instance.saveQuestionAnswer(q, correct));
     }
     if (notify) notifyListeners();
   }
@@ -123,10 +167,12 @@ class AppState extends ChangeNotifier {
   void addExamResult(ExamResult result) {
     for (int i = 0; i < result.questions.length; i++) {
       if (result.answers[i] != null) {
-        recordAnswer(result.questions[i], result.isCorrect(i), notify: false);
+        recordAnswer(result.questions[i], result.isCorrect(i),
+            notify: false, persist: false);
       }
     }
     examResults.insert(0, result);
+    _persist(ContentRepository.instance.saveExamResult(result));
     notifyListeners();
   }
 
@@ -156,7 +202,9 @@ class AppState extends ChangeNotifier {
     final int total = ContentRepository.instance.totalLessons;
     final double lessons = total == 0 ? 0 : completedLessons.length / total;
     final double exam = examResults.isEmpty ? 0 : examResults.first.ratio;
-    return (lessons * 0.4 + accuracy * 0.3 + exam * 0.3).clamp(0.0, 1.0).toDouble();
+    return (lessons * 0.4 + accuracy * 0.3 + exam * 0.3)
+        .clamp(0.0, 1.0)
+        .toDouble();
   }
 }
 
