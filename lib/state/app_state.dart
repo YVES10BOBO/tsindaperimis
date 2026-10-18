@@ -50,14 +50,42 @@ class AppState extends ChangeNotifier {
       correctByCategory
           .addAll((saved['correctByCategory'] as Map<String, int>?) ?? {});
       examResults.addAll((saved['examResults'] as List<ExamResult>?) ?? []);
+      final cloud = await ContentRepository.instance.syncProgressWithSupabase();
+      if (cloud != null) _applyProgress(cloud);
       if (saved.isNotEmpty) notifyListeners();
     } catch (error) {
       debugPrint('Could not restore local progress: $error');
     }
   }
 
+  void _applyProgress(Map<String, dynamic> saved) {
+    completedLessons
+      ..clear()
+      ..addAll((saved['completedLessons'] as List<String>?) ?? []);
+    bookmarkedLessons
+      ..clear()
+      ..addAll((saved['bookmarkedLessons'] as List<String>?) ?? []);
+    bookmarkedQuestions
+      ..clear()
+      ..addAll((saved['bookmarkedQuestions'] as List<String>?) ?? []);
+    wrongQuestions
+      ..clear()
+      ..addAll((saved['wrongQuestions'] as List<String>?) ?? []);
+    answeredByCategory
+      ..clear()
+      ..addAll((saved['answeredByCategory'] as Map<String, int>?) ?? {});
+    correctByCategory
+      ..clear()
+      ..addAll((saved['correctByCategory'] as Map<String, int>?) ?? {});
+    examResults
+      ..clear()
+      ..addAll((saved['examResults'] as List<ExamResult>?) ?? []);
+  }
+
   void _persist(Future<void> operation) {
-    unawaited(operation.catchError((Object error) {
+    unawaited(operation
+        .then((_) => ContentRepository.instance.pushProgressSnapshot())
+        .catchError((Object error) {
       debugPrint('Could not save local progress: $error');
     }));
   }
@@ -70,6 +98,13 @@ class AppState extends ChangeNotifier {
     _userName = name.trim().isEmpty ? 'Umukoresha' : name.trim();
     if (phone.trim().isNotEmpty) this.phone = phone.trim();
     _isGuest = false;
+    unawaited(
+        ContentRepository.instance.syncProgressWithSupabase().then((saved) {
+      if (saved != null) {
+        _applyProgress(saved);
+        notifyListeners();
+      }
+    }));
     notifyListeners();
   }
 

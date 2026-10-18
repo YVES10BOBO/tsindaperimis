@@ -22,6 +22,7 @@ class ContentRepository {
   static final ContentRepository instance = ContentRepository._();
   final Random _random = Random();
   Database? _db;
+  Future<void> _progressQueue = Future<void>.value();
   List<LearnCategory> _categories = learnCategories;
   List<Question> _all = <Question>[
     ...questionBank,
@@ -120,6 +121,165 @@ class ContentRepository {
               jsonDecode(r['payload'] as String) as Map<String, dynamic>))
           .toList(),
     };
+  }
+
+  /// Pull a user's cloud snapshot and merge additive progress into this device.
+  /// Bookmark state follows the cloud snapshot so removals sync as well.
+  Future<Map<String, dynamic>?> syncProgressWithSupabase() async {
+    final db = _db;
+    if (db == null) return null;
+    try {
+      final client = Supabase.instance.client;
+      final user = client.auth.currentUser;
+      if (user == null) return null;
+      final row = await client
+          .from('user_progress')
+          .select('progress')
+          .eq('user_id', user.id)
+          .maybeSingle();
+      final local = await loadProgress();
+      final cloud = row?['progress'];
+      if (cloud is Map) {
+        final remote = Map<String, dynamic>.from(cloud);
+        final merged = _mergeProgress(local, remote);
+        await _storeProgressSnapshot(merged);
+        await client.from('user_progress').upsert({
+          'user_id': user.id,
+          'progress': _progressJson(merged),
+          'updated_at': DateTime.now().toUtc().toIso8601String(),
+        });
+        return merged;
+      }
+      await client.from('user_progress').upsert({
+        'user_id': user.id,
+        'progress': _progressJson(local),
+        'updated_at': DateTime.now().toUtc().toIso8601String(),
+      });
+      return local;
+    } catch (error) {
+      debugPrint(
+          'Progress cloud sync failed; keeping offline progress ($error).');
+      return null;
+    }
+  }
+
+  Future<void> pushProgressSnapshot() {
+    _progressQueue = _progressQueue.then((_) async {
+      try {
+        final client = Supabase.instance.client;
+        final user = client.auth.currentUser;
+        if (user == null) return;
+        final progress = await loadProgress();
+        await client.from('user_progress').upsert({
+          'user_id': user.id,
+          'progress': _progressJson(progress),
+          'updated_at': DateTime.now().toUtc().toIso8601String(),
+        });
+      } catch (error) {
+        debugPrint(
+            'Progress upload failed; it will remain on this device ($error).');
+      }
+    });
+    return _progressQueue;
+  }
+
+  Map<String, dynamic> _progressJson(Map<String, dynamic> progress) =>
+      <String, dynamic>{
+        'completedLessons': progress['completedLessons'] ?? <String>[],
+        'bookmarkedLessons': progress['bookmarkedLessons'] ?? <String>[],
+        'bookmarkedQuestions': progress['bookmarkedQuestions'] ?? <String>[],
+        'answeredByCategory': progress['answeredByCategory'] ?? <String, int>{},
+        'correctByCategory': progress['correctByCategory'] ?? <String, int>{},
+        'wrongQuestions': progress['wrongQuestions'] ?? <String>[],
+        'examResults': (progress['examResults'] as List<ExamResult>? ?? [])
+            .map(_examResultToJson)
+            .toList(),
+      };
+
+  Map<String, dynamic> _mergeProgress(
+      Map<String, dynamic> local, Map<String, dynamic> remote) {
+    List<String> union(String key) => <String>{
+          ...((local[key] as List<dynamic>?)?.cast<String>() ?? []),
+          ...((remote[key] as List<dynamic>?)?.cast<String>() ?? []),
+        }.toList();
+    Map<String, int> maxCounts(String key) {
+      final a = Map<String, dynamic>.from(local[key] as Map? ?? {});
+      final b = Map<String, dynamic>.from(remote[key] as Map? ?? {});
+      return <String, int>{
+        for (final id in <String>{...a.keys, ...b.keys})
+          id: ((a[id] as num?)?.toInt() ?? 0)
+              .clamp((b[id] as num?)?.toInt() ?? 0, 0x7fffffff),
+      };
+    }
+
+    final exams = <String, Map<String, dynamic>>{};
+    for (final raw in <dynamic>[
+      ...((local['examResults'] as List<dynamic>?) ?? []),
+      ...((remote['examResults'] as List<dynamic>?) ?? []),
+    ]) {
+      final json = raw is ExamResult
+          ? _examResultToJson(raw)
+          : Map<String, dynamic>.from(raw as Map);
+      exams[json['date'] as String] = json;
+    }
+    return <String, dynamic>{
+      'completedLessons': union('completedLessons'),
+      'bookmarkedLessons': remote.containsKey('bookmarkedLessons')
+          ? (remote['bookmarkedLessons'] as List<dynamic>).cast<String>()
+          : union('bookmarkedLessons'),
+      'bookmarkedQuestions': remote.containsKey('bookmarkedQuestions')
+          ? (remote['bookmarkedQuestions'] as List<dynamic>).cast<String>()
+          : union('bookmarkedQuestions'),
+      'answeredByCategory': maxCounts('answeredByCategory'),
+      'correctByCategory': maxCounts('correctByCategory'),
+      'wrongQuestions': union('wrongQuestions'),
+      'examResults': exams.values.map(_examResultFromJson).toList()
+        ..sort((a, b) => b.date.compareTo(a.date)),
+    };
+  }
+
+  Future<void> _storeProgressSnapshot(Map<String, dynamic> snapshot) async {
+    final db = _db;
+    if (db == null) return;
+    await db.transaction((tx) async {
+      await tx.delete('completed_lessons');
+      await tx.delete('bookmarks');
+      await tx.delete('question_stats');
+      await tx.delete('wrong_questions');
+      await tx.delete('exam_history');
+      for (final id
+          in (snapshot['completedLessons'] as List<dynamic>).cast<String>()) {
+        await tx.insert('completed_lessons', {'lesson_id': id});
+      }
+      for (final kind in ['lesson', 'question']) {
+        final key =
+            kind == 'lesson' ? 'bookmarkedLessons' : 'bookmarkedQuestions';
+        for (final id in (snapshot[key] as List<dynamic>).cast<String>()) {
+          await tx.insert('bookmarks', {'kind': kind, 'item_id': id});
+        }
+      }
+      final answered =
+          Map<String, int>.from(snapshot['answeredByCategory'] as Map);
+      final correct =
+          Map<String, int>.from(snapshot['correctByCategory'] as Map);
+      for (final id in <String>{...answered.keys, ...correct.keys}) {
+        await tx.insert('question_stats', {
+          'category_id': id,
+          'answered': answered[id] ?? 0,
+          'correct': correct[id] ?? 0,
+        });
+      }
+      for (final id
+          in (snapshot['wrongQuestions'] as List<dynamic>).cast<String>()) {
+        await tx.insert('wrong_questions', {'question_id': id});
+      }
+      for (final result in (snapshot['examResults'] as List<ExamResult>)) {
+        await tx.insert('exam_history', {
+          'date_ms': result.date.millisecondsSinceEpoch,
+          'payload': jsonEncode(_examResultToJson(result)),
+        });
+      }
+    });
   }
 
   Future<void> saveCompletedLesson(String id, bool completed) async {
