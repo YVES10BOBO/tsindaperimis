@@ -29,6 +29,11 @@ enum SignType {
   plainWarningTriangle,
   sideRoadRight,
   crosswind,
+  deadEnd,
+  railwayCrossing,
+  priorityOverOncoming,
+  twoWayTraffic,
+  speedBump,
 }
 
 class LearnCategory {

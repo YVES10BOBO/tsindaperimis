@@ -129,6 +129,56 @@ class RoadSign extends StatelessWidget {
         return _warning(
           Icon(Icons.air, color: AppColors.signBlack, size: size * 0.48),
         );
+      case SignType.deadEnd:
+        return Container(
+          color: AppColors.signBlue,
+          padding: EdgeInsets.all(size * 0.13),
+          child: Column(
+            children: <Widget>[
+              Container(height: size * 0.12, color: Colors.white),
+              Expanded(
+                child: Row(
+                  children: <Widget>[
+                    SizedBox(width: size * 0.30),
+                    Expanded(child: Container(color: Colors.white)),
+                    SizedBox(width: size * 0.30),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      case SignType.railwayCrossing:
+        return _warning(
+          Icon(Icons.train, color: AppColors.signBlack, size: size * 0.46),
+        );
+      case SignType.priorityOverOncoming:
+        return _prohibitory(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(Icons.arrow_downward, color: AppColors.signRed, size: size * 0.38),
+              Icon(Icons.arrow_upward, color: AppColors.signBlack, size: size * 0.38),
+            ],
+          ),
+        );
+      case SignType.twoWayTraffic:
+        return _warning(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(Icons.arrow_downward, color: AppColors.signBlack, size: size * 0.34),
+              Icon(Icons.arrow_upward, color: AppColors.signBlack, size: size * 0.34),
+            ],
+          ),
+        );
+      case SignType.speedBump:
+        return _warning(
+          CustomPaint(
+            size: Size(size * 0.56, size * 0.3),
+            painter: const _SpeedBumpPainter(AppColors.signBlack),
+          ),
+        );
       case SignType.children:
         return _warning(
           Icon(Icons.escalator_warning, color: AppColors.signBlack, size: size * 0.38),
@@ -275,6 +325,46 @@ class _PolyPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _PolyPainter oldDelegate) => false;
+}
+
+class _SpeedBumpPainter extends CustomPainter {
+  const _SpeedBumpPainter(this.color);
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = size.height * 0.12
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+    final Path path = Path()
+      ..moveTo(0, size.height * 0.72)
+      ..lineTo(size.width * 0.18, size.height * 0.72)
+      ..cubicTo(
+        size.width * 0.34,
+        size.height * 0.72,
+        size.width * 0.35,
+        size.height * 0.18,
+        size.width * 0.5,
+        size.height * 0.18,
+      )
+      ..cubicTo(
+        size.width * 0.65,
+        size.height * 0.18,
+        size.width * 0.66,
+        size.height * 0.72,
+        size.width * 0.82,
+        size.height * 0.72,
+      )
+      ..lineTo(size.width, size.height * 0.72);
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _SpeedBumpPainter oldDelegate) => oldDelegate.color != color;
 }
 
 class _SlashPainter extends CustomPainter {
