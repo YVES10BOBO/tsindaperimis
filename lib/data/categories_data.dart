@@ -1,0 +1,380 @@
+import 'package:flutter/material.dart';
+
+import 'extended_data.dart';
+import 'models.dart';
+
+/// Ibirimo by'urugero. Nyuma bizava muri database (SQLite) no muri API.
+/// ICYITONDERWA: Ibisobanuro byose bigomba kugenzurwa n'itegeko rigenga
+/// imikoreshereze y'imihanda mu Rwanda mbere yo gusohora app.
+final List<LearnCategory> _baseLearnCategories = <LearnCategory>[
+  const LearnCategory(
+    id: 'amategeko',
+    title: "Amategeko y'Umuhanda",
+    subtitle: 'Menya amategeko agenga imikoreshereze y\'umuhanda',
+    icon: Icons.menu_book,
+    color: Color(0xFF2563EB),
+    softColor: Color(0xFFEAF1FF),
+    lessons: <Lesson>[
+      Lesson(
+        id: 'amategeko-1',
+        categoryId: 'amategeko',
+        title: 'Amategeko rusange',
+        minutes: 6,
+        sections: <LessonSection>[
+          LessonSection('Uruhushya rwo gutwara',
+              'Umuntu utwara ikinyabiziga agomba kugira uruhushya rwemewe rujyanye n\'ubwoko bw\'ikinyabiziga atwaye, kandi akarugendana.'),
+          LessonSection('Umukandara w\'umutekano',
+              'Umushoferi n\'abagenzi bagomba kwambara umukandara w\'umutekano aho uri.'),
+          LessonSection('Telefoni',
+              'Birabujijwe kuvugira kuri telefoni utwaye. Niba ugomba kuvugana n\'umuntu, banza uhagarare ahantu hemewe kandi hizewe.'),
+        ],
+      ),
+      Lesson(
+        id: 'amategeko-2',
+        categoryId: 'amategeko',
+        title: 'Umuvuduko',
+        minutes: 5,
+        sections: <LessonSection>[
+          LessonSection('Umuvuduko ntarengwa',
+              'Kurikiza umuvuduko ntarengwa werekanwa n\'ibimenyetso byo ku muhanda.',
+              sign: SignType.speedLimit, signLabel: '40'),
+          LessonSection('Hindura umuvuduko ukurikije ibihe',
+              'Iyo imvura iguye, hari igihu, cyangwa hari abanyamaguru benshi, gabanya umuvuduko kandi wongere intera hagati yawe n\'ikinyabiziga kiri imbere.'),
+        ],
+      ),
+      Lesson(
+        id: 'amategeko-3',
+        categoryId: 'amategeko',
+        title: 'Uburenganzira bwo gutambuka',
+        minutes: 7,
+        sections: <LessonSection>[
+          LessonSection('Amasangano adafite ibimenyetso',
+              'Ku masangano adafite ibimenyetso cyangwa amatara, ikinyabiziga kiva iburyo bwawe ni cyo gitambuka mbere.'),
+          LessonSection('Ibimenyetso n\'amatara',
+              'Iyo ku masangano hari ibimenyetso, amatara cyangwa umupolisi uyobora umuhanda, ni byo ukurikiza.'),
+          LessonSection('Abanyamaguru',
+              'Abanyamaguru bari ku nzira yabo bagomba guhabwa inzira.'),
+        ],
+      ),
+      Lesson(
+        id: 'amategeko-4',
+        categoryId: 'amategeko',
+        title: 'Kunyuranaho',
+        minutes: 5,
+        sections: <LessonSection>[
+          LessonSection('Uruhande',
+              'Kunyuranaho bisanzwe bikorerwa ibumoso bw\'ikinyabiziga unyuraho.'),
+          LessonSection('Aho bibujijwe',
+              'Ntunyuranaho mu ikorosi, hejuru y\'umusozi, ku nzira y\'abanyamaguru, cyangwa ahantu hose utabona imbere neza.',
+              sign: SignType.noOvertaking),
+        ],
+      ),
+      Lesson(
+        id: 'amategeko-5',
+        categoryId: 'amategeko',
+        title: 'Guhagarara no guparika',
+        minutes: 4,
+        sections: <LessonSection>[
+          LessonSection('Aho utemerewe guparika',
+              'Ntuparike ku nzira y\'abanyamaguru, ku masangano, cyangwa aho ikimenyetso kibibuza.',
+              sign: SignType.noParking),
+        ],
+      ),
+    ],
+  ),
+  const LearnCategory(
+    id: 'ibimenyetso',
+    title: "Ibimenyetso by'Umuhanda",
+    subtitle: 'Menya ibimenyetso n\'icyo bisobanura',
+    icon: Icons.report,
+    color: Color(0xFFDC2626),
+    softColor: Color(0xFFFDECEC),
+    lessons: <Lesson>[
+      Lesson(
+        id: 'ibimenyetso-1',
+        categoryId: 'ibimenyetso',
+        title: 'Ibimenyetso by\'uburenganzira',
+        minutes: 5,
+        sections: <LessonSection>[
+          LessonSection('STOP — Hagarara',
+              'Hagarara burundu ku murongo wo guhagarara, utange inzira, hanyuma ukomeze igihe nta kaga.',
+              sign: SignType.stop),
+          LessonSection('Tanga inzira',
+              'Gabanya umuvuduko kandi uhe inzira ibinyabiziga biri ku muhanda ugiye kwinjiramo.',
+              sign: SignType.giveWay),
+        ],
+      ),
+      Lesson(
+        id: 'ibimenyetso-2',
+        categoryId: 'ibimenyetso',
+        title: 'Ibimenyetso bibuza',
+        minutes: 6,
+        sections: <LessonSection>[
+          LessonSection('Kwinjira birabujijwe',
+              'Nta kinyabiziga cyemerewe kwinjira muri uyu muhanda kiturutse kuri uru ruhande.',
+              sign: SignType.noEntry),
+          LessonSection('Kunyuranaho birabujijwe',
+              'Ntiwemerewe kunyuranaho n\'ibindi binyabiziga bifite moteri.',
+              sign: SignType.noOvertaking),
+          LessonSection('Guparika birabujijwe',
+              'Ntiwemerewe gusiga ikinyabiziga cyawe aha.',
+              sign: SignType.noParking),
+        ],
+      ),
+      Lesson(
+        id: 'ibimenyetso-3',
+        categoryId: 'ibimenyetso',
+        title: 'Ibimenyetso biburira',
+        minutes: 5,
+        sections: <LessonSection>[
+          LessonSection('Akaga',
+              'Iburira akaga katagaragazwa n\'ikindi kimenyetso. Gabanya umuvuduko kandi witonde.',
+              sign: SignType.danger),
+          LessonSection('Witondere abana',
+              'Hafi aha hari ishuri cyangwa ahantu abana bakunze kwambukira.',
+              sign: SignType.children),
+        ],
+      ),
+      Lesson(
+        id: 'ibimenyetso-4',
+        categoryId: 'ibimenyetso',
+        title: 'Ibimenyetso bitegeka',
+        minutes: 5,
+        sections: <LessonSection>[
+          LessonSection('Komeza imbere gusa',
+              'Ugomba gukomeza imbere; ntiwemerewe gukata.',
+              sign: SignType.aheadOnly),
+          LessonSection('Kata iburyo',
+              'Ugomba gukata iburyo.',
+              sign: SignType.turnRight),
+          LessonSection('Rond-point',
+              'Ugomba kuzenguruka ukurikije icyerekezo cy\'imyambi.',
+              sign: SignType.roundabout),
+        ],
+      ),
+      Lesson(
+        id: 'ibimenyetso-5',
+        categoryId: 'ibimenyetso',
+        title: 'Ibimenyetso bimenyesha',
+        minutes: 3,
+        sections: <LessonSection>[
+          LessonSection('Inzira y\'abanyamaguru',
+              'Imbere hari inzira abanyamaguru bambukiramo. Itegure kubaha inzira.',
+              sign: SignType.pedestrianCrossing),
+        ],
+      ),
+    ],
+  ),
+  const LearnCategory(
+    id: 'amatara',
+    title: 'Amatara yo mu Muhanda',
+    subtitle: 'Menya amatara n\'amabwiriza yayo',
+    icon: Icons.traffic,
+    color: Color(0xFF16A34A),
+    softColor: Color(0xFFEAF8EE),
+    lessons: <Lesson>[
+      Lesson(
+        id: 'amatara-1',
+        categoryId: 'amatara',
+        title: 'Amatara atatu',
+        minutes: 4,
+        sections: <LessonSection>[
+          LessonSection('Umutuku', 'Hagarara mbere y\'umurongo wo guhagarara.'),
+          LessonSection('Umuhondo',
+              'Itegure guhagarara. Hagarara, keretse niba utagishobora guhagarara mu mutekano.'),
+          LessonSection('Icyatsi',
+              'Ushobora gukomeza, ariko gusa niba amasangano arimo ubusa kandi nta kaga.'),
+        ],
+      ),
+      Lesson(
+        id: 'amatara-2',
+        categoryId: 'amatara',
+        title: 'Umupolisi uyobora umuhanda',
+        minutes: 3,
+        sections: <LessonSection>[
+          LessonSection('Ni nde ukurikizwa?',
+              'Amabwiriza y\'umupolisi uyobora umuhanda asumba amatara n\'ibimenyetso.'),
+        ],
+      ),
+    ],
+  ),
+  const LearnCategory(
+    id: 'imirongo',
+    title: 'Imirongo yo ku Muhanda',
+    subtitle: 'Sobanukirwa imirongo ishushanyije ku muhanda',
+    icon: Icons.add_road,
+    color: Color(0xFFD97706),
+    softColor: Color(0xFFFFF4E0),
+    lessons: <Lesson>[
+      Lesson(
+        id: 'imirongo-1',
+        categoryId: 'imirongo',
+        title: 'Imirongo yo hagati',
+        minutes: 4,
+        sections: <LessonSection>[
+          LessonSection('Umurongo udacagaguye',
+              'Ntiwemerewe kuwurenga cyangwa kuwugenderaho.'),
+          LessonSection('Umurongo ucagaguye',
+              'Ushobora kuwurenga iyo bikenewe, kandi gusa iyo nta kaga.'),
+        ],
+      ),
+      Lesson(
+        id: 'imirongo-2',
+        categoryId: 'imirongo',
+        title: 'Inzira y\'abanyamaguru (zebra)',
+        minutes: 3,
+        sections: <LessonSection>[
+          LessonSection('Imirongo y\'umweru ibangikanye',
+              'Yerekana aho abanyamaguru bambukira. Gabanya umuvuduko kandi ubahe inzira.'),
+        ],
+      ),
+    ],
+  ),
+  const LearnCategory(
+    id: 'modoka',
+    title: 'Ubumenyi ku Modoka',
+    subtitle: 'Menya ibice by\'imodoka n\'imikoreshereze yabyo',
+    icon: Icons.directions_car,
+    color: Color(0xFF4F46E5),
+    softColor: Color(0xFFEEF0FF),
+    lessons: vehicleLessons,
+  ),
+  const LearnCategory(
+    id: 'imyitwarire',
+    title: 'Imyitwarire ku Muhanda',
+    subtitle: 'Wige uko witwara mu bihe bitandukanye',
+    icon: Icons.alt_route,
+    color: Color(0xFFDB2777),
+    softColor: Color(0xFFFDEEF5),
+    lessons: drivingLessons,
+  ),
+  const LearnCategory(
+    id: 'umutekano',
+    title: 'Umutekano wo mu Muhanda',
+    subtitle: 'Wige uburyo bwo kwirinda impanuka',
+    icon: Icons.health_and_safety,
+    color: Color(0xFF0F766E),
+    softColor: Color(0xFFE6F6F3),
+    lessons: <Lesson>[
+      Lesson(
+        id: 'umutekano-1',
+        categoryId: 'umutekano',
+        title: 'Inzoga n\'umunaniro',
+        minutes: 4,
+        sections: <LessonSection>[
+          LessonSection('Inzoga',
+              'Inzoga zigabanya ubushobozi bwo kubona no gufata ibyemezo vuba. Niba wanyoye, shaka undi utwara.'),
+          LessonSection('Umunaniro',
+              'Niba wumva usinziriye, hagarara ahantu hizewe uruhuke.'),
+        ],
+      ),
+      Lesson(
+        id: 'umutekano-2',
+        categoryId: 'umutekano',
+        title: 'Abanyamaguru n\'abana',
+        minutes: 3,
+        sections: <LessonSection>[
+          LessonSection('Hafi y\'amashuri',
+              'Gabanya umuvuduko kandi witegure guhagarara igihe icyo ari cyo cyose.',
+              sign: SignType.children),
+        ],
+      ),
+    ],
+  ),
+];
+
+/// Amasomo y'inyongera kugira ngo buri cyiciro kigire nibura amasomo 20.
+/// Ibi biracyari ibikoresho by'urugero; bigomba kugenzurwa n'inzobere mbere yo gusohora.
+final List<LearnCategory> learnCategories = <LearnCategory>[
+  for (final LearnCategory category in _baseLearnCategories)
+    LearnCategory(
+      id: category.id,
+      title: category.title,
+      subtitle: category.subtitle,
+      icon: category.icon,
+      color: category.color,
+      softColor: category.softColor,
+      lessons: <Lesson>[
+        ...category.lessons,
+        for (int i = 0; i < _extraLessonTitles[category.id]!.length; i++)
+          Lesson(
+            id: '${category.id}-inyongera-${i + 1}',
+            categoryId: category.id,
+            title: _extraLessonTitles[category.id]![i],
+            minutes: 4,
+            sections: <LessonSection>[
+              LessonSection(
+                'Iby’ingenzi',
+                _extraLessonBodies[category.id]![i],
+              ),
+            ],
+          ),
+      ],
+    ),
+];
+
+const Map<String, List<String>> _extraLessonTitles = <String, List<String>>{
+  'amategeko': <String>[
+    'Ibyangombwa byo gutwara', 'Uruhushya n’icyiciro cy’ikinyabiziga', 'Kubahiriza amabwiriza y’umupolisi',
+    'Gutanga inzira ku binyabiziga by’ubutabazi', 'Gukoresha ihoni mu buryo bukwiye', 'Kugenda mu gisate cyawe',
+    'Guhindura icyerekezo', 'Guhagarara ahabugenewe', 'Gusubira inyuma mu mutekano', 'Gutwara mu nzira zifunganye',
+    'Ibyo ukora ugera ku masangano', 'Kwinjira mu muhanda munini', 'Kugendera ku muvuduko utekanye',
+    'Kwirinda kunyuranaho nabi', 'Uko witwara hafi y’ibinyabiziga bihagaze',
+  ],
+  'ibimenyetso': <String>[
+    'Ibimenyetso biburira akaga', 'Ibimenyetso by’ibibujijwe', 'Ibimenyetso bitegeka icyerekezo',
+    'Ibimenyetso by’ahantu ho guhagarara', 'Ibimenyetso by’inzira y’abanyamaguru', 'Ibimenyetso by’imirimo yo mu muhanda',
+    'Ibimenyetso by’amatungo', 'Ibimenyetso by’umuhanda unyerera', 'Ibimenyetso by’umuhanda ugabanyutse',
+    'Ibimenyetso by’ikiraro', 'Ibimenyetso by’ahagenewe abana', 'Ibimenyetso by’icyerekezo',
+    'Ibimenyetso by’agace k’umuvuduko', 'Uko usoma ibyapa by’inyongera', 'Gukurikiza ikimenyetso cy’agateganyo',
+  ],
+  'amatara': <String>[
+    'Itara ritukura', 'Itara ry’umuhondo', 'Itara ry’icyatsi', 'Amatara y’umwambi', 'Amatara ahuma',
+    'Itara ry’umupolisi', 'Amatara y’abanyamaguru', 'Amatara y’amagare', 'Amatara ahindagurika',
+    'Kwegera amatara agenzura umuhanda', 'Guhagarara ku murongo', 'Gusubira kugenda neza',
+    'Kugenda ku masangano afite amatara', 'Iyo amatara ataka', 'Amatara n’ibimenyetso bihabanye',
+    'Kwirinda guhagarara mu masangano', 'Gutegereza abanyamaguru', 'Kwitegereza ibinyabiziga byambukiranya',
+  ],
+  'imirongo': <String>[
+    'Umurongo ucagaguye', 'Umurongo udacagaguye', 'Imirongo ibiri hagati y’umuhanda', 'Umurongo wo guhagarara',
+    'Umurongo w’inzira y’abanyamaguru', 'Imyambi yo mu gisate', 'Imirongo yo ku ruhande', 'Agace kabujijwe kugenderwamo',
+    'Imirongo yo gutandukanya ibyerekezo', 'Imirongo ku masangano', 'Aho guhagarara mbere y’amatara', 'Umurongo w’abanyamaguru',
+    'Imirongo y’agace k’ishuri', 'Imirongo y’ahakorerwa imirimo', 'Uko witwara iyo imirongo itagaragara neza',
+    'Kwirinda kugendera ku murongo', 'Guhindura igisate witonze', 'Kureba imirongo mu mvura',
+  ],
+  'modoka': <String>[
+    'Uko wicara neza utwaye', 'Indorerwamo z’imodoka', 'Umukandara n’intebe', 'Uko feri zikora', 'Ikoreshwa rya feri y’intoki',
+    'Gupima amapine', 'Guhindura ipine ryapfumutse', 'Gusuzuma amatara', 'Gukoresha amatara y’igihu', 'Essuie-glace n’ikirahuri',
+    'Gusuzuma steering',
+  ],
+  'imyitwarire': <String>[
+    'Kwitegura urugendo', 'Kureba mu ndorerwamo mbere yo gukata', 'Gusiga intera ku ruhande', 'Gutwara mu muhanda urimo abantu benshi',
+    'Kwirinda uburakari utwaye', 'Kuganira n’abagenzi utarangara', 'Gutwara mu gihu', 'Gutwara nijoro', 'Gutwara mu mvura nyinshi',
+    'Kwegera bisi ihagaze', 'Kwitonda hafi y’amashuri', 'Gutwara hafi y’abanyamaguru', 'Kugabanya umuvuduko mu bice bitazwi',
+  ],
+  'umutekano': <String>[
+    'Kwambara umukandara neza', 'Kurinda abana mu modoka', 'Kwirinda umunaniro', 'Kwirinda inzoga n’ibiyobyabwenge',
+    'Kurinda abanyamaguru', 'Kurinda abatwara amagare', 'Kurinda abatwara moto', 'Kugenda mu mvura', 'Kugenda nijoro',
+    'Kwirinda telefoni utwaye', 'Gutwara ibintu biremereye', 'Kugira ibikoresho by’ubutabazi', 'Guhagarara ahantu hizewe',
+    'Guhamagara ubutabazi', 'Gutanga ubufasha bw’ibanze', 'Kwirinda inkongi mu modoka', 'Kwirinda ibyago hafi y’amazi', 'Gusuzuma umutekano mbere y’urugendo',
+  ],
+};
+
+final Map<String, List<String>> _extraLessonBodies = <String, List<String>>{
+  'amategeko': List<String>.filled(15, 'Banza urebe ibimenyetso n’imiterere y’umuhanda, ugabanye umuvuduko kandi ukurikize amabwiriza yemewe. Ibisabwa byihariye bigomba kugenzurwa mu mategeko agezweho y’u Rwanda.'),
+  'ibimenyetso': List<String>.filled(15, 'Iki kimenyetso kigufasha kumenya uko umuhanda umeze cyangwa icyo ugomba gukora. Kigereho witonze, ukurikize ishusho n’inyandiko iri ku cyapa kandi witegure kubahiriza amabwiriza y’umupolisi.'),
+  'amatara': List<String>.filled(18, 'Reba ibimenyetso n’abandi bakoresha umuhanda, ugabanye umuvuduko kandi ukurikize itara ritanga amabwiriza. Ntukinjire mu masangano niba udashobora kuyavamo mu mutekano.'),
+  'imirongo': List<String>.filled(18, 'Imirongo igaragaza uko ibisate n’ahagenewe guhagarara biteye. Yitegereze mbere yo guhindura icyerekezo, kandi ntuyirenge keretse amabwiriza n’umutekano bibikwemerera.'),
+  'modoka': List<String>.filled(11, 'Genzura iki gice cy’ikinyabiziga mbere y’urugendo no mu gihe ubonye impinduka. Niba utizeye ko gifite umutekano, hagarara ahantu hizewe maze ugishe inama umukanishi.'),
+  'imyitwarire': List<String>.filled(13, 'Itegereze kure n’impande zombi, uteganyirize amakosa y’abandi kandi ugende ku muvuduko ushobora kugenzura. Mu bihe bibi, ongera intera cyangwa usubike urugendo.'),
+  'umutekano': List<String>.filled(18, 'Shyira imbere kurinda ubuzima bwawe n’ubw’abandi. Gabanya ibyago, fata ingamba z’umutekano kandi uhamagare ubutabazi igihe bikenewe; ntukishyire mu kaga.'),
+};
+
+const List<AppNotification> sampleNotifications = <AppNotification>[
+  AppNotification('Igihe cyo kwiga', 'Komeza aho wari ugeze: Ibimenyetso biburira.',
+      'Uyu munsi', Icons.alarm),
+  AppNotification('Ibibazo bishya', 'Ibibazo bishya byongewe muri "Imyitwarire ku Muhanda".',
+      'Ejo hashize', Icons.fiber_new),
+  AppNotification('Inama', 'Gerageza ikizamini cy\'igerageza rimwe mu cyumweru.',
+      'Ku wa Mbere', Icons.lightbulb_outline),
+];
