@@ -20,66 +20,52 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _name = TextEditingController();
-  final TextEditingController _phone = TextEditingController();
+  final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
-  final TextEditingController _otp = TextEditingController();
   bool _hidePassword = true;
   bool _loading = false;
-  bool _awaitingOtp = false;
+  bool _awaitingEmailConfirmation = false;
   String? _error;
 
   @override
   void dispose() {
     _name.dispose();
-    _phone.dispose();
+    _email.dispose();
     _password.dispose();
-    _otp.dispose();
     super.dispose();
-  }
-
-  String _normalizedPhone() {
-    final input = _phone.text.trim();
-    if (input.startsWith('+'))
-      return '+${input.substring(1).replaceAll(RegExp(r'\D'), '')}';
-    final digits = input.replaceAll(RegExp(r'\D'), '');
-    if (digits.startsWith('250')) return '+$digits';
-    if (digits.startsWith('0')) return '+25${digits}';
-    return '+$digits';
   }
 
   Future<void> _submit() async {
     if (_loading ||
-        (!_awaitingOtp && !(_formKey.currentState?.validate() ?? false)))
-      return;
+        _awaitingEmailConfirmation ||
+        !(_formKey.currentState?.validate() ?? false)) return;
     setState(() {
       _loading = true;
       _error = null;
     });
     try {
       final auth = Supabase.instance.client.auth;
-      final phone = _normalizedPhone();
-      if (_awaitingOtp) {
-        await auth.verifyOTP(
-            phone: phone, token: _otp.text.trim(), type: OtpType.sms);
-      } else if (widget.isRegister) {
+      final email = _email.text.trim().toLowerCase();
+      if (widget.isRegister) {
         final result = await auth.signUp(
-          phone: phone,
+          email: email,
           password: _password.text,
           data: {'full_name': _name.text.trim()},
         );
         if (result.session == null) {
           setState(() {
-            _awaitingOtp = true;
+            _awaitingEmailConfirmation = true;
             _loading = false;
           });
           return;
         }
       } else {
-        await auth.signInWithPassword(phone: phone, password: _password.text);
+        await auth.signInWithPassword(email: email, password: _password.text);
       }
       if (!mounted) return;
-      final name = widget.isRegister ? _name.text : 'Umukoresha';
-      AppScope.of(context).signIn(name, phone: phone);
+      final name = (auth.currentUser?.userMetadata?['full_name'] as String?) ??
+          (widget.isRegister ? _name.text : 'Umukoresha');
+      AppScope.of(context).signIn(name, email: email);
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute<void>(builder: (_) => MainShell()),
         (Route<dynamic> route) => false,
@@ -111,21 +97,21 @@ class _AuthScreenState extends State<AuthScreen> {
             padding: EdgeInsets.fromLTRB(24, 8, 24, 24),
             children: <Widget>[
               Text(
-                  _awaitingOtp
-                      ? 'Emeza nimero ya telefoni'
+                  _awaitingEmailConfirmation
+                      ? 'Reba email yawe'
                       : (reg ? 'Fungura konti' : 'Murakaza neza'),
                   style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800)),
               SizedBox(height: 8),
               Text(
-                _awaitingOtp
-                    ? 'Andika kode twohereje kuri telefoni yawe.'
+                _awaitingEmailConfirmation
+                    ? 'Twohereje umurongo wo kwemeza konti kuri ${_email.text.trim()}. Reba muri email yawe, ukande uwo murongo, hanyuma winjire.'
                     : reg
                         ? 'Iyandikishe kugira ngo iterambere ryawe ribikwe.'
                         : 'Injira ukomeze aho wari ugeze.',
                 style: TextStyle(color: AppColors.muted, fontSize: 15),
               ),
               SizedBox(height: 28),
-              if (reg && !_awaitingOtp) ...<Widget>[
+              if (reg && !_awaitingEmailConfirmation) ...<Widget>[
                 TextFormField(
                   controller: _name,
                   textCapitalization: TextCapitalization.words,
@@ -137,33 +123,27 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
                 SizedBox(height: 14),
               ],
-              if (!_awaitingOtp)
+              if (!_awaitingEmailConfirmation)
                 TextFormField(
-                  controller: _phone,
-                  keyboardType: TextInputType.phone,
+                  controller: _email,
+                  keyboardType: TextInputType.emailAddress,
+                  autocorrect: false,
+                  textCapitalization: TextCapitalization.none,
                   decoration: InputDecoration(
-                    labelText: 'Nimero ya telefoni',
-                    hintText: '07X XXX XXXX',
-                    prefixIcon: Icon(Icons.phone_outlined),
+                    labelText: 'Email',
+                    hintText: 'urugero@email.com',
+                    prefixIcon: Icon(Icons.email_outlined),
                   ),
                   validator: (String? v) {
-                    final String digits =
-                        (v ?? '').replaceAll(RegExp(r'\D'), '');
-                    if (digits.length < 10) return 'Andika nimero yuzuye';
+                    if (!RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
+                        .hasMatch((v ?? '').trim())) {
+                      return 'Andika email yemewe';
+                    }
                     return null;
                   },
                 ),
-              if (!_awaitingOtp) SizedBox(height: 14),
-              if (_awaitingOtp)
-                TextFormField(
-                  controller: _otp,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: 'Kode ya SMS'),
-                  validator: (v) => (v == null || v.trim().length < 4)
-                      ? 'Andika kode wakiriye'
-                      : null,
-                ),
-              if (!_awaitingOtp)
+              if (!_awaitingEmailConfirmation) SizedBox(height: 14),
+              if (!_awaitingEmailConfirmation)
                 TextFormField(
                   controller: _password,
                   obscureText: _hidePassword,
@@ -182,7 +162,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   validator: (String? v) =>
                       (v == null || v.length < 6) ? 'Nibura inyuguti 6' : null,
                 ),
-              if (!reg && !_awaitingOtp)
+              if (!reg && !_awaitingEmailConfirmation)
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -198,7 +178,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 Text(_error!, style: const TextStyle(color: Colors.red)),
                 const SizedBox(height: 8),
               ],
-              if (reg && !_awaitingOtp) ...<Widget>[
+              if (reg && !_awaitingEmailConfirmation) ...<Widget>[
                 Wrap(
                   alignment: WrapAlignment.center,
                   crossAxisAlignment: WrapCrossAlignment.center,
@@ -233,19 +213,26 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
                 SizedBox(height: 12),
               ],
-              ElevatedButton(
-                onPressed: _loading ? null : _submit,
-                child: _loading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2))
-                    : Text(_awaitingOtp
-                        ? 'Emeza'
-                        : (reg ? 'Iyandikishe' : 'Injira')),
-              ),
-              if (!_awaitingOtp) const SizedBox(height: 12),
-              if (!_awaitingOtp)
+              if (!_awaitingEmailConfirmation)
+                ElevatedButton(
+                  onPressed: _loading ? null : _submit,
+                  child: _loading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2))
+                      : Text(reg ? 'Iyandikishe' : 'Injira'),
+                ),
+              if (_awaitingEmailConfirmation)
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pushReplacement(
+                    MaterialPageRoute<void>(
+                        builder: (_) => const AuthScreen(isRegister: false)),
+                  ),
+                  child: const Text('Nemeje email, injira'),
+                ),
+              if (!_awaitingEmailConfirmation) const SizedBox(height: 12),
+              if (!_awaitingEmailConfirmation)
                 TextButton(
                   onPressed: () => Navigator.of(context).pushReplacement(
                     MaterialPageRoute<void>(

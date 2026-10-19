@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/app_colors.dart';
 import '../widgets/common.dart';
@@ -35,7 +36,8 @@ String maskPhone(String phone) {
 
 /// Umutwe uri hejuru ya buri paji y'ijambo ry'ibanga.
 class _Header extends StatelessWidget {
-  const _Header({required this.icon, required this.title, required this.subtitle});
+  const _Header(
+      {required this.icon, required this.title, required this.subtitle});
 
   final IconData icon;
   final String title;
@@ -53,9 +55,12 @@ class _Header extends StatelessWidget {
           size: 60,
         ),
         const SizedBox(height: 20),
-        Text(title, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w800)),
+        Text(title,
+            style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w800)),
         const SizedBox(height: 8),
-        Text(subtitle, style: TextStyle(color: AppColors.muted, fontSize: 15, height: 1.45)),
+        Text(subtitle,
+            style:
+                TextStyle(color: AppColors.muted, fontSize: 15, height: 1.45)),
         const SizedBox(height: 28),
       ],
     );
@@ -72,12 +77,27 @@ class PasswordStrength extends StatelessWidget {
   Widget build(BuildContext context) {
     int score = 0;
     if (password.length >= 8) score++;
-    if (RegExp(r'[A-Za-z]').hasMatch(password) && RegExp(r'\d').hasMatch(password)) score++;
-    if (RegExp(r'[A-Z]').hasMatch(password) && RegExp(r'[a-z]').hasMatch(password)) score++;
-    if (RegExp(r'[^A-Za-z0-9]').hasMatch(password) || password.length >= 12) score++;
+    if (RegExp(r'[A-Za-z]').hasMatch(password) &&
+        RegExp(r'\d').hasMatch(password)) score++;
+    if (RegExp(r'[A-Z]').hasMatch(password) &&
+        RegExp(r'[a-z]').hasMatch(password)) score++;
+    if (RegExp(r'[^A-Za-z0-9]').hasMatch(password) || password.length >= 12)
+      score++;
 
-    final List<String> labels = <String>['Rifite intege nke cyane', 'Rifite intege nke', 'Riraringaniye', 'Rikomeye', 'Rikomeye cyane'];
-    final List<Color> colors = <Color>[AppColors.error, AppColors.error, AppColors.warning, AppColors.success, AppColors.success];
+    final List<String> labels = <String>[
+      'Rifite intege nke cyane',
+      'Rifite intege nke',
+      'Riraringaniye',
+      'Rikomeye',
+      'Rikomeye cyane'
+    ];
+    final List<Color> colors = <Color>[
+      AppColors.error,
+      AppColors.error,
+      AppColors.warning,
+      AppColors.success,
+      AppColors.success
+    ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,7 +120,9 @@ class PasswordStrength extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Text(
-          password.isEmpty ? 'Nibura inyuguti 8, harimo inyuguti n\'umubare' : labels[score],
+          password.isEmpty
+              ? 'Nibura inyuguti 8, harimo inyuguti n\'umubare'
+              : labels[score],
           style: TextStyle(
             fontSize: 12.5,
             color: password.isEmpty ? AppColors.muted : colors[score],
@@ -113,7 +135,7 @@ class PasswordStrength extends StatelessWidget {
 }
 
 // =====================================================================
-// 1. Wibagiwe ijambo ry'ibanga: andika telefoni
+// 1. Wibagiwe ijambo ry'ibanga: saba reset link kuri email
 // =====================================================================
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -124,24 +146,34 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _phone = TextEditingController();
+  final TextEditingController _email = TextEditingController();
   bool _sending = false;
+  bool _sent = false;
+  String? _error;
 
   @override
   void dispose() {
-    _phone.dispose();
+    _email.dispose();
     super.dispose();
   }
 
   Future<void> _send() async {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
-    setState(() => _sending = true);
-    await Future<void>.delayed(const Duration(milliseconds: 900)); // TODO: hamagara API
-    if (!mounted) return;
-    setState(() => _sending = false);
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => OtpScreen(phone: _phone.text)),
-    );
+    if (_sending || !(_formKey.currentState?.validate() ?? false)) return;
+    setState(() {
+      _sending = true;
+      _error = null;
+    });
+    try {
+      await Supabase.instance.client.auth
+          .resetPasswordForEmail(_email.text.trim().toLowerCase());
+      if (mounted) setState(() => _sent = true);
+    } on AuthException catch (error) {
+      if (mounted) setState(() => _error = error.message);
+    } catch (_) {
+      if (mounted) setState(() => _error = 'Ntibyashobotse kohereza email.');
+    } finally {
+      if (mounted) setState(() => _sending = false);
+    }
   }
 
   @override
@@ -154,35 +186,48 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
             children: <Widget>[
-              const _Header(
+              _Header(
                 icon: Icons.lock_reset,
                 title: 'Wibagiwe ijambo ry\'ibanga?',
-                subtitle:
-                    'Andika nimero ya telefoni wakoresheje wiyandikisha. Turakoherereza kode y\'imibare 6 kuri SMS.',
+                subtitle: _sent
+                    ? 'Niba iyi email ifite konti, twohereje umurongo wo guhindura ijambo ry\'ibanga. Reba muri inbox no muri spam.'
+                    : 'Andika email wakoresheje wiyandikisha. Turakoherereza umurongo wo guhindura ijambo ry\'ibanga.',
               ),
-              TextFormField(
-                controller: _phone,
-                keyboardType: TextInputType.phone,
-                autofocus: true,
-                decoration: const InputDecoration(
-                  labelText: 'Nimero ya telefoni',
-                  hintText: '07X XXX XXXX',
-                  prefixIcon: Icon(Icons.phone_outlined),
+              if (!_sent) ...[
+                TextFormField(
+                  controller: _email,
+                  keyboardType: TextInputType.emailAddress,
+                  textCapitalization: TextCapitalization.none,
+                  autocorrect: false,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    hintText: 'urugero@email.com',
+                    prefixIcon: Icon(Icons.email_outlined),
+                  ),
+                  validator: (value) => RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
+                          .hasMatch((value ?? '').trim())
+                      ? null
+                      : 'Andika email yemewe',
+                  onFieldSubmitted: (_) => _send(),
                 ),
-                validator: validatePhone,
-                onFieldSubmitted: (_) => _send(),
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _sending ? null : _send,
-                child: _sending
-                    ? const SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
-                      )
-                    : const Text('Ohereza kode'),
-              ),
+                const SizedBox(height: 24),
+                if (_error != null) ...[
+                  Text(_error!, style: const TextStyle(color: Colors.red)),
+                  const SizedBox(height: 8),
+                ],
+                ElevatedButton(
+                  onPressed: _sending ? null : _send,
+                  child: _sending
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2.5, color: Colors.white),
+                        )
+                      : const Text('Ohereza umurongo'),
+                ),
+              ],
               const SizedBox(height: 12),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
@@ -253,7 +298,8 @@ class _OtpScreenState extends State<OtpScreen> {
   void _resend() {
     // TODO: hamagara API yongere yohereze kode
     setState(_startTimer);
-    showComingSoon(context, 'Kode nshya yoherejwe kuri ${maskPhone(widget.phone)}');
+    showComingSoon(
+        context, 'Kode nshya yoherejwe kuri ${maskPhone(widget.phone)}');
   }
 
   Future<void> _verify() async {
@@ -266,11 +312,13 @@ class _OtpScreenState extends State<OtpScreen> {
       _error = null;
       _verifying = true;
     });
-    await Future<void>.delayed(const Duration(milliseconds: 800)); // TODO: hamagara API
+    await Future<void>.delayed(
+        const Duration(milliseconds: 800)); // TODO: hamagara API
     if (!mounted) return;
     setState(() => _verifying = false);
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(builder: (_) => ResetPasswordScreen(phone: widget.phone)),
+      MaterialPageRoute<void>(
+          builder: (_) => ResetPasswordScreen(phone: widget.phone)),
     );
   }
 
@@ -287,7 +335,8 @@ class _OtpScreenState extends State<OtpScreen> {
             _Header(
               icon: Icons.sms_outlined,
               title: 'Andika kode',
-              subtitle: 'Twohereje kode y\'imibare 6 kuri ${maskPhone(widget.phone)}.',
+              subtitle:
+                  'Twohereje kode y\'imibare 6 kuri ${maskPhone(widget.phone)}.',
             ),
             // Utuzu 6 tugaragaza imibare; TextField nyayo irihishe inyuma.
             GestureDetector(
@@ -311,12 +360,15 @@ class _OtpScreenState extends State<OtpScreen> {
                                       : (i == code.length && _focus.hasFocus
                                           ? AppColors.primary
                                           : AppColors.border),
-                                  width: i == code.length && _focus.hasFocus ? 2 : 1.2,
+                                  width: i == code.length && _focus.hasFocus
+                                      ? 2
+                                      : 1.2,
                                 ),
                               ),
                               child: Text(
                                 i < code.length ? code[i] : '',
-                                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
+                                style: const TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.w800),
                               ),
                             ),
                           ),
@@ -351,7 +403,8 @@ class _OtpScreenState extends State<OtpScreen> {
             ),
             if (_error != null) ...<Widget>[
               const SizedBox(height: 10),
-              Text(_error!, style: const TextStyle(color: AppColors.error, fontSize: 13)),
+              Text(_error!,
+                  style: const TextStyle(color: AppColors.error, fontSize: 13)),
             ],
             const SizedBox(height: 24),
             ElevatedButton(
@@ -360,7 +413,8 @@ class _OtpScreenState extends State<OtpScreen> {
                   ? const SizedBox(
                       width: 22,
                       height: 22,
-                      child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2.5, color: Colors.white),
                     )
                   : const Text('Emeza kode'),
             ),
@@ -415,11 +469,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   Future<void> _save() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     setState(() => _saving = true);
-    await Future<void>.delayed(const Duration(milliseconds: 900)); // TODO: hamagara API
+    await Future<void>.delayed(
+        const Duration(milliseconds: 900)); // TODO: hamagara API
     if (!mounted) return;
     setState(() => _saving = false);
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(builder: (_) => const PasswordResetSuccessScreen()),
+      MaterialPageRoute<void>(
+          builder: (_) => const PasswordResetSuccessScreen()),
     );
   }
 
@@ -436,7 +492,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               const _Header(
                 icon: Icons.password,
                 title: 'Ijambo ry\'ibanga rishya',
-                subtitle: 'Hitamo ijambo ry\'ibanga rishya utigeze ukoresha mbere.',
+                subtitle:
+                    'Hitamo ijambo ry\'ibanga rishya utigeze ukoresha mbere.',
               ),
               PasswordField(
                 controller: _password,
@@ -460,7 +517,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     ? const SizedBox(
                         width: 22,
                         height: 22,
-                        child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2.5, color: Colors.white),
                       )
                     : const Text('Bika ijambo ry\'ibanga'),
               ),
@@ -490,8 +548,10 @@ class PasswordResetSuccessScreen extends StatelessWidget {
               Container(
                 width: 110,
                 height: 110,
-                decoration: BoxDecoration(color: AppColors.successSoft, shape: BoxShape.circle),
-                child: const Icon(Icons.check_circle, color: AppColors.success, size: 64),
+                decoration: BoxDecoration(
+                    color: AppColors.successSoft, shape: BoxShape.circle),
+                child: const Icon(Icons.check_circle,
+                    color: AppColors.success, size: 64),
               ),
               const SizedBox(height: 24),
               const Text('Byagenze neza!',
@@ -500,12 +560,14 @@ class PasswordResetSuccessScreen extends StatelessWidget {
               Text(
                 'Ijambo ry\'ibanga ryawe ryahinduwe.\nInjira ukoresheje irishya.',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: AppColors.muted, fontSize: 15, height: 1.45),
+                style: TextStyle(
+                    color: AppColors.muted, fontSize: 15, height: 1.45),
               ),
               const Spacer(),
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute<void>(builder: (_) => const AuthScreen(isRegister: false)),
+                  MaterialPageRoute<void>(
+                      builder: (_) => const AuthScreen(isRegister: false)),
                   (Route<dynamic> r) => r.isFirst,
                 ),
                 child: const Text('Injira'),
@@ -546,7 +608,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   Future<void> _save() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     setState(() => _saving = true);
-    await Future<void>.delayed(const Duration(milliseconds: 900)); // TODO: hamagara API
+    await Future<void>.delayed(
+        const Duration(milliseconds: 900)); // TODO: hamagara API
     if (!mounted) return;
     setState(() => _saving = false);
     showComingSoon(context, 'Ijambo ry\'ibanga ryahinduwe.');
@@ -566,14 +629,16 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               PasswordField(
                 controller: _current,
                 label: 'Ijambo ry\'ibanga usanganywe',
-                validator: (String? v) =>
-                    (v == null || v.isEmpty) ? 'Andika ijambo ry\'ibanga usanganywe' : null,
+                validator: (String? v) => (v == null || v.isEmpty)
+                    ? 'Andika ijambo ry\'ibanga usanganywe'
+                    : null,
               ),
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(builder: (_) => const ForgotPasswordScreen()),
+                    MaterialPageRoute<void>(
+                        builder: (_) => const ForgotPasswordScreen()),
                   ),
                   child: const Text('Wibagiwe ijambo ry\'ibanga?'),
                 ),
@@ -585,7 +650,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 validator: (String? v) {
                   final String? base = validateNewPassword(v);
                   if (base != null) return base;
-                  if (v == _current.text) return 'Rigomba gutandukana n\'irya mbere';
+                  if (v == _current.text)
+                    return 'Rigomba gutandukana n\'irya mbere';
                   return null;
                 },
                 onChanged: (_) => setState(() {}),
@@ -606,7 +672,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     ? const SizedBox(
                         width: 22,
                         height: 22,
-                        child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2.5, color: Colors.white),
                       )
                     : const Text('Bika impinduka'),
               ),

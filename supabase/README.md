@@ -2,6 +2,11 @@
 
 1. Create a Supabase project.
 2. Run `migrations/202610180001_content.sql` in the Supabase SQL Editor.
+   If the project already has content, also run
+   `migrations/202610190002_lesson_created_at.sql` to enable lesson creation-date
+   sorting and the Today/Yesterday filters in the admin dashboard. Existing
+   lessons receive the migration date because their original dates were not
+   recorded.
 3. Generate the initial content seed from the app's current bundled questions and lessons:
 
 ```powershell

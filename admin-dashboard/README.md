@@ -16,7 +16,7 @@ Responsive Next.js + TypeScript web dashboard for managing the Supabase driving-
    ```
 
    Check that exactly one row was inserted. Only trusted project owners should be able to change `admin_users`.
-5. Copy `.env.example` to `.env.local` and set your Supabase project URL and **publishable** key. Do not put a service-role key in this app.
+5. Copy `.env.example` to `.env.local` and set your Supabase project URL and **publishable** key. To enable the admin users screen, also set `SUPABASE_SERVICE_ROLE_KEY` to the server-side secret from Supabase **Project Settings → API Keys**. Keep that key server-only: do not add `NEXT_PUBLIC_`, commit `.env.local`, paste the key into chat, or put it in the Flutter app. Restart `npm run dev` after changing environment variables.
 6. From this folder run:
 
    ```powershell
@@ -31,6 +31,8 @@ Responsive Next.js + TypeScript web dashboard for managing the Supabase driving-
 - Email/password admin sign-in and a database membership check.
 - Create, edit, publish/unpublish, search, and delete questions and lessons.
 - Manage categories and create new categories as drafts.
+- Admin overview with published/draft counts, content shortcuts, and a review queue.
+- Search and paginate Auth users, see sign-in and learner-progress summaries, and suspend or restore learner accounts. Admin accounts and your own account are protected from suspension here.
 - Set a question's correct option and add explanations.
 - Upload road-sign images to the public `road-signs` bucket; only admins can upload or delete stored objects.
 - Row Level Security grants content writes only to users in `admin_users`.

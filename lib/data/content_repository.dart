@@ -12,6 +12,7 @@ import 'exam_scope.dart';
 import 'extended_data.dart';
 import 'models.dart';
 import 'more_questions.dart';
+import 'pdf_reference_data.dart';
 import 'questions_data.dart';
 
 /// Offline-first content store. Bundled content is written to SQLite once;
@@ -29,6 +30,7 @@ class ContentRepository {
     ...vehicleQuestions,
     ...drivingQuestions,
     ...moreQuestions,
+    ...pdfQuestionBank,
   ];
 
   List<LearnCategory> get categories => _categories;
@@ -46,9 +48,10 @@ class ContentRepository {
     if (!kIsWeb) {
       try {
         final dir = await getDatabasesPath();
+        var refreshBundledContent = false;
         _db = await openDatabase(
           p.join(dir, 'amategeko_content.db'),
-          version: 3,
+          version: 4,
           onCreate: (db, _) async {
             await db.execute(
                 'CREATE TABLE categories (id TEXT PRIMARY KEY, title TEXT, subtitle TEXT, icon_code INTEGER, icon_font TEXT, icon_package TEXT, color INTEGER, soft_color INTEGER, sort_order INTEGER)');
@@ -70,9 +73,14 @@ class ContentRepository {
               await db
                   .execute('ALTER TABLE questions ADD COLUMN image_path TEXT');
             }
+            if (oldVersion < 4) refreshBundledContent = true;
           },
         );
-        await _seedSqliteIfEmpty();
+        if (refreshBundledContent) {
+          await _replaceSqlite(_categories, _all);
+        } else {
+          await _seedSqliteIfEmpty();
+        }
         await _loadSqlite();
       } catch (_) {
         // Keep bundled content on unsupported devices or a corrupt old cache.

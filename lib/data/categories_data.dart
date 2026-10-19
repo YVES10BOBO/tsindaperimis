@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'extended_data.dart';
 import 'models.dart';
+import 'pdf_reference_data.dart';
 
 /// Ibirimo by'urugero. Nyuma bizava muri database (SQLite) no muri API.
 /// ICYITONDERWA: Ibisobanuro byose bigomba kugenzurwa n'itegeko rigenga
@@ -84,8 +85,8 @@ final List<LearnCategory> _baseLearnCategories = <LearnCategory>[
   ),
   const LearnCategory(
     id: 'ibimenyetso',
-    title: "Ibimenyetso by'Umuhanda",
-    subtitle: 'Menya ibimenyetso n\'icyo bisobanura',
+    title: "IBYAPA N’IBIMENYETSO BYO MU MUHANDA",
+    subtitle: 'Ibyapa, ibimenyetso byo mu muhanda n’ibisobanuro byabyo',
     icon: Icons.report,
     color: Color(0xFFDC2626),
     softColor: Color(0xFFFDECEC),
@@ -295,6 +296,7 @@ final List<LearnCategory> learnCategories = <LearnCategory>[
       softColor: category.softColor,
       lessons: <Lesson>[
         ...category.lessons,
+        if (category.id == 'ibimenyetso') ...pdfSignLessons,
         for (int i = 0; i < _extraLessonTitles[category.id]!.length; i++)
           Lesson(
             id: '${category.id}-inyongera-${i + 1}',

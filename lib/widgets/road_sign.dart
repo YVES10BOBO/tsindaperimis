@@ -24,6 +24,18 @@ class RoadSignVisual extends StatelessWidget {
   Widget build(BuildContext context) {
     final path = imagePath?.trim();
     if (path != null && path.isNotEmpty) {
+      if (path.startsWith('assets/')) {
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.asset(
+            path,
+            width: size,
+            height: size,
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) => _fallback(),
+          ),
+        );
+      }
       try {
         final url = Supabase.instance.client.storage
             .from('road-signs')

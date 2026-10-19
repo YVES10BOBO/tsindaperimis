@@ -94,9 +94,10 @@ class AppState extends ChangeNotifier {
   String get displayName => _userName ?? 'Mushyitsi';
 
   // ---------- Konti ----------
-  void signIn(String name, {String phone = ''}) {
+  void signIn(String name, {String phone = '', String email = ''}) {
     _userName = name.trim().isEmpty ? 'Umukoresha' : name.trim();
     if (phone.trim().isNotEmpty) this.phone = phone.trim();
+    if (email.trim().isNotEmpty) this.email = email.trim();
     _isGuest = false;
     unawaited(
         ContentRepository.instance.syncProgressWithSupabase().then((saved) {

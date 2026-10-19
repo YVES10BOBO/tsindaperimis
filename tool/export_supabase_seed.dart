@@ -7,6 +7,7 @@ import 'package:amategeko_app/data/categories_data.dart';
 import 'package:amategeko_app/data/extended_data.dart';
 import 'package:amategeko_app/data/models.dart';
 import 'package:amategeko_app/data/more_questions.dart';
+import 'package:amategeko_app/data/pdf_reference_data.dart';
 import 'package:amategeko_app/data/questions_data.dart';
 
 String sql(String value) => "'${value.replaceAll("'", "''")}'";
@@ -24,6 +25,7 @@ String buildSeedSql() {
     ...vehicleQuestions,
     ...drivingQuestions,
     ...moreQuestions,
+    ...pdfQuestionBank,
   ];
 
   for (var ci = 0; ci < learnCategories.length; ci++) {
@@ -57,13 +59,15 @@ String buildSeedSql() {
         final section = lesson.sections[si];
         out.writeln(
           'insert into public.lesson_sections '
-          '(id,lesson_id,position,heading,body,sign_type,sign_label) values '
+          '(id,lesson_id,position,heading,body,sign_type,sign_label,image_path) values '
           '(${sql('${lesson.id}-$si')},${sql(lesson.id)},$si,'
           '${sql(section.heading)},${sql(section.body)},'
-          '${nullable(section.sign?.name)},${nullable(section.signLabel)}) '
+          '${nullable(section.sign?.name)},${nullable(section.signLabel)},'
+          '${nullable(section.imagePath)}) '
           'on conflict (id) do update set lesson_id=excluded.lesson_id,'
           'position=excluded.position,heading=excluded.heading,body=excluded.body,'
-          'sign_type=excluded.sign_type,sign_label=excluded.sign_label;',
+          'sign_type=excluded.sign_type,sign_label=excluded.sign_label,'
+          'image_path=excluded.image_path;',
         );
       }
     }

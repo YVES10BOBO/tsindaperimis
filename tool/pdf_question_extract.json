@@ -1,0 +1,4377 @@
+[
+  {
+    "number": 1,
+    "prompt": "Ijambo \"inzira y'ibinyabiziga\" risobanura:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Inzira zikikije umuhanda",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Umuhanda",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Inzira nyabagendwa",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Umuhanda n'inzira ziwukijije",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 2,
+    "prompt": "Ikinyabiziga cyose cyangwa ibinyabiziga bikururana iyo bigenda bigomba kugira:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ikibiranga",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Imyanya yo kwicaramo",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Ubiyobora",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 3,
+    "prompt": "Ijambo \"itara ndangacyerekezo cyangwa ikinyoteri\" bivuga itara ry'ikinyabiziga rigenewe kwereka abandi bagenzi ko umuyobozi ashaka kugana:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Iburyo",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ibumoso",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Iburyo cyangwa ibumoso",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Ku ruhande",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 4,
+    "prompt": "Ijambo \"ikinyabiziga gifatanyije\" bivuga ikinyabiziga gikomatanyije, kimwe ari ikinyabiziga gikurura, ikindi ari:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Igikomatanyije",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Makuzungu",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Remoroki",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Igikururana kabiri",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 5,
+    "prompt": "Ibyo aribyo byose abakozi babifitiye ububasha bashobora gutegeka kugenda:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ku mirongo iteganye",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ku mirongo ibangikanye",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Ku mirongo ibiri",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Ku murongo umwe",
+        "correct": false
+      },
+      {
+        "letter": "E",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 6,
+    "prompt": "Ijambo \"remoroki ntoya\" bivuga remoroki iyo ariyo yose ifite uburemere:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Burenga ibiro 750",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Butarenga ibiro 750",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Bungana n'ibiro 750",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 7,
+    "prompt": "Kuzunguza intambike itara ritukura bitegeka guhagarara:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Abageze mu masangano",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Abatari hafi yayo",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Abo itara riganishaho",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 8,
+    "prompt": "Mu bitegekwa n'umukozi ubifitiye ububasha, ukuboko kuzamuye gutegeka ibi bikurikira:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Abagenzi bose bagomba guhagarara",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Abagenzi bose bagomba guhagarara uretse abageze mu masangano",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Abaturuka imbere nibo bahagarara",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 9,
+    "prompt": "Ntawe ushobora gutwara ikinyabiziga kigendeshwa na moteri mu nzira nyabagendwa adafite kandi atitwaje uruhushya rwo gutwara ibinyabiziga rwatanzwe na:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Porokireri wa repubulika",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Minisitiri ushinzwe gutwara abantu n'ibintu",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Komite y'igihugu ishinzwe umutekano wo mu muhanda",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Polisi y'igihugu",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 10,
+    "prompt": "Urwego C rureba imodoka zagenewe gutwara ibintu bifite uburemere ntarengwa bwemewe:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Butarenga ibiro 5000",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Burenga ibiro 5000",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Butarenga ibiro 3500",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Burenga ibiro 5000",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 11,
+    "prompt": "Icyemezo cyo kwambura burundu uruhushya rwo gutwara ibinyabiziga kimenyeshwa:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Porokireri wa repubulika",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ubutegetsi bwarutanze",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Minisitiri ushinzwe gutwara abantu n'ibintu",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Minisitiri w'ubutabera",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 12,
+    "prompt": "Urwego B rugenewe imodoka zagenewe gutwara abantu kandi zifite imyanya yo kwicarwamo hatabariwemo uw'umuyobozi:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Irenga 8",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Itarenga 8",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Irenga 18",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 13,
+    "prompt": "Urwego B rugenewe imodoka zagenewe gutwara ibintu kandi zifite uburemere ntarengwa bwemewe:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Burenga ibiro 3500",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Butarenga ibiro 3500",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Burenga ibiro 5000",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Butarenga ibiro 5000",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 14,
+    "prompt": "Urwego D rugenewe imodoka zagenewe abantu kandi zifite imyanya yo kwicarwamo hatabariwemo uw'umuyobozi:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Itarenga 18",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Itarenga 8",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Irenga 8",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Irenga 18",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 15,
+    "prompt": "Iyo rwatakaye, rwibwe cyangwa rwangiritse, uruhushya rwo gutwara ibinyabiziga rusimburwa by'agateganyo n'urupapuro rutangwa na:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Minisitiri ushinzwe gutwara abantu n'ibintu",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Polisi ishinzwe umutekano wo mu muhanda",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Porokireri wa repubulika",
+        "correct": true
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 16,
+    "prompt": "Ijambo \"akagarura-rumuri\" risobanura akantu karabagirana gasubiza imirasire y'urumuri:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ku kintu kirabagirana",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ku kintu kiyohereje",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Ku mpande z'inzira nyabagendwa",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 17,
+    "prompt": "Inyamaswa zigenda mu muhanda zigomba uko bishobotse kose gukomeza kugendera:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Iburyo bw'umuhanda",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ku nkombe y'iburyo",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Ku nkombe zigiye hejuru z'iburyo bw'umuhanda",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Ku mirongo ibangikanye",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 18,
+    "prompt": "Ijambo \"ikinyabiziga kigendeshwa na moteri\" bivuga ikinyabiziga cyose gifite moteri ikigendesha kandi kigendeshwa:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "N'umuyobozi",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Na moteri",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "N'ibikigize",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 19,
+    "prompt": "Iyo kugenda ku mirongo ibangikanye byemewe kandi ibisate by'umuhanda bikaba bigaragazwa n'imirongo irombereje cyangwa iciyemo uduce, abayobozi babujijwe:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Kongera umuvuduko",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Kunyura hejuru y'iyo mirongo",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "a na b ni ibisubizo by'ukuri",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 20,
+    "prompt": "Imyaka y'ifatizo ku bayobozi b'amatungo ni:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "12",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "14",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "15",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 21,
+    "prompt": "Ku bayobozi b'inyamaswa zikurura zaba ziziritse cyangwa zitaziritse ku cyo zikurura no ku bayobozi b'inyamaswa zikoreye cyangwa zigenderwaho, imyaka y'ifatizo ni:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "12",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "15",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "18",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "14",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 22,
+    "prompt": "Imyaka fatizo ku bayobozi b'inyamaswa ziri mu nzego A na B ni:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Imyaka 20",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Imyaka 17",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Imyaka 18",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 23,
+    "prompt": "Umuyobozi w'imyaka 19 ashobora kuyobora:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ibinyabiziga byo mu nzego C na D",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ibinyabiziga byo mu nzego E na F",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Amatungo cyangwa inyamaswa",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 24,
+    "prompt": "Imyaka fatizo ku bayobozi b'ibinyabiziga biri mu nzego C, D, E na F ni:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "25",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "21",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "20",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "18",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 25,
+    "prompt": "Uretse igihe byatangiwe uruhushya, nta muyobozi wemerewe kugenza cyangwa gukomeza kugenza ikinyabiziga gifite ubuhagarike burengeje:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 3 habariwemo ibyo kikoreye",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 4 habariwemo ibyo kikoreye",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 26,
+    "prompt": "Iyo banyuze iruhande rw'inkomyi, abanyamaguru bagomba gukikira banyuze mu muhanda, abayobozi bagomba gusiga umwanya ufite ubugari:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Bwa metero 2 nibura hagati yabo n'iyo nkomyi",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Bwa metero 5 nibura hagati yabo n'iyo nkomyi",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Bwa metero 15 nibura hagati yabo n'iyo nkomyi",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Bwa metero 1 nibura hagati yabo n'iyo nkomyi",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 27,
+    "prompt": "Iyo bidashoboka gusiga umwanya ufite ubugari bwa metero 1 kandi umunyamaguru akaba anyura iruhande rwi'nkomyi, umuyobozi agomba kuyikikira afite umuvuduko utarengeje:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "10km/h",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "5 km/h",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "20 km/h",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "40 km/h",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 28,
+    "prompt": "Umuyobozi wese uvuye ahantu hahana imbibi n'inzira nyabagendwa agiye kwinjiramo agomba kureka:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ibinyabiziga bihegereye bigatambuka",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ibinyabiziga byahageze bigatambuka",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Ibinyabiziga bigendamo bigatambuka",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 29,
+    "prompt": "Mbere yo kwinjira mu isangano aho bagomba kuzenguruka, umuyobozi w'ikinyabiziga agomba:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Guhagarara akanya gato",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Kureka ibinyabiziga byagezemo bigatambuka",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Gukomeza kugenda igihe bimworoheye",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 30,
+    "prompt": "Umugenzi wese uri mu nzira nyabagendwa agomba guhita yumvira ibitegetswe na:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ibimenyetso biri mu muhanda",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ibimenyetso bimurika",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Ibimenyetso byera biri mu mahanda",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Abakozi babifitiye ububasha",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 31,
+    "prompt": "Kubisikana bikorerwa ku ruhande:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Rw'iburyo",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Rw'ibumoso",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Ku nkengero z'umuhanda",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Ku murongo ucagaguye",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 32,
+    "prompt": "Kunyuranaho bikorerwa ku ruhande:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Rw'ibumoso",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Rw'iburyo",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Ku nkengero z'umuhanda",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Ku murongo ucagaguye",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 33,
+    "prompt": "Umuyobozi ubonye ko hari undi umukurikiye ushaka kumunyuraho agomba:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Guhagarara gato",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Kongera umuvuduko",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Kwegera uruhande rw'iburyo bw'umuhanda",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 34,
+    "prompt": "Ku byerekeye imyubahirize y'iri teka, kubisikana no kunyuranaho bireba ibinyabiziga:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Bikururana gusa",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ibigenda n'ibihagaze gusa",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Ibigenda gusa",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Abantu, inyamaswa n'ibinyabiziga",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 35,
+    "prompt": "Mu misozi miremire aho ibisikana ridashoboka cyangwa riruhije kandi ibinyabiziga bihuye ari ibyo mu rwego rumwe, ibigomba gusubira inyuma ni:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ibinyabiziga bizamuka",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ibinyabiziga bimanuka",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Ibinyabiziga bito",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 36,
+    "prompt": "Iyo byanze bikunze ibinyabiziga bigiye kubisikana bigomba gusubira inyuma, abayobozi bagomba gusubira inyuma ni aba bakurikira:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Abatwaye ibinyabiziga bikomatanye bahuye n'abatwaye ibidakomatanye",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Abatwaye ibinyabiziga binini bahuye n'abatwaye ibito",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Abatwaye ibinyabiziga bitwarira abantu hamwe bahuye n'abatwaye imizigo",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 37,
+    "prompt": "Intabaza ndangururajwi ikoreshwa gusa igihe ikinyabiziga ndakumirwa:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Kiri mu rugendo rwihutirwa",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Kiri mu butumwa bwihutirwa",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Mu gihe gihurujwe",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Mu gihe gitabaye",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 38,
+    "prompt": "Kugira ngo habe umutekano mu kugenda mu muhanda ushobora mu ifasi ashinzwe gutegeka ko habaho icyerekezo kimwe ni:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Umukuru w'akarere",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Minisitiri ushinzwe imirimo ya leta",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Umukozi ubifitiye ububasha",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Umukuru w'intara",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 39,
+    "prompt": "Iyo icyerekezo kimwe kireba ishami ry'inzira nyabagendwa mu ntara nyinshi, icyemezo gifatwa na:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Umukuru w'intara",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Minisitiri ushinzwe imirimo ya leta",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Minisitiri ushinzwe gutwara abantu n'ibintu",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 40,
+    "prompt": "Iyo kugenda mu muhanda bidashoboka kunyuzwa mu yindi nzira ku buryo bworoshye, icyerekezo kimwe gishobora gushyirwaho:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Amasaha amwe n'amwe",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Igihe ari ngombwa",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Mu buryo busimburana",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "N'umukozi ubifitiye ububasha",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 41,
+    "prompt": "Mu gihe ahindura icyerekezo, umuyobozi wese agomba kubigira agabanyije umuvuduko kandi akareka hagahita:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Abanyamaguru bambukiranya umuhanda avuyemo cyangwa uwo aganamo",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Ibinyabiziga byihuta cyane",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Ibinyabiziga n'abanyamaguru bivuye mu muhanda agendamo",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 42,
+    "prompt": "Amapikipiki n'imodoka bifite uburemere ntarengwa bwemewe butarenga ibiro 3500 uretse amavatiri cyagwa tagisi n'ibibiziga bitwarira abantu hamwe, umuvuduko ni:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "80 km/h",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "70 km/h",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "60km/h",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "50 km/h",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 43,
+    "prompt": "Imodoka zikoreshwa nk'amavatiri y'ifasi cyangwa amatagisi zifite uburemere bwemewe butarenga ibiro 3500, umuvuduko ni:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "80 km/h",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "70 km/h",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "60 km/h",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "50 km/h",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 44,
+    "prompt": "Imodoka cyangwa ibinyabiziga bikomatanye bifite uburemere ntarengwa bwemewe cyangwa uburemere bugendanwa burenga ibiro 12500 kimwe na velomoteri, umuvuduko ni:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "70 km/h",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "50 km/h",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "80 km/h",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "60 km/h",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 45,
+    "prompt": "Ibinyabiziga by'ubuhinzi bifite imipira irambuka cyangwa itarambuka ntibigomba kurenza umuvuduko ukurikira:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "40 km/h",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "25 km/h",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "35 km/h",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "20 km/h",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 46,
+    "prompt": "Icyapa cyerekana umuvuduko ntarengwa ikinyabiziga kitagomba kurenza gishyirwa ku binyabiziga bikurikira:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ibinyabiziga ndakumirwa",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ibinyabiziga bifite uburemere ntarengwa bwemewe burenga toni 3",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Ibinyabiziga bitwarira abantu hamwe",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Ibinyabiziga bifite uburemere ntarengwa bwemewe burenga toni 5",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 47,
+    "prompt": "Umwanya usigara hagati y'ibinyabiziga bibiri bihagaze umwanya munini ku ruhande rumwe rw'umuhanda ubisikanirwamo kandi utuma hahita ibinyabiziga bibiri ugomba kuba nibura:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 5 mu nsisiro na metero 20 ahatari mu nsisiro",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Metero 10 mu nsisiro na metero 15 ahatari mu nsisiro",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 15 mu nsisiro na metero 25 ahatari mu nsisiro",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Metero 10 mu nsisiro na metero 20 ahatari mu nsisiro",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 48,
+    "prompt": "Ikinyabiziga kibujijwe guhagarara akanya kanini iyo ubugari bw'umwanya usigaye ku muhanda butagifite:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 6",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 3",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Metero 2.10",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Metero 2.90",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 49,
+    "prompt": "Ikinyabiziga kibujijwe guhagarara akanya kanini mu muhanda aho ugabanyirijemo ibisate bigaragazwa na:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Imirongo idacagaguye",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Imirongo icagaguye",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Imirongo irombereje",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 50,
+    "prompt": "Ikinyabiziga kibujijwe guhagarara akanya kanini mu muhanda wo hagati mu nzira igizwe n'imihanda:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ibiri",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Itatu",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Ine",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 51,
+    "prompt": "Birabujijwe guhagarara igihe kirenze iminsi 7 ku nzira nyabagendwa ibinyabiziga bikurikira:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Remoroki",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ibinyabiziga bifite moteri bitagishobora kugenda",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "a na b ni ibisubizo by'ukuri",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 52,
+    "prompt": "Mbere yo kugira uwo anyuraho, umuyobozi wese agomba kwiringira ko:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Umuyobozi umuri imbere yagaragaje ko ashaka kunyura ku wundi",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Nta wundi muyobozi watangiye kumunyuraho",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Byose ni ibisubizo by'ukuri",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 53,
+    "prompt": "Uburemere ntarengwa bwemewe kujya ku cyome bwerekanwa na:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ibyapa biri ku cyome",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ibyangombwa by'icyome",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Umuyobozi w'icyome",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Ibyapa biri kuri buri nkombe",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 54,
+    "prompt": "Uretse igihe icyapa kibyerekana ukundi, uburemere ntarengwa ku mateme akozwe mu ngiga z'ibiti cyangwa imbaho ni:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Toni 10",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Toni 8",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Toni 12",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Toni 16",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 55,
+    "prompt": "Abagendera mu nzira nyabagendwa babujijwe kwata:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Imirongo y'abanyeshuri badashorewe na mwarimu",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ibinyabiziga bishoreranye",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Uruhererekane",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Inzira zigiye hejuru",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 56,
+    "prompt": "Amatara maremare agomba kuzimwa iyo umuhanda umurikiwe hose kandi bikaba bihagije kugira ngo umuyobozi arebe neza muri:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 100",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Metero 150",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 200",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Metero 50",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 57,
+    "prompt": "Amatara magufi y'amapikipiki na velomoteri bigenda mu nzira nyabagendwa agomba gukoreshwa:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Igihe bibujijwe",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Igihe cy'imvura nyinshi cyangwa cy'umukungugu mwinshi",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Igihe cyose no mu buryo bwose",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Igihe cyose ari ngombwa",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 58,
+    "prompt": "Amapikipiki adafite akanyabiziga ko ku ruhande iyo bitagishoboka kubona muri metero 200 agomba kugaragaza inyuma n'amatara akurikira:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Amatara 2 yera",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Itara 1 ry'umuhondo",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Itara 1 risa n'icunga rihishije",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Itara 1 ritukura",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 59,
+    "prompt": "Amatara ndanga agomba gucanirwa rimwe n'amatara yo kubisikana ni:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Amatara y'urugendo cyangwa amatara kamenabihu",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Amatara y'urugendo cyangwa amatara kamenabihu y'imbere",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Amatara kamenabihu y'imbere",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 60,
+    "prompt": "Imburira zimurikwa zemewe gukoreshwa kugira ngo bamenyeshe umuyobozi ko:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Bagiye kubisikana mu nsisiro",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Agomba kugabanya umuvuduko aho ageze",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Bagiye kumunyuraho haba mu nsisiro cyangwa ahandi hose",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 61,
+    "prompt": "Ibyerekeranye no gusimburana kw'amahoni n'imburira zimurika ntibireba:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ibinyabiziga bitwara imizigo",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ibinyabiziga ndakumirwa",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Ibinyabiziga by'abapolisi",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "b na c ni ibisubizo by'ukuri",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 62,
+    "prompt": "Ibinyabiziga bigendeshwa na moteri bitari velomoteri n'amapikipiki bidafite akanyabiziga ku ruhande inyuma ni:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Amatara 2 y'umuhondo cyangwa asa n'icunga rihishije",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Amatara 2 y'umutuku",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Amatara 2 yera",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Itara 1 ritukura",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 63,
+    "prompt": "Abanyamaguru batatanye cyangwa bagize udutsiko tudafatanyije gahunda kandi batayobowe n'umwarimu bategetswe kunyura:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Mu kayira k'amagare",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ku ruhande rw'iburyo rw'umuhanda",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Mu tuyira turi ku mpande z'umuhanda",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Mu tuyira turi ku mpande z'umuhanda no ku nkengero zigiye hejuru",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 64,
+    "prompt": "Nta na rimwe abanyamaguru bashobora gutinda mu muhanda cyangwa kuhahagarara keretse:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Keretse hari impamvu nyakuri ibibateye",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Bambukiranya umuhanda mu nzira y'abanyamaguru",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Iyo bagize itsinda ry'abantu benshi",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 65,
+    "prompt": "Iyo nta nkengero y'umuhanda iringaniye cyangwa idashobora kugendwamo, abanyamaguru bashobora kunyura:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Mu kayira k'amagare cyangwa se mu muhanda",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Mu kayira k'amagare gusa",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Mu muhanda gusa",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 66,
+    "prompt": "Bamwe muri aba bantu bubahiriza ibyo abanyamaguru bategetswe:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Abantu batwaye amagare na velomoteri",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Abantu batwaye utunyamizigo",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Abantu batwaye utunyamizigo tw'abana",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 67,
+    "prompt": "Abanyamaguru bagomba kunyura mu myanya yabateganyirijwe iyo iri ahatageze mu ntera ya:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 10",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 20",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 50",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Metero 100",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 68,
+    "prompt": "Ibinyabiziga bikururwa n'inyamaswa biherekeranyije mu butumwa bigomba kugabanywamo amatsinda afite uburebure butarengeje:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 500 kandi hagati yayo hakaba nibura metero 50",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 500 kandi hagati yayo hakaba nibura metero 30",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Metero 300 kandi hagati yayo hakaba nibura metero 30",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Metero 100 kandi hagati yayo hakaba nibura metero 50",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 69,
+    "prompt": "Hagati y'imodoka ziherekeranyinje mu butumwa zigamije urugendo rumwe hagomba kuba byibura:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 50",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 40",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 30",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Metero 20",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 70,
+    "prompt": "Umubare w'inyamaswa zikurura ibinyabiziga ntushobora kurenga:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Eshatu zikurikiranye n'enye zibangikanye",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Enye zikurikiranye n'eshatu zibangikanye",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Eshanu zikurikiranye n'enye zibangikanye",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "a na b ni ibisubizo by'ukuri",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 71,
+    "prompt": "Amagambo \"ATTENTION CONVOI\" yanditse ku cyapa cy'umuhondo mu nyuguti zitukura zishyirwa ku kinyabiziga cya mbere mu biherekeranyije mu butumwa agomba gusomeka neza ku manywa mu ntera ya:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 150",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 200",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 100",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 72,
+    "prompt": "Ku mateme, hagati y'ibinyabiziga bifite ibimenyetso byerekana umuvuduko hagomba kuba nibura:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 30",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 40",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 10",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Metero 20",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 73,
+    "prompt": "Hashyirwaho umuherekeza wunganira umuyobozi iyo umubare zikurura urenze:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "4",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "5",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "6",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "8",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 74,
+    "prompt": "Iyo ikinyabiziga gikuruwe n'inyamaswa nacyo gikuruye ikindi kandi uburebure bukaba burenga metero 18 hatabariwemo icyo kinyabiziga cya mbere kiziritseho hagomba:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Umuherekeza ukurikiye icyo kinyabiziga ku maguru",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Abandi bantu bunganira umuyobozi",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Abandi bamufasha gukurura icyo kinyabiziga",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Umuherekeza w'ikinyabiziga cya kabiri",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 75,
+    "prompt": "Iyo uburebure bw'imizigo iri ku kanyamizigo gakururwa burenga metero 12 hagomba:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Abandi bantu 12 bamufasha gukurura ako kanyamizigo",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Undi muntu 1 nawe ukurura ako kanyamizigo",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Umuherekeza ukurikiye ako kanyamizigo ku maguru",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 76,
+    "prompt": "Imizigo yikorewe n'amagare na velomoteri, amapikipiki, ibinyamitende by'ibiziga bitatu n'iby'ine bifite cyangwa bidafite moteri ntibishobora kurenza impera y'imbere y'ikinyabiziga, naho inyuma y'ikinyabiziga ntibishobora kurenza:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "50 cm",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "40 cm",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "30 cm",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "20 cm",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 77,
+    "prompt": "Birabujijwe gutwara ku ntebe z'ikinyabiziga umubare w'abantu urenze umubare wateganijwe na:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Polisi y'igihugu",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Uwayikoze",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Umutwe wa polisi ushinzwe umutekano mu muhanda",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 78,
+    "prompt": "Iyo igenda mu nzira nyabagendwa, imikumbi igomba kugabanywamo udutsiko tugizwe n'inyamaswa:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Zitarenze 20 kandi dutandukanijwe n'intera ya metero 10",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Zitarenze 10 kandi dutandukanijwe n'intera ya metero 20",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Zitarenze 10 kandi dutandukanijwe n'intera ya metero 10",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Zitarenze 20 kandi dutandukanijwe n'intera ya metero 10",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 79,
+    "prompt": "Abayobozi b'amagare na velomoteri bayoboye ibinyabiziga byabo babyicayeho bagomba kubahiriza amategeko agenga:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Amagare",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Velomoteri",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Abanyamaguru",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Amagare na velomoteri",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 80,
+    "prompt": "Ku binyabiziga bifite imitambiko ibiri cyangwa irenga hadashyizweho icyuma gifata iyo ari ikinyabiziga gikuruwe n'ikindi cyangwa gikuruwe n'inyamaswa, uburebure ntiburenza:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 18",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 11",
+        "correct": true
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 81,
+    "prompt": "Iyo akanyamizigo gasunikwa cyangwa ibyo gatwaye bidatuma umuyobozi abona imbere neza imbere ye:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Agomba guhagarara",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Agomba kubigabanya",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Agomba gukurura ikinyabiziga cye",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "a na b ni ibisubizo by'ukuri",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 82,
+    "prompt": "Uburebure bw'ibinyabiziga bikururana hashyizwemo ibituma bikururana icya mbere kikaba gikururwa n'inyamaswa ntiburenza:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 7",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 11",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 13",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Metero 18",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 83,
+    "prompt": "Ikinyabiziga gifite umutambiko umwe uhuza imipira, uburebure ntiburenza:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 7",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Metero 11",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 13",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Metero 18",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 84,
+    "prompt": "Ibinyabiziga iyo biva aho biba bijya mu mirima cyangwa iyo bitahuka kandi bikaba bitarengeje umuvuduko wa kilometero 20 ku isaha, bishobora kugeza ku bugari ntarengwa bwa:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 6",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 200",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 3",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 85,
+    "prompt": "Ubuhagarike bw'ikinyabiziga ni:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 5",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 2.70",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 4.20",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Metero 4.70",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 86,
+    "prompt": "Uburebure bwa makuzungu ntiburenza:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 13.7",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 18",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 17.40",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Metero 24",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 87,
+    "prompt": "Iyo ikinyabiziga kikoreye ibintu birebire bidashobora kugabanywa, icyo gihe imizigo ntishobora kurenza mu mpera y'inyuma y'ikinyabiziga:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "600 cm",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "300 cm",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "200 cm",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "100 cm",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 88,
+    "prompt": "Igihe harimo indi myanya, birabujijwe gutwara abana ku ntebe y'imbere y'imodoka badafite imyaka:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "8",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "10",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "12",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "15",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 89,
+    "prompt": "Ibimenyetso bikoreshwa kugira ngo berekane impera y'inyuma y'imizigo ntibishobora gushyirwa ku buhagarike uhereye ku butaka burenze:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 1 na santimetero 55",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Metero 2 na santimetero 70",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 1 na santimetero 50",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Metero 1 na santimetero 90",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 90,
+    "prompt": "Amatara ndangambere yakira rimwe buri gihe:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "N'amatara magufi n'amatara kamenabihu y'imbere",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "N'amatara maremare n'amatara n'amatara kamenabihu y'imbere",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "N'amatara magufi n'amatara kamenabihu y'inyuma",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "a na b ni ibisubizo by'ukuri",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 91,
+    "prompt": "Ibinyabiziga bishobora gushyirwaho amatara amurika kure cyane, amatara kamenabihu, amatara yo gusubira inyuma, n'itara rishakisha rifite ibara:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ryera",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ry'umutuku",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Ry'umutuku cyangwa umuhondo",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Ryera cyangwa ry'umuhondo",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 92,
+    "prompt": "Itara ryo guhagarara ry'ibara ritukura ridahumisha rigomba kugaragara nijoro igihe ijuru rikeye mu ntera nibura ya:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 10 no ku manywa igihe cy'umucyo mu ntera ya metero 20",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Metero 120 no ku manywa igihe cy'umucyo mu ntera ya metero 30",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 100 no ku manywa igihe cy'umucyo mu ntera ya metero 20",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 93,
+    "prompt": "Amatara yo kubisikana y'ibara ryera cyangwa ry'umuhondo agomba nijoro igihe ijuru rikeye kumurika mu muhanda imbere y'ikinyabiziga mu ntera ya:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 100",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 150",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 50",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Metero 40",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 94,
+    "prompt": "Itara ryo guhagarara rishyirwaho gusa iyo ingufu za moteri zirengeje santimetero kibe:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "350",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "125",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "120",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "50",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 95,
+    "prompt": "Ubugari bw'imizigo yikorewe n'amagare na velomoteri kimwe na remoroki zikuruwe n'ibyo binyabiziga ntibushobora kurenza:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "75 cm",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "30 cm",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "40 cm",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "50 cm",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 96,
+    "prompt": "Ubugari bw'imizigo yikorewe n'ipikipiki ifite akanyabiziga ko ku ruhande kimwe n'ubw'iya remoroki ikuruwe na bene icyo kinyabiziga kidapakiye ntibushobora kurenza:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Santimetero  75",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 1.25",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Santimetero 30",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Santimetero 50",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 97,
+    "prompt": "Iyo ikinyabiziga kikoreye ibintu bidashobora kugabanywa, icyo gihe imizigo ntishobora kurenza:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 3 ku mpera y'inyuma",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Metero 2 ku mpera y'inyuma",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 2.10 ku mpera y'inyuma",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Metero 1 ku mpera y'inyuma",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 98,
+    "prompt": "Iyo imizigo isumba impera y'ikinyabiziga ho metero irenga igice gihera cy'imizigo, igihe amatara y'ikinyabiziga agomba gucanwa kigomba kugaragazwa:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Itara ritukura cyangwa akagarurarumuri k'umutuku",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Agatambaro gatukura ka 50 cm",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Agatambaro gatukura ka 50 cm y'uruhande",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 99,
+    "prompt": "Umuyobozi w'ikinyabiziga cyangwa uw'ikinyamitende itatu cyangwa ine bifite moteri bigomba kugira aho yicara hafite ubugari butari munsi ya:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "40 cm",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "55 cm",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "50 cm",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "30 cm",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 100,
+    "prompt": "Ubwikorezi ntarengwa ku binyabiziga bikururana ni:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Toni 12",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Toni 2",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Toni 16",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Toni 20",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 101,
+    "prompt": "Ikinyabiziga kigendeshwa na moteri n'ikinyabiziga gikururwa n'inyamaswa ntibishobora gukurura:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ibinyabiziga birenze bitatu",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ibinyabiziga birenze bibiri",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Ibinyabiziga bitarenze bine",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Ibinyabiziga bitarenze bitatu",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 102,
+    "prompt": "Ibizirikisho bigomba kugaragazwa n'icyapa cyera cya mpande enye zingana kiri ku ruhande rw'imbere rw'ikinyabiziga gikurura kuri buri ruhande nibura:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "50 cm",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "40 cm",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "30 cm",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "20 cm",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 103,
+    "prompt": "Amatara ndangacyerekezo agomba kugaragara nijoro igihe ijoro rikeye mu ntera nibura ya metero 150 no ku manywa mu gihe cy'umucyo mu ntera ya:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 20",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Metero 30",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 100",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Metero 150",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 104,
+    "prompt": "Ahari hejuru y'ubuso bumurikaho amatara ndangambere na ndanganyuma ntihashobora kuba aharenze hejuru y'ubutaka ku kinyabiziga kidapakiye:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 1",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 1.20",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 1.90",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Metero 1.55",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 105,
+    "prompt": "Itara ribonesha icyapa kiranga nimero z'ikinyabiziga ritegetswe gukoreshwa gusa iyo ikinyabiziga kigomba:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Gucana amatara",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Kugira bene icyo cyapa",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Kugenda igihe bwije",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 106,
+    "prompt": "Itara rigufi rishobora gushyirwa cyangwa kudashyirwa ku binyabiziga bifite moteri y'ingufu za:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Santimetero kibe 40",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Santimetero kibe 80",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Santimetero kibe 50",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 107,
+    "prompt": "Ahari hejuru cyane h'ubuso bubonesha bw'itara ryo guhagarara ntihashobora gusumba uhereye ku butaka igihe ikinyabiziga kidapakiye:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 1.55",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Metero 1.90",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 1.50",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 108,
+    "prompt": "Ubwikorezi ntarengwa bwemewe kuri buri mutambiko ufungirwaho ibiziga bine ku mitambiko ibiri ikurikiranye ni:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Toni 16",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Toni 8",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Toni 10",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Toni 24",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 109,
+    "prompt": "Gushyira mu muhanda ku buryo budasanzwe ibinyabiziga bikururana birenze bitatu bigomba gutangirwa uruhushya na:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Polisi ishinzwe umutekano mu muhanda",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Minisitiri ushinzwe imirimo ya leta",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Minisitiri w'ubutabera",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Minisitiri ushinzwe gutwara abantu n'ibintu",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 110,
+    "prompt": "Kuva ku butaka igihe ikinyabiziga kidapakiye nta tara na rimwe cyangwa akagarurarumuri bishobora kuba bifunze ku buryo igice cyabyo cyo hasi cyane kimurika hasi ya:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 1.55",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 1. 99",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Santimetero 40",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Santimetero 30",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 111,
+    "prompt": "Amatara ndangaburumbarare agomba kubonwa nijoro igihe ijuru rikeye n'umuyobozi w'ikinyabiziga kiri mu ntera ya:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 100",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 150",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 200",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Metero 300",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 112,
+    "prompt": "Amatara maremare n'ayo kubisikana ategetswe gukoreshwa gusa iyo umuvuduko w'ikinyabiziga kidapakiye kandi kigeze ahahengamye ushobora kurenga:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "40 km/h",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "30 km/h",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "20 km/h",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "50 km/h",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 113,
+    "prompt": "Amatara magufi y'imodoka ntashobora kurenga:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Atatu",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Abiri",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Rimwe",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Ane",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 114,
+    "prompt": "Igihe ikinyabiziga kidapakiye, ahari hejuru cyane h'ubuso bubonesha bw'itara ryo guhagarara ntihashobora gusumba:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 1.55",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Metero 1.90",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 1.25",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Santimetero 70",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 115,
+    "prompt": "Itara ribonesha icyapa kiranga nimero z'ikinyabiziga rigomba kuba:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Umutuku",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Umweru",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Umuhondo",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Umuhondo usa n'icunga rihishije",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 116,
+    "prompt": "Isonga y'impombo yohereza ibyotsi ntishobora kwerekezwa:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ibumoso bw'ikinyabiziga",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ku ruhande rw'ikinyabiziga",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Iburyo bw'ikinyabiziga",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Hejuru y'ikinyabiziga",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 117,
+    "prompt": "Itara ryo guhagarara rigomba kwaka iyo:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Feri yo gutabara ikoreshejwe",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Feri yo guhagarara ikoreshejwe",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Feri y'urugendo ikoreshejwe",
+        "correct": true
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 118,
+    "prompt": "Utugarurarumuri two ku ruhande rw'imbere rw'ikinyabiziga tugomba gusa na:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Umuhondo",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Umweru",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Umutuku",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 119,
+    "prompt": "Nta mwanya n'umwe feri ifungirwaho ushobora kurekurana n'ibiziga keretse iyo:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Feri y'urugendo idakora",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Kurekurana ari iby'akanya gato nk'igihe cyo guhinduranya vitensi",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Kurekurana bireba feri y'urugendo cyangwa feri yo gutabara igihe zidakora neza",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Ikinyabiziga kiri ku gacuri cyangwa ku kazamuko ka 16%",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 120,
+    "prompt": "Itara ribonesha icyapa kiranga nimero y'ikinyabiziga rigomba kuba ryera kandi nijoro igihe ijuru rikeye rigomba gutuma izo nimero zisomerwa nibura muri:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 100",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 150",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 50",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Metero 20",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 121,
+    "prompt": "Ibyapa byo ku mihanda bigomba gushyirwa iburyo bw'umuhanda ku buryo umusozo wo hasi udashobora kuba munsi uhereye ku butaka uretse ibyapa by'agateganyo:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 1.55 cyangwa hejuru ya metero 2.10",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 1.90 cyangwa hejuru ya metero 2.15",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 1.50 cyangwa hejuru ya metero 2.10",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Metero 1.50 cyangwa hejuru ya metero 2",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 122,
+    "prompt": "Ahatari mu nsisiro, ibyapa biburira n'ibyo gutambuka mbere bigomba gushyirwa mu ntera kuva kuri:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 150 kugeza kuri metero 200",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Metero 100 kugeza kuri metero 150",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 50 kugeza kuri metero 100",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 123,
+    "prompt": "Amatara ndanga yera cyangwa y'umuhondo ari imbere y'ikinyabiziga n'amatara ari inyuma agomba ariko kuba adahumishije, agaragara nijoro igihe ijuru rikeye muri:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 300",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 200",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Metero 150",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Metero 100",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 124,
+    "prompt": "Ku byerekeye amatara y'inyuma y'ikinyamitende na velomoteri, intera iba gusa:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 100",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Metero 150",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 200",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Metero 50",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 125,
+    "prompt": "Iyo tumuritswe n'amatara y'urugendo y'icyo kinyabiziga, utugarurarumuri tugomba nijoro igihe ijuru rikeye kubonwa n'umuyobozi w'ikinyabiziga kiri muri:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Metero 50",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Metero 100",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Metero 150",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 126,
+    "prompt": "Utugarurarumuri turi ku kindi kinyabiziga kitari remoroki ntidushobora gusa n'igishushanyo cya:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Kare",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Urukiramende",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Mpandeshatu",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Uruziga",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 127,
+    "prompt": "Kugira ngo berekane ahantu habi cyane, hakoreshwa ikimenyetso cy'itara ry'umuhondo rimyasa. Iryo tara rivuga ibi bikurikira:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Gutambuka icyo kimenyetso barushijeho kwitonda",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Guhagarara akanya gato",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "a na b byose ni byo",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 128,
+    "prompt": "Umurongo mugari wera udacagaguye ushobora gucibwa ku muhanda kugira ngo:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Werekane inkombe yawo",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ugaragaze inkombe mpimbano yawo",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Ugaragaze inkombe nyayo y'umuhanda",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 129,
+    "prompt": "Imyanya ibinyabiziga bigomba guhagararamo ishobora kugaragazwa na:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Imirongo yera yambukiranya umuhanda",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Umurongo wera udacagaguye wambukiranya umuhanda",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Umurongo ucagaguye ugizwe n'imitemeri y'ibara ryera",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Imirongo yera irombereje",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 130,
+    "prompt": "Imirongo yera igomba kugira ubugari buri hagati ya:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Santimetero 15 na santimetero 21",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Santimetero 20 na santimetero 40",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Santimetero 40 na santimetero 60",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Santimetero 10 na santimetero 15",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 131,
+    "prompt": "Imirongo migari igomba kugira ubugari buri hagati ya:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Santimetero 18 na santimetero 21",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Santimetero 20 na santimetero 21",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Santimetero 40 na santimetero 60",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 132,
+    "prompt": "Igice cy'inzira nyabagendwa kigarukira ku mirongo 2 yera icagaguye ibangikanye kandi gifite ubugari budahagije kugira ngo imodoka zitambuke neza kiba ari:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Inzira y'abanyamaguru",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Agahanda k'amagare",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "a na b byose ni ukuri",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 133,
+    "prompt": "Uburebure n'ubutandukane by'uduce tw'umurongo ucagaguye buzaba ku buryo bukurikiranye hagati ya:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "1m na 30m no hagati ya 5m na 15m",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "1m na 5m no hagati ya 3m na 15m",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "3m na 5m no hagati ya 10m na 20m",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "2m na 4m no hagati ya 10m na 15m",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 134,
+    "prompt": "Impande za kare zera zigomba kugira umubyimba uri hagati ya:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "30 cm na 40cm",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "20 cm na 40 cm",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "50 cm na 70 cm",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "40 cm na 60 cm",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 135,
+    "prompt": "Ubuhagarike bwa mpandeshatu n'ubw'ingirwamwashi bugomba kuba hagati ya:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "40cm na 60cm",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "50cm na 70cm",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "20cm na 40cm",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "10cm na 20cm",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 136,
+    "prompt": "Ubutambike bwa mpandeshatu n'ubw'ingirwamwashi bugomba kugira ubugari buri hagati ya:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "40cm na 60cm",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "50cm na 70cm",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "20cm na 40cm",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "40cm na 70cm",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 137,
+    "prompt": "Ibimenyetso byerekana imirimo mu nzira bishyirwaho na:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Abayobozi babifitiye ububasha",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ubutegetsi bushinzwe inzira nyabagendwa",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Uyikora",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Perefe cyangwa intumwa",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 138,
+    "prompt": "Inkombe z'inzira nyabagendwa cyangwa z'umuhanda zishobora kugaragazwa na:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Imirongo migari yera",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ibikoresho ngarurarumuri",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Imirongo migari y'umuhondo",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Ibimenyetso by'agateganyo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 139,
+    "prompt": "Ibikoresho ngarurarumuri bishyirwa ku nkombe z'inzira nyabagendwa cyangwa z'umuhanda bishyirwaho ku buryo abagenzi babona gusa iburyo bwabo iby'ibara ritukura cyangwa ibisa n'icunga rihishije, naho ibumoso bwabo bakahabona:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Iby'ibara ry'icyatsi",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Iby'ibara ryera",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Iby'ibara ry'umuhondo",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Iby'ibara ry'ubururu",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 140,
+    "prompt": "Imyanya y'aho ibinyabiziga bibujijwe kunyura cyangwa bitegekwa kunyura mu cyerekezo iki n'iki ishobora kugaragazwa ku butaka n'imirongo iberamye yera ifite ubugari buri hagati ya 10cm na 15cm kandi itandukanyijwe no kuva kuri:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "10cm kugeza kuri 15cm",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "15cm kugeza kuri 20cm",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "20cm kugeza kuri 30cm",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "25cm kugeza kuri 35cm",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 141,
+    "prompt": "Ibimenyetso by'agateganyo bivanaho agaciro k'ibimenyetso:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Birombereje byera biri ahantu hamwe",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Birombereje byera biri ahantu hatandukanye",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Birombereje bitukura biri ahantu hamwe",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Birombereje by'umuhondo biri ahantu hamwe",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 142,
+    "prompt": "Ibyandikishije ibara ryera mu muhanda bishobora:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Gusimbura ibyerekanwa n'ibyapa",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Gusimburwa n'ibyerekanwa n'ibyapa",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Kuzuza ibyerekanwa n'ibyapa",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 143,
+    "prompt": "Ibimenyetso birombereje bigizwe n'imirongo iteganye n'umurongo ugabanya umuhanda mo kabiri, ibi bikaba bishobora kuba bigizwe na:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Umurongo ucagaguye n'udacagaguye",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Umurongo ucagaguye n'udacagaguye ibangikanye",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Umurongo udacagaguye, ucagaguye n'iyi yombi ibangikanye",
+        "correct": true
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 144,
+    "prompt": "Ahantu uburyo bwo kugenda mu muhanda bwerekanwa n'ibimenyetso bimurika, ibinyabiziga bishobora kuhagenda biteganye:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "N'aho umubare wabyo utatuma biba ngombwa",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Umubare wabyo utarengeje uwateganyijwe",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Begereye imirongo y'abanyamaguru",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 145,
+    "prompt": "Iyo uduce tw'umurongo ucagaguye ari tugufi kandi twegeranye cyane, tuvuga ko:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ugeze ku murongo ukomeza",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Urenze umurongo ukomeza",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Wegereye umurongo ukomeza",
+        "correct": true
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 146,
+    "prompt": "Umurongo wera ucagaguye uvuga ko buri muyobozi abujijwe kuwurenga uretse gusa mu gihe:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Abiherewe uruhushya n'umuyobozi ubifitiye ububasha",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Agiye guhagarika ikinyabiziga ayoboye",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Agiye kunyura ku kinyabiziga, agiye gukatira ibumoso, guhindukira cyangwa kujya mu kindi gice cy'umuhanda",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 147,
+    "prompt": "Ubuhagarike bw'ibinyabiziga bikururana hashyizwemo ibituma bikururana icya mbere kikaba gikururwa n'inyamaswa ntiburenza:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "18m",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "14m",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "24m",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 148,
+    "prompt": "Umurongo ugizwe na mpandeshatu nyampanga zifite amasonga yerekeye hasi aho abayobozi zireba baturuka kandi uciye ku buryo bugororotse ku nkengero y'umuhanda werekana:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ahanyurwa n'abanyamaguru",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Aho abayobozi bagomba guhagarara akanya gato iyo bishoboka",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Ahanyurwa n'amagare",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 149,
+    "prompt": "Itara ry'icyatsi kibisi n'akarangacyerekezo gafite isonga ryerekana hasi risobanura ko:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Kugenda ku gisate cy'umuhanda rigenga byemewe ku bayobozi ba velomoteri",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Kugenda ku gisate cy'umuhanda rigenga byemewe ku bayobozi bakigana",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 150,
+    "prompt": "Ibyapa byereka abagenda ibyo babujijwe n'ibyo bategetswe bimeze:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Nk'ingasire",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "Nk'uruziga",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Nka kare",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nk'urukiramende",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 151,
+    "prompt": "Uturangacyerekezo dutoranya tw'ibara ryera dushobora gushyirwa:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Kure y'amasangano",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Mu masangano",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Hafi y'amasangano",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 152,
+    "prompt": "Imirongo yera yambukiranya umuhanda igomba kuba ifite ubugari buri hagati ya:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "20cm na 60cm",
+        "correct": true
+      },
+      {
+        "letter": "B",
+        "text": "10cm na 60cm",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "60cm na 25cm",
+        "correct": false
+      }
+    ],
+    "correctIndex": 0,
+    "answerCount": 1
+  },
+  {
+    "number": 153,
+    "prompt": "Ibyapa by'inyongera bishobora kumenyesha:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ibitegetswe byihariye gusa",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ubugerure cyangwa amarengamategeko rusange cyangwa ibibujijwe ndetse n'ibitegetswe byihariye",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 154,
+    "prompt": "Ibimenyetso bigenga uburyo bwo kugenda mu muhanda bigizwe na:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ibyapa n'ibimenyetso bimurika",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ibimenyetso byo mu muhanda",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "a na b ni ibisubizo by'ukuri",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 155,
+    "prompt": "Iyo umurongo wera ucagaguye n'umurongo wera ukomeje ibangikanye, umuyobozi yita:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ku murongo ucagaguye",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ku murongo udacagaguye",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "a na b ni ibisubizo by'ukuri",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Ku murongo urushijeho kumwegera",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 156,
+    "prompt": "Ibyapa byo ku muhanda bigizwe na:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ibyapa biburira, ibyo gutambuka mbere n'ibyapa ndanga",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ibiburira, Ibyo gutambuka mbere, Ibimenyetso bibuza cyangwa bitegeka n'ibyapa ndanga",
+        "correct": true
+      },
+      {
+        "letter": "C",
+        "text": "Ibiburira, ibyo gutambuka mbere n'ibimenyetso bibuza",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 1,
+    "answerCount": 1
+  },
+  {
+    "number": 157,
+    "prompt": "Icyapa kivuga ko hatanyurwa n'ibinyamitende gifite ubuso:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Bw'ibara ry'umukara",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Bw'ibara ry'ubururu",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Bw'ibara ry'umutuku",
+        "correct": false
+      },
+      {
+        "letter": "D",
+        "text": "Bw'ibara ry'umweru",
+        "correct": true
+      }
+    ],
+    "correctIndex": 3,
+    "answerCount": 1
+  },
+  {
+    "number": 158,
+    "prompt": "Icyapa cyerekana umuhanda ubisikanirwamo kigizwe na mpandeshatu ifite:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Ubuso mu ibara ritukura, ikiranga cy'umukara n'umuzenguruko utukura",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Ubuso mu ibara ry'ubururu, ikiranga cy'umukara n'umuzenguruko utukura",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "Ubuso mu ibara ry'umweru, ikiranga cy'umukara n'umuzenguruko utukura",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 159,
+    "prompt": "Ahanyurwa n'abayobozi b'amagare na velomoteri zifite imitende ibiri bambukiranya umuhanda hagaragazwa na:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Imirongo ibiri icagaguye igizwe na kare z'ibara ry'umweru",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "Imirongo ibiri icagaguye igizwe n'ingirwamwashi z'ibara ry'umweru",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "a na b ni ibisubizo by'ukuri",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "Nta gisubizo cy'ukuri kirimo",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  },
+  {
+    "number": 160,
+    "prompt": "Intera nini hagati y'urubibi rw'inyuma rw'ibyapa n'urubavu rw'ikinyabiziga ni:",
+    "options": [
+      {
+        "letter": "A",
+        "text": "40cm",
+        "correct": false
+      },
+      {
+        "letter": "B",
+        "text": "60cm",
+        "correct": false
+      },
+      {
+        "letter": "C",
+        "text": "120cm",
+        "correct": true
+      },
+      {
+        "letter": "D",
+        "text": "180cm",
+        "correct": false
+      }
+    ],
+    "correctIndex": 2,
+    "answerCount": 1
+  }
+]
