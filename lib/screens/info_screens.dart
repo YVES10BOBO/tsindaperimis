@@ -88,7 +88,7 @@ class FaqScreen extends StatelessWidget {
     _DocSection('Nahindura nte amabara (Light / Dark)?',
         'Jya muri Ibindi → Imiterere y\'amabara, uhitemo Urumuri, Umwijima cyangwa Nk\'iya telefoni.'),
     _DocSection('Nibagiwe ijambo ry\'ibanga. Nkora iki?',
-        'Ku ipaji yo kwinjira, kanda "Wibagiwe ijambo ry\'ibanga?", wandike email yawe, hanyuma ukurikize amabwiriza.'),
+        'Ku ipaji yo kwinjira, kanda "Wibagiwe ijambo ry\'ibanga?", wandike email yawe, hanyuma wandike kode y\'imibare 6 twakoherereje kuri email. Nyuma yaho uhitamo ijambo ry\'ibanga rishya.'),
     _DocSection('Nasiba nte konti yanjye?',
         'Injira, ujye muri Ibindi → Siba konti, wandike ijambo ry\'ibanga ryawe kugira ngo wemeze. Konti yawe n\'iterambere ryawe bisibwa burundu.'),
     _DocSection('Premium ni iki kandi nishyura nte?',

@@ -28,11 +28,14 @@ String? validateNewPassword(String? v) {
   return null;
 }
 
-String maskPhone(String phone) {
-  final String d = phone.replaceAll(RegExp(r'\D'), '');
-  if (d.length < 4) return phone;
-  return '${d.substring(0, 3)} *** ** ${d.substring(d.length - 2)}';
-}
+/// Ubutumwa bwumvikana iyo Supabase yanze ijambo ry'ibanga rishya.
+String passwordUpdateError(AuthException error) => switch (error.code) {
+      'same_password' => 'Rigomba gutandukana n\'irya mbere.',
+      'weak_password' => 'Ijambo ry\'ibanga rishya ntirikomeye bihagije.',
+      'reauthentication_needed' =>
+        'Ongera winjire, hanyuma wongere ugerageze.',
+      _ => error.message,
+    };
 
 /// Umutwe uri hejuru ya buri paji y'ijambo ry'ibanga.
 class _Header extends StatelessWidget {
@@ -148,7 +151,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _email = TextEditingController();
   bool _sending = false;
-  bool _sent = false;
   String? _error;
 
   @override
@@ -164,9 +166,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       _error = null;
     });
     try {
-      await Supabase.instance.client.auth
-          .resetPasswordForEmail(_email.text.trim().toLowerCase());
-      if (mounted) setState(() => _sent = true);
+      final String email = _email.text.trim().toLowerCase();
+      // The email carries a 6-digit code ({{ .Token }} in the Supabase
+      // "Reset password" template), so no deep link back into the app is needed.
+      await Supabase.instance.client.auth.resetPasswordForEmail(email);
+      if (!mounted) return;
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (_) => OtpScreen(email: email)),
+      );
     } on AuthException catch (error) {
       if (mounted) setState(() => _error = error.message);
     } catch (_) {
@@ -189,11 +196,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               _Header(
                 icon: Icons.lock_reset,
                 title: 'Wibagiwe ijambo ry\'ibanga?',
-                subtitle: _sent
-                    ? 'Niba iyi email ifite konti, twohereje umurongo wo guhindura ijambo ry\'ibanga. Reba muri inbox no muri spam.'
-                    : 'Andika email wakoresheje wiyandikisha. Turakoherereza umurongo wo guhindura ijambo ry\'ibanga.',
+                subtitle:
+                    'Andika email wakoresheje wiyandikisha. Turakoherereza kode y\'imibare 6 yo guhindura ijambo ry\'ibanga.',
               ),
-              if (!_sent) ...[
+              ...[
                 TextFormField(
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
@@ -225,7 +231,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           child: CircularProgressIndicator(
                               strokeWidth: 2.5, color: Colors.white),
                         )
-                      : const Text('Ohereza umurongo'),
+                      : const Text('Ohereza kode'),
                 ),
               ],
               const SizedBox(height: 12),
@@ -242,12 +248,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 }
 
 // =====================================================================
-// 2. Andika kode wahawe kuri SMS
+// 2. Andika kode wahawe kuri email
 // =====================================================================
 class OtpScreen extends StatefulWidget {
-  const OtpScreen({super.key, required this.phone});
+  const OtpScreen({super.key, required this.email});
 
-  final String phone;
+  final String email;
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -295,11 +301,23 @@ class _OtpScreenState extends State<OtpScreen> {
     });
   }
 
-  void _resend() {
-    // TODO: hamagara API yongere yohereze kode
-    setState(_startTimer);
-    showComingSoon(
-        context, 'Kode nshya yoherejwe kuri ${maskPhone(widget.phone)}');
+  Future<void> _resend() async {
+    setState(() {
+      _error = null;
+      _startTimer();
+    });
+    try {
+      await Supabase.instance.client.auth.resetPasswordForEmail(widget.email);
+      if (mounted) {
+        showComingSoon(context, 'Kode nshya yoherejwe kuri ${widget.email}');
+      }
+    } on AuthException catch (error) {
+      if (mounted) setState(() => _error = error.message);
+    } catch (_) {
+      if (mounted) {
+        setState(() => _error = 'Ntibyashobotse kohereza kode. Reba internet.');
+      }
+    }
   }
 
   Future<void> _verify() async {
@@ -312,14 +330,33 @@ class _OtpScreenState extends State<OtpScreen> {
       _error = null;
       _verifying = true;
     });
-    await Future<void>.delayed(
-        const Duration(milliseconds: 800)); // TODO: hamagara API
-    if (!mounted) return;
-    setState(() => _verifying = false);
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(
-          builder: (_) => ResetPasswordScreen(phone: widget.phone)),
-    );
+    try {
+      // A valid recovery code signs the user in so the password can be changed.
+      await Supabase.instance.client.auth.verifyOTP(
+        type: OtpType.recovery,
+        email: widget.email,
+        token: _code.text,
+      );
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute<void>(builder: (_) => const ResetPasswordScreen()),
+      );
+    } on AuthException catch (error) {
+      if (mounted) {
+        setState(() {
+          _code.clear();
+          _error = error.code == 'otp_expired'
+              ? 'Kode si yo cyangwa yararangiye. Ongera uyandike cyangwa usabe indi.'
+              : error.message;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _error = 'Ntibyashobotse kugenzura kode. Reba internet.');
+      }
+    } finally {
+      if (mounted) setState(() => _verifying = false);
+    }
   }
 
   @override
@@ -333,10 +370,10 @@ class _OtpScreenState extends State<OtpScreen> {
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
           children: <Widget>[
             _Header(
-              icon: Icons.sms_outlined,
+              icon: Icons.mark_email_read_outlined,
               title: 'Andika kode',
               subtitle:
-                  'Twohereje kode y\'imibare 6 kuri ${maskPhone(widget.phone)}.',
+                  'Niba ${widget.email} ifite konti, twayoherereje kode y\'imibare 6. Reba muri inbox no muri spam.',
             ),
             // Utuzu 6 tugaragaza imibare; TextField nyayo irihishe inyuma.
             GestureDetector(
@@ -432,7 +469,7 @@ class _OtpScreenState extends State<OtpScreen> {
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Hindura nimero ya telefoni'),
+              child: const Text('Hindura email'),
             ),
           ],
         ),
@@ -445,9 +482,7 @@ class _OtpScreenState extends State<OtpScreen> {
 // 3. Shyiraho ijambo ry'ibanga rishya
 // =====================================================================
 class ResetPasswordScreen extends StatefulWidget {
-  const ResetPasswordScreen({super.key, required this.phone});
-
-  final String phone;
+  const ResetPasswordScreen({super.key});
 
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -458,6 +493,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final TextEditingController _password = TextEditingController();
   final TextEditingController _confirm = TextEditingController();
   bool _saving = false;
+  String? _error;
 
   @override
   void dispose() {
@@ -467,16 +503,30 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 
   Future<void> _save() async {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
-    setState(() => _saving = true);
-    await Future<void>.delayed(
-        const Duration(milliseconds: 900)); // TODO: hamagara API
-    if (!mounted) return;
-    setState(() => _saving = false);
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(
-          builder: (_) => const PasswordResetSuccessScreen()),
-    );
+    if (_saving || !(_formKey.currentState?.validate() ?? false)) return;
+    setState(() {
+      _saving = true;
+      _error = null;
+    });
+    try {
+      final auth = Supabase.instance.client.auth;
+      await auth.updateUser(UserAttributes(password: _password.text));
+      // End the recovery session; the learner signs in again with the new password.
+      await auth.signOut();
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute<void>(
+            builder: (_) => const PasswordResetSuccessScreen()),
+      );
+    } on AuthException catch (error) {
+      if (mounted) setState(() => _error = passwordUpdateError(error));
+    } catch (_) {
+      if (mounted) {
+        setState(() => _error = 'Ntibyashobotse kubika. Reba internet.');
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
   @override
@@ -510,6 +560,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 validator: (String? v) =>
                     v != _password.text ? 'Amagambo y\'ibanga ntahuye' : null,
               ),
+              if (_error != null) ...<Widget>[
+                const SizedBox(height: 12),
+                Text(_error!,
+                    style: const TextStyle(color: AppColors.error, fontSize: 13)),
+              ],
               const SizedBox(height: 28),
               ElevatedButton(
                 onPressed: _saving ? null : _save,
@@ -596,6 +651,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final TextEditingController _password = TextEditingController();
   final TextEditingController _confirm = TextEditingController();
   bool _saving = false;
+  String? _error;
 
   @override
   void dispose() {
@@ -606,14 +662,45 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   }
 
   Future<void> _save() async {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
-    setState(() => _saving = true);
-    await Future<void>.delayed(
-        const Duration(milliseconds: 900)); // TODO: hamagara API
-    if (!mounted) return;
-    setState(() => _saving = false);
-    showComingSoon(context, 'Ijambo ry\'ibanga ryahinduwe.');
-    Navigator.of(context).pop();
+    if (_saving || !(_formKey.currentState?.validate() ?? false)) return;
+    final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
+    final NavigatorState navigator = Navigator.of(context);
+    setState(() {
+      _saving = true;
+      _error = null;
+    });
+    var currentPasswordChecked = false;
+    try {
+      final auth = Supabase.instance.client.auth;
+      final String? email = auth.currentUser?.email;
+      if (email == null) {
+        setState(() =>
+            _error = 'Banza winjire muri konti yawe, hanyuma wongere ugerageze.');
+        return;
+      }
+      // Checking the current password first stops anyone holding an unlocked
+      // phone from changing it, and gives Supabase the recent sign-in it needs.
+      await auth.signInWithPassword(email: email, password: _current.text);
+      currentPasswordChecked = true;
+      await auth.updateUser(UserAttributes(password: _password.text));
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+            const SnackBar(content: Text('Ijambo ry\'ibanga ryahinduwe.')));
+      navigator.pop();
+    } on AuthException catch (error) {
+      if (mounted) {
+        setState(() => _error = currentPasswordChecked
+            ? passwordUpdateError(error)
+            : 'Ijambo ry\'ibanga usanganywe si ryo.');
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _error = 'Ntibyashobotse kubika. Reba internet.');
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
   @override
@@ -665,6 +752,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 validator: (String? v) =>
                     v != _password.text ? 'Amagambo y\'ibanga ntahuye' : null,
               ),
+              if (_error != null) ...<Widget>[
+                const SizedBox(height: 12),
+                Text(_error!,
+                    style: const TextStyle(color: AppColors.error, fontSize: 13)),
+              ],
               const SizedBox(height: 28),
               ElevatedButton(
                 onPressed: _saving ? null : _save,
