@@ -36,7 +36,9 @@ class ContentRepository {
   List<LearnCategory> get categories => _categories;
   List<Question> get allQuestions => _all;
   List<Question> get examQuestions => _all.where(isExamQuestion).toList();
-  List<AppNotification> get notifications => sampleNotifications;
+  List<AppNotification> _notifications = const <AppNotification>[];
+  List<AppNotification> get notifications =>
+      _notifications.where((n) => !n.isExpired).toList();
   List<Lesson> get allLessons => <Lesson>[
         for (final c in _categories) ...c.lessons,
       ];
@@ -51,7 +53,7 @@ class ContentRepository {
         var refreshBundledContent = false;
         _db = await openDatabase(
           p.join(dir, 'amategeko_content.db'),
-          version: 4,
+          version: 5,
           onCreate: (db, _) async {
             await db.execute(
                 'CREATE TABLE categories (id TEXT PRIMARY KEY, title TEXT, subtitle TEXT, icon_code INTEGER, icon_font TEXT, icon_package TEXT, color INTEGER, soft_color INTEGER, sort_order INTEGER)');
@@ -64,6 +66,7 @@ class ContentRepository {
             await db.execute(
                 'CREATE TABLE options (id TEXT PRIMARY KEY, question_id TEXT, position INTEGER, option_text TEXT, is_correct INTEGER)');
             await _createProgressTables(db);
+            await _createNotificationsTable(db);
           },
           onUpgrade: (db, oldVersion, _) async {
             if (oldVersion < 2) await _createProgressTables(db);
@@ -74,6 +77,7 @@ class ContentRepository {
                   .execute('ALTER TABLE questions ADD COLUMN image_path TEXT');
             }
             if (oldVersion < 4) refreshBundledContent = true;
+            if (oldVersion < 5) await _createNotificationsTable(db);
           },
         );
         if (refreshBundledContent) {
@@ -82,11 +86,90 @@ class ContentRepository {
           await _seedSqliteIfEmpty();
         }
         await _loadSqlite();
+        await _loadCachedNotifications();
       } catch (_) {
         // Keep bundled content on unsupported devices or a corrupt old cache.
       }
     }
-    await _refreshFromSupabase();
+    await Future.wait<void>(<Future<void>>[
+      _refreshFromSupabase(),
+      refreshNotifications(),
+    ]);
+  }
+
+  Future<void> _createNotificationsTable(DatabaseExecutor db) async {
+    await db.execute(
+        'CREATE TABLE IF NOT EXISTS notifications (id TEXT PRIMARY KEY, title TEXT NOT NULL, body TEXT NOT NULL, icon TEXT, date_ms INTEGER, expires_ms INTEGER)');
+  }
+
+  /// Fetches published, unexpired announcements; keeps the cached copy offline.
+  Future<void> refreshNotifications() async {
+    const url = String.fromEnvironment('SUPABASE_URL');
+    const key = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
+    if (url.isEmpty || key.isEmpty) return;
+    try {
+      final List<Map<String, dynamic>> rows = await Supabase.instance.client
+          .from('notifications')
+          .select('id, title, body, icon, published_at, created_at, expires_at')
+          .eq('published', true)
+          .order('published_at', ascending: false)
+          .limit(50)
+          .timeout(const Duration(seconds: 8));
+      final items = rows
+          .map((r) => AppNotification(
+                id: r['id'] as String,
+                title: r['title'] as String,
+                body: r['body'] as String,
+                iconKey: r['icon'] as String? ?? 'info',
+                date: DateTime.tryParse(
+                        (r['published_at'] ?? r['created_at']) as String? ?? '')
+                    ?.toLocal(),
+                expiresAt: DateTime.tryParse(r['expires_at'] as String? ?? '')
+                    ?.toLocal(),
+              ))
+          .where((n) => !n.isExpired)
+          .toList();
+      _notifications = items;
+      await _storeNotifications(items);
+    } catch (error) {
+      debugPrint('Notifications sync failed; using cached messages ($error).');
+    }
+  }
+
+  Future<void> _loadCachedNotifications() async {
+    final db = _db;
+    if (db == null) return;
+    final rows = await db.query('notifications', orderBy: 'date_ms DESC');
+    DateTime? fromMs(Object? ms) =>
+        ms is int ? DateTime.fromMillisecondsSinceEpoch(ms) : null;
+    _notifications = rows
+        .map((r) => AppNotification(
+              id: r['id'] as String,
+              title: r['title'] as String,
+              body: r['body'] as String,
+              iconKey: r['icon'] as String? ?? 'info',
+              date: fromMs(r['date_ms']),
+              expiresAt: fromMs(r['expires_ms']),
+            ))
+        .toList();
+  }
+
+  Future<void> _storeNotifications(List<AppNotification> items) async {
+    final db = _db;
+    if (db == null) return;
+    await db.transaction((tx) async {
+      await tx.delete('notifications');
+      for (final n in items) {
+        await tx.insert('notifications', {
+          'id': n.id,
+          'title': n.title,
+          'body': n.body,
+          'icon': n.iconKey,
+          'date_ms': n.date?.millisecondsSinceEpoch,
+          'expires_ms': n.expiresAt?.millisecondsSinceEpoch,
+        });
+      }
+    });
   }
 
   Future<void> _createProgressTables(DatabaseExecutor db) async {
@@ -100,6 +183,40 @@ class ContentRepository {
         'CREATE TABLE IF NOT EXISTS wrong_questions (question_id TEXT PRIMARY KEY)');
     await db.execute(
         'CREATE TABLE IF NOT EXISTS exam_history (id INTEGER PRIMARY KEY AUTOINCREMENT, date_ms INTEGER NOT NULL, payload TEXT NOT NULL)');
+  }
+
+  /// Removes this device's saved progress, e.g. after the account is deleted.
+  Future<void> clearLocalProgress() async {
+    try {
+      await _progressQueue;
+    } catch (_) {
+      // A failed earlier save does not matter: everything is being removed.
+    }
+    final db = _db;
+    if (db == null) return;
+    await db.transaction((tx) async {
+      for (final table in [
+        'completed_lessons',
+        'bookmarks',
+        'question_stats',
+        'wrong_questions',
+        'exam_history'
+      ]) {
+        await tx.delete(table);
+      }
+    });
+  }
+
+  /// Ends the Supabase session so progress stops syncing to that account.
+  Future<void> signOutRemote() async {
+    const url = String.fromEnvironment('SUPABASE_URL');
+    const key = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
+    if (url.isEmpty || key.isEmpty) return;
+    try {
+      await Supabase.instance.client.auth.signOut();
+    } catch (error) {
+      debugPrint('Supabase sign-out failed: $error');
+    }
   }
 
   Future<Map<String, dynamic>> loadProgress() async {

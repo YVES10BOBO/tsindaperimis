@@ -140,7 +140,26 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void signOut() => continueAsGuest();
+  void signOut() {
+    unawaited(ContentRepository.instance.signOutRemote());
+    continueAsGuest();
+  }
+
+  /// Clears everything this device knew about an account that was just deleted.
+  Future<void> forgetDeletedAccount() async {
+    completedLessons.clear();
+    bookmarkedLessons.clear();
+    bookmarkedQuestions.clear();
+    wrongQuestions.clear();
+    answeredByCategory.clear();
+    correctByCategory.clear();
+    examResults.clear();
+    licenseCategory = 'B';
+    avatarColor = 0;
+    await ContentRepository.instance.clearLocalProgress();
+    await ContentRepository.instance.signOutRemote();
+    continueAsGuest();
+  }
 
   void setNotifications(bool value) {
     notificationsOn = value;

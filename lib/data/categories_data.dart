@@ -456,18 +456,3 @@ final Map<String, List<String>> _extraLessonBodies = <String, List<String>>{
   'umutekano': List<String>.filled(18,
       'Shyira imbere kurinda ubuzima bwawe n’ubw’abandi. Gabanya ibyago, fata ingamba z’umutekano kandi uhamagare ubutabazi igihe bikenewe; ntukishyire mu kaga.'),
 };
-
-const List<AppNotification> sampleNotifications = <AppNotification>[
-  AppNotification('Igihe cyo kwiga',
-      'Komeza aho wari ugeze: Ibimenyetso biburira.', 'Uyu munsi', Icons.alarm),
-  AppNotification(
-      'Ibibazo bishya',
-      'Ibibazo bishya byongewe muri "Imyitwarire ku Muhanda".',
-      'Ejo hashize',
-      Icons.fiber_new),
-  AppNotification(
-      'Inama',
-      'Gerageza ikizamini cy\'igerageza rimwe mu cyumweru.',
-      'Ku wa Mbere',
-      Icons.lightbulb_outline),
-];
