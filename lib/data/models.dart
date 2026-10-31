@@ -190,11 +190,49 @@ class ExamResult {
   bool isCorrect(int i) => answers[i] == questions[i].correctIndex;
 }
 
+/// Ubutumwa admin yanditse muri dashboard (imbonerahamwe `notifications`).
 class AppNotification {
-  const AppNotification(this.title, this.body, this.when, this.icon);
+  const AppNotification({
+    required this.id,
+    required this.title,
+    required this.body,
+    this.iconKey = 'info',
+    this.date,
+    this.expiresAt,
+  });
 
+  final String id;
   final String title;
   final String body;
-  final String when;
-  final IconData icon;
+
+  /// Igomba guhura n'urutonde ruri muri migration `notifications.icon`.
+  final String iconKey;
+  final DateTime? date;
+  final DateTime? expiresAt;
+
+  bool get isExpired =>
+      expiresAt != null && expiresAt!.isBefore(DateTime.now());
+
+  IconData get icon => switch (iconKey) {
+        'new' => Icons.fiber_new,
+        'tip' => Icons.lightbulb_outline,
+        'reminder' => Icons.alarm,
+        'warning' => Icons.warning_amber_rounded,
+        'exam' => Icons.assignment_outlined,
+        _ => Icons.info_outline,
+      };
+
+  /// Igihe bwatangarijwe, mu magambo: "Uyu munsi", "Ejo hashize", ...
+  String get when {
+    final DateTime? d = date;
+    if (d == null) return '';
+    final DateTime now = DateTime.now();
+    final int days = DateTime(now.year, now.month, now.day)
+        .difference(DateTime(d.year, d.month, d.day))
+        .inDays;
+    if (days <= 0) return 'Uyu munsi';
+    if (days == 1) return 'Ejo hashize';
+    if (days < 7) return 'Hashize iminsi $days';
+    return '${d.day}/${d.month}/${d.year}';
+  }
 }

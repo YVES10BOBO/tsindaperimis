@@ -7,6 +7,7 @@ import '../data/models.dart';
 import '../state/app_state.dart';
 import '../widgets/common.dart';
 import 'auth_screen.dart';
+import 'delete_account_screen.dart';
 import 'info_screens.dart';
 import 'lesson_screen.dart';
 import 'password_screens.dart';
@@ -184,6 +185,12 @@ class MoreScreen extends StatelessWidget {
                     icon: Icons.lock_reset,
                     title: 'Hindura ijambo ry\'ibanga',
                     onTap: () => _push(context, const ChangePasswordScreen()),
+                  ),
+                  _MenuTile(
+                    icon: Icons.delete_forever_outlined,
+                    title: 'Siba konti',
+                    color: AppColors.error,
+                    onTap: () => _push(context, const DeleteAccountScreen()),
                   ),
                 ],
               ),
@@ -412,15 +419,53 @@ class BookmarksScreen extends StatelessWidget {
 // =====================================================================
 // Ubutumwa
 // =====================================================================
-class NotificationsScreen extends StatelessWidget {
+class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
+
+  @override
+  State<NotificationsScreen> createState() => _NotificationsScreenState();
+}
+
+class _NotificationsScreenState extends State<NotificationsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _refresh();
+  }
+
+  // Shows the cached messages at once, then replaces them with the latest from Supabase.
+  Future<void> _refresh() async {
+    await ContentRepository.instance.refreshNotifications();
+    if (mounted) setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     final List<AppNotification> items = ContentRepository.instance.notifications;
     return Scaffold(
       appBar: AppBar(title: Text('Ubutumwa')),
-      body: ListView.separated(
+      body: RefreshIndicator(
+        onRefresh: _refresh,
+        child: items.isEmpty
+            ? ListView(
+                physics: AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.only(top: 80),
+                children: <Widget>[
+                  EmptyState(
+                    icon: Icons.notifications_none,
+                    title: 'Nta butumwa buhari',
+                    message: 'Ubutumwa bushya buzagaragara hano. Kurura hasi kugira ngo urebe ubushya.',
+                  ),
+                ],
+              )
+            : _buildList(items),
+      ),
+    );
+  }
+
+  Widget _buildList(List<AppNotification> items) {
+    return ListView.separated(
+        physics: AlwaysScrollableScrollPhysics(),
         padding: EdgeInsets.fromLTRB(20, 8, 20, 24),
         itemCount: items.length,
         separatorBuilder: (_, __) => SizedBox(height: 10),
@@ -441,8 +486,10 @@ class NotificationsScreen extends StatelessWidget {
                       Text(n.title, style: TextStyle(fontWeight: FontWeight.w700)),
                       SizedBox(height: 2),
                       Text(n.body, style: TextStyle(color: AppColors.muted, height: 1.4)),
-                      SizedBox(height: 4),
-                      Text(n.when, style: TextStyle(color: AppColors.muted, fontSize: 12)),
+                      if (n.when.isNotEmpty) ...<Widget>[
+                        SizedBox(height: 4),
+                        Text(n.when, style: TextStyle(color: AppColors.muted, fontSize: 12)),
+                      ],
                     ],
                   ),
                 ),
@@ -450,8 +497,7 @@ class NotificationsScreen extends StatelessWidget {
             ),
           );
         },
-      ),
-    );
+      );
   }
 }
 

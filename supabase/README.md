@@ -27,3 +27,11 @@ Until the project is configured and the content tables are populated, the app us
 ## Admin dashboard
 
 See [`../admin-dashboard/README.md`](../admin-dashboard/README.md) for setup. Run `migrations/202610190001_admin_access.sql`, create an email/password user in Supabase Auth, then add that user's ID to `public.admin_users` from the SQL Editor. Never give ordinary learners an admin membership.
+
+## Notifications (Ubutumwa)
+
+After the admin migration, run `migrations/202610310001_notifications.sql`. Admins write, publish, and delete messages from the dashboard's **Ubutumwa** page; the app shows published messages that have not passed their optional end date, and keeps the last copy for offline use. Until this migration runs, the dashboard shows a setup notice on that page and the app shows an empty Ubutumwa screen.
+
+## Account deletion
+
+Run `migrations/202610310002_delete_my_account.sql` so learners can delete their own account in the app (**Ibindi → Siba konti**), which Google Play requires for apps with sign-up. The app asks for the password again, then calls `public.delete_my_account()`, which deletes the signed-in user and, through `ON DELETE CASCADE`, their `user_progress` row. Admin accounts are refused. Admins can also delete a learner from the dashboard's Abakoresha page.

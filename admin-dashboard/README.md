@@ -34,7 +34,11 @@ Responsive Next.js + TypeScript web dashboard for managing the Supabase driving-
 - Admin overview with published/draft counts, content shortcuts, and a review queue.
 - Search and paginate Auth users, see sign-in and learner-progress summaries, and suspend or restore learner accounts. Admin accounts and your own account are protected from suspension here.
 - Set a question's correct option and add explanations.
-- Upload road-sign images to the public `road-signs` bucket; only admins can upload or delete stored objects.
+- Upload road-sign images to the public `road-signs` bucket; only admins can upload or delete stored objects. Replaced, removed, or unsaved uploads are deleted when no question or lesson section uses them.
+- Reorder categories, lessons within a category, and sections within a lesson; questions take 2–4 answers.
+- Edit category colours and app icon; delete a category once it has no lessons or questions.
+- Permanently delete a learner account (type SIBA to confirm). Admin accounts and your own account are protected.
+- Write, publish, schedule an end date for, and delete app notifications (Ubutumwa). Requires [`../supabase/migrations/202610310001_notifications.sql`](../supabase/migrations/202610310001_notifications.sql).
 - Row Level Security grants content writes only to users in `admin_users`.
 
 An uploaded image is saved as a Storage object path in `image_path`. Flutter lesson, practice, exam, and review screens use that path to display the uploaded sign, and fall back to the built-in illustration when one is available.

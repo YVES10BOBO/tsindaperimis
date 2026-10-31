@@ -125,3 +125,24 @@ export async function PATCH(request: NextRequest) {
   if (error) return NextResponse.json({ error: error.message }, { status: 502 });
   return NextResponse.json({ success: true });
 }
+
+// Permanently deletes a learner account; user_progress is removed by its ON DELETE CASCADE.
+export async function DELETE(request: NextRequest) {
+  const context = await getAdminContext(request);
+  if ('error' in context) return context.error;
+
+  let body: { userId?: string };
+  try { body = await request.json(); }
+  catch { return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 }); }
+  if (!body.userId) return NextResponse.json({ error: 'A user ID is required.' }, { status: 400 });
+  if (body.userId === context.userId) return NextResponse.json({ error: 'You cannot delete your own account here.' }, { status: 400 });
+
+  const { data: targetAdmin, error: targetError } = await context.admin
+    .from('admin_users').select('user_id').eq('user_id', body.userId).maybeSingle();
+  if (targetError) return NextResponse.json({ error: targetError.message }, { status: 502 });
+  if (targetAdmin) return NextResponse.json({ error: 'Admin accounts cannot be deleted from this screen.' }, { status: 403 });
+
+  const { error } = await context.admin.auth.admin.deleteUser(body.userId);
+  if (error) return NextResponse.json({ error: error.message }, { status: 502 });
+  return NextResponse.json({ success: true });
+}
