@@ -32,6 +32,23 @@ See [`../admin-dashboard/README.md`](../admin-dashboard/README.md) for setup. Ru
 
 After the admin migration, run `migrations/202610310001_notifications.sql`. Admins write, publish, and delete messages from the dashboard's **Ubutumwa** page; the app shows published messages that have not passed their optional end date, and keeps the last copy for offline use. Until this migration runs, the dashboard shows a setup notice on that page and the app shows an empty Ubutumwa screen.
 
+## Password reset email
+
+The app resets passwords with a 6-digit code (no deep link needed): the learner enters their email, types the code from the email, then chooses a new password. In Supabase:
+
+1. **Authentication → Emails → Reset Password**: make the template show the code, for example:
+
+   ```html
+   <h2>Guhindura ijambo ry'ibanga</h2>
+   <p>Kode yawe yo guhindura ijambo ry'ibanga ni:</p>
+   <p style="font-size:28px;font-weight:bold;letter-spacing:6px">{{ .Token }}</p>
+   <p>Iyandike muri app. Niba atari wowe wabisabye, wirengagize iyi email.</p>
+   ```
+
+2. **Authentication → Providers → Email**: keep **Email OTP Length** at 6, which the app's code screen expects.
+
+Changing a password while signed in (**Ibindi → Hindura ijambo ry'ibanga**) checks the current password first, then calls `updateUser`.
+
 ## Account deletion
 
 Run `migrations/202610310002_delete_my_account.sql` so learners can delete their own account in the app (**Ibindi → Siba konti**), which Google Play requires for apps with sign-up. The app asks for the password again, then calls `public.delete_my_account()`, which deletes the signed-in user and, through `ON DELETE CASCADE`, their `user_progress` row. Admin accounts are refused. Admins can also delete a learner from the dashboard's Abakoresha page.
