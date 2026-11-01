@@ -6,6 +6,7 @@ import '../data/exam_scope.dart';
 import '../data/models.dart';
 import '../state/app_state.dart';
 import '../widgets/common.dart';
+import '../widgets/question_report.dart';
 import '../widgets/road_sign.dart';
 
 /// Tab y'Imyitozo: guhitamo ibibazo umuntu ashaka kwitoza.

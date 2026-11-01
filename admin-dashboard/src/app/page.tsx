@@ -11,7 +11,10 @@ type Section = { id?: string; position: number; heading: string; body: string; s
 type Lesson = { id: string; category_id: string; title: string; minutes: number; sort_order: number; created_at: string; updated_at?: string | null; is_extra: boolean; published: boolean; lesson_sections: Section[] };
 type Learner = { id: string; email: string | null; phone: string | null; createdAt: string; lastSignInAt: string | null; bannedUntil: string | null; isAdmin: boolean; progressUpdatedAt: string | null; completedLessons: number; hasProgress: boolean };
 type Announcement = { id: string; title: string; body: string; icon: string; published: boolean; published_at: string | null; expires_at: string | null; created_at: string; updated_at: string };
-type View = 'overview' | 'questions' | 'lessons' | 'categories' | 'notifications' | 'users';
+type QuestionReport = { id: string; question_id: string; reason: string; comment: string | null; reporter_id: string | null; status: 'new' | 'resolved'; created_at: string; resolved_at: string | null };
+type View = 'overview' | 'questions' | 'reports' | 'lessons' | 'categories' | 'notifications' | 'users';
+// Keys must match the question_reports.reason check constraint and the Flutter app.
+const reportReasons: Record<string, string> = { wrong_answer: 'Igisubizo nyacyo si cyo', typo: 'Amakosa mu nyandiko', image: 'Ifoto cyangwa icyapa si cyo', other: 'Ibindi' };
 type Notice = { kind: 'error' | 'success'; text: string };
 type ConfirmOptions = { title: string; message: ReactNode; confirmLabel: string; tone?: 'danger' | 'warning' | 'primary'; requireText?: string };
 
@@ -67,6 +70,9 @@ export default function Home() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [announcementsError, setAnnouncementsError] = useState<string | null>(null);
   const [announcementForm, setAnnouncementForm] = useState(emptyAnnouncement);
+  const [reports, setReports] = useState<QuestionReport[]>([]);
+  const [reportsError, setReportsError] = useState<string | null>(null);
+  const [reportStatus, setReportStatus] = useState<'new' | 'resolved' | 'all'>('new');
   const [drawer, setDrawer] = useState<'question' | 'lesson' | 'announcement' | null>(null);
   const [formSnapshot, setFormSnapshot] = useState('');
   const [openSections, setOpenSections] = useState<number[]>([0]);
@@ -101,16 +107,19 @@ export default function Home() {
   const loadData = useCallback(async () => {
     if (!isAdmin || !supabase) return;
     setBusy(true);
-    const [cats, qs, ls, ns] = await Promise.all([
+    const [cats, qs, ls, ns, rs] = await Promise.all([
       supabase.from('content_categories').select('*').order('sort_order'),
       supabase.from('questions').select('*, question_options(*)').order('sort_order'),
       supabase.from('lessons').select('*, lesson_sections(*)').order('created_at', { ascending: false }),
       supabase.from('notifications').select('*').order('created_at', { ascending: false }),
+      supabase.from('question_reports').select('*').order('created_at', { ascending: false }),
     ]);
     setBusy(false);
-    // Kept apart from content errors so a missing notifications migration never blocks lessons and questions.
+    // Kept apart from content errors so a missing notifications or reports migration never blocks lessons and questions.
     setAnnouncements(ns.error ? [] : (ns.data ?? []) as Announcement[]);
     setAnnouncementsError(ns.error ? ns.error.message : null);
+    setReports(rs.error ? [] : (rs.data ?? []) as QuestionReport[]);
+    setReportsError(rs.error ? rs.error.message : null);
     const firstError = cats.error ?? qs.error ?? ls.error;
     if (firstError) { sayError(firstError); return; }
     setCategories((cats.data ?? []) as Category[]);
@@ -389,6 +398,17 @@ export default function Home() {
     finally { setBusy(false); }
   };
 
+  const setReportResolved = async (report: QuestionReport, resolved: boolean) => {
+    const { error } = await requireClient().from('question_reports').update({ status: resolved ? 'resolved' : 'new', resolved_at: resolved ? new Date().toISOString() : null }).eq('id', report.id);
+    if (error) sayError(error); else { setNotice({ kind: 'success', text: resolved ? 'Raporo yashyizwe mu byakemutse.' : 'Raporo yongeye gufungurwa.' }); await loadData(); }
+  };
+
+  const removeReport = async (report: QuestionReport) => {
+    if (!(await askConfirm({ title: 'Siba iyi raporo?', message: 'Raporo izasibwa burundu. Ikibazo ubwacyo ntikizahinduka.', confirmLabel: 'Siba raporo' }))) return;
+    const { error } = await requireClient().from('question_reports').delete().eq('id', report.id);
+    if (error) sayError(error); else { setNotice({ kind: 'success', text: 'Raporo yasibwe neza.' }); await loadData(); }
+  };
+
   const removeAnnouncement = async (item: Announcement) => {
     if (!(await askConfirm({ title: 'Siba ubu butumwa?', message: <>“{item.title}” buzasibwa burundu, kandi abakoresha ntibazongera kububona.</>, confirmLabel: 'Siba ubutumwa' }))) return;
     const { error } = await requireClient().from('notifications').delete().eq('id', item.id);
@@ -420,6 +440,7 @@ export default function Home() {
   // Present once the numbers/dates migration has run; until then saves leave these columns out.
   const questionMetaReady = questions.some(q => q.created_at !== undefined);
   const editingNumber = questions.find(q => q.id === questionForm.id)?.number;
+  const editingReports = questionForm.id ? reports.filter(r => r.status === 'new' && r.question_id === questionForm.id) : [];
   const lessonMetaReady = lessons.some(l => l.updated_at !== undefined);
   const filteredLessons = useMemo(() => lessons.filter(l => {
     const category = categories.find(c => c.id === l.category_id)?.title ?? '';
@@ -443,6 +464,23 @@ export default function Home() {
   const updateCategoryFilter = (value: string) => { setCategoryFilter(value); setPage(1); };
   const updatePageSize = (value: number) => { setPageSize(value); setPage(1); };
   const missingExplanations = questions.filter(q => !q.explanation?.trim()).length;
+  const newReports = reports.filter(r => r.status === 'new');
+  const openReportsByQuestion = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const report of reports) if (report.status === 'new') counts.set(report.question_id, (counts.get(report.question_id) ?? 0) + 1);
+    return counts;
+  }, [reports]);
+  const questionById = useMemo(() => new Map(questions.map(q => [q.id, q])), [questions]);
+  const filteredReports = useMemo(() => {
+    const query = search.trim().toLocaleLowerCase();
+    const wantedNumber = /^#\d+$/.test(query) ? Number(query.slice(1)) : null;
+    return reports.filter(report => {
+      if (reportStatus !== 'all' && report.status !== reportStatus) return false;
+      const question = questionById.get(report.question_id);
+      if (wantedNumber !== null) return question?.number === wantedNumber;
+      return `#${question?.number ?? ''} ${question?.prompt ?? ''} ${report.comment ?? ''} ${reportReasons[report.reason] ?? ''}`.toLocaleLowerCase().includes(query);
+    });
+  }, [reports, reportStatus, search, questionById]);
   const filteredAnnouncements = useMemo(() => announcements.filter(item => `${item.title} ${item.body}`.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()) && (statusFilter === 'all' || item.published === (statusFilter === 'published'))), [announcements, search, statusFilter]);
   const categoryById = useMemo(() => new Map(categories.map(category => [category.id, category])), [categories]);
   const lessonFiltersActive = Boolean(search.trim()) || statusFilter !== 'all' || categoryFilter !== 'all' || lessonDateFilter !== 'all';
@@ -496,11 +534,11 @@ export default function Home() {
   if (!session || !isAdmin) return <main className="center"><form className="login-card" onSubmit={signIn}><Brand /><p className="eyebrow">AMATEGEKO Y’UMUHANDA</p><h1>Admin Dashboard</h1><p>Injira ukoresheje konti yemerewe gucunga ibikubiye muri app.</p>{notice && <div className={`notice ${notice.kind}`}>{notice.text}</div>}<label>Email<input type="email" autoComplete="username" required value={email} onChange={e => setEmail(e.target.value)} /></label><label>Ijambo ry’ibanga<input type="password" autoComplete="current-password" required value={password} onChange={e => setPassword(e.target.value)} /></label><button className="primary full" disabled={busy}>{busy ? 'Tegereza...' : 'Injira'}</button><small>Konti igomba kuba yanditswe muri <code>admin_users</code> ya Supabase.</small></form></main>;
 
   return <main className={`shell grid min-h-screen transition-[grid-template-columns] duration-300 ease-in-out ${menuOpen ? '' : 'sidebar-collapsed'}`}>
-    <aside className="sidebar sticky top-0 flex h-screen flex-col overflow-hidden transition-all duration-300"><Brand /><div className="side-label">IMICUNGIRE</div><nav className="sidebar-nav flex flex-col">{(['overview', 'questions', 'lessons', 'categories', 'notifications', 'users'] as View[]).map(item => <button key={item} className={`nav-item ${view === item ? 'active' : ''}`} onClick={() => { setView(item); setNotice(null); setSearch(''); }}><span className="nav-icon"><Icon name={item} /></span>{{ overview: 'Incamake', questions: 'Ibibazo', lessons: 'Amasomo', categories: 'Ibyiciro', notifications: 'Ubutumwa', users: 'Abakoresha' }[item]}<span className="nav-count">{item === 'questions' ? questions.length : item === 'lessons' ? lessons.length : item === 'categories' ? categories.length : item === 'notifications' ? announcements.length || '' : item === 'users' ? learnerTotal || '' : ''}</span></button>)}</nav><div className="sidebar-bottom"><span className="avatar">{session.user.email?.slice(0, 1).toUpperCase() ?? 'A'}</span><span className="admin-email">{session.user.email}</span><button className="text-button" onClick={signOut}>Sohoka</button></div></aside>
-    <section className="workspace mx-auto w-full max-w-[1550px]"><header className="topbar"><div className="topbar-title"><button className="sidebar-toggle grid h-[42px] w-[42px] place-items-center rounded-xl border border-slate-300 bg-white text-xl text-brand-800 transition duration-200 hover:-translate-y-px hover:border-brand-100 hover:bg-brand-50" type="button" aria-label={menuOpen ? 'Funga sidebar' : 'Fungura sidebar'} aria-expanded={menuOpen} onClick={() => setMenuOpen(open => !open)}>{menuOpen ? '×' : '☰'}</button><div><span className="eyebrow">AMATEGEKO Y’UMUHANDA / ADMIN</span><h1>{{ overview: 'Incamake', questions: 'Gucunga ibibazo', lessons: 'Gucunga amasomo', categories: 'Gucunga ibyiciro', notifications: 'Gucunga ubutumwa', users: 'Gucunga abakoresha' }[view]}</h1></div></div><div className="top-actions"><span className="secure"><i /> Konti ya admin</span><button className="refresh" onClick={() => view === 'users' ? void loadLearners() : void loadData()} title="Ongera uvugurure">↻</button></div></header>
+    <aside className="sidebar sticky top-0 flex h-screen flex-col overflow-hidden transition-all duration-300"><Brand /><div className="side-label">IMICUNGIRE</div><nav className="sidebar-nav flex flex-col">{(['overview', 'questions', 'reports', 'lessons', 'categories', 'notifications', 'users'] as View[]).map(item => <button key={item} className={`nav-item ${view === item ? 'active' : ''}`} onClick={() => { setView(item); setNotice(null); setSearch(''); }}><span className="nav-icon"><Icon name={item} /></span>{{ overview: 'Incamake', questions: 'Ibibazo', reports: 'Raporo', lessons: 'Amasomo', categories: 'Ibyiciro', notifications: 'Ubutumwa', users: 'Abakoresha' }[item]}<span className="nav-count">{item === 'questions' ? questions.length : item === 'lessons' ? lessons.length : item === 'categories' ? categories.length : item === 'notifications' ? announcements.length || '' : item === 'reports' ? newReports.length || '' : item === 'users' ? learnerTotal || '' : ''}</span></button>)}</nav><div className="sidebar-bottom"><span className="avatar">{session.user.email?.slice(0, 1).toUpperCase() ?? 'A'}</span><span className="admin-email">{session.user.email}</span><button className="text-button" onClick={signOut}>Sohoka</button></div></aside>
+    <section className="workspace mx-auto w-full max-w-[1550px]"><header className="topbar"><div className="topbar-title"><button className="sidebar-toggle grid h-[42px] w-[42px] place-items-center rounded-xl border border-slate-300 bg-white text-xl text-brand-800 transition duration-200 hover:-translate-y-px hover:border-brand-100 hover:bg-brand-50" type="button" aria-label={menuOpen ? 'Funga sidebar' : 'Fungura sidebar'} aria-expanded={menuOpen} onClick={() => setMenuOpen(open => !open)}>{menuOpen ? '×' : '☰'}</button><div><span className="eyebrow">AMATEGEKO Y’UMUHANDA / ADMIN</span><h1>{{ overview: 'Incamake', questions: 'Gucunga ibibazo', lessons: 'Gucunga amasomo', categories: 'Gucunga ibyiciro', notifications: 'Gucunga ubutumwa', reports: 'Raporo z’abakoresha', users: 'Gucunga abakoresha' }[view]}</h1></div></div><div className="top-actions"><span className="secure"><i /> Konti ya admin</span><button className="refresh" onClick={() => view === 'users' ? void loadLearners() : void loadData()} title="Ongera uvugurure">↻</button></div></header>
       <div className="cm-toast-region" aria-live="polite">{notice && <Toast notice={notice} onClose={() => setNotice(null)} />}</div>
       {confirmState && <ConfirmDialog {...confirmState} onAnswer={answerConfirm} />}
-      {view === 'overview' && <><div className="dashboard-hero"><div><p className="eyebrow">AMATEGEKO Y’UMUHANDA · ADMIN</p><h2>Murakaza neza 👋</h2><p>Reba uko app ihagaze, ucunge abakoresha, kandi uvugurure ibikubiye muri app.</p></div><div className="hero-actions"><button className="primary" onClick={() => { openQuestion(); setView('questions'); }}>＋ Ikibazo gishya</button><button className="hero-secondary" onClick={() => { openLesson(); setView('lessons'); }}>＋ Isomo rishya</button></div><div className="hero-orb orb-one" /><div className="hero-orb orb-two" /></div><div className="section-heading dashboard-heading"><div><p className="eyebrow">INCAMAKE Y’IBIKUBIYE MURI APP</p><h2>Uko ibintu bihagaze</h2></div><span className="live-label"><i /> Bivuye muri Supabase</span></div><div className="stat-grid dashboard-stats"><Stat label="Ibibazo" value={questions.length} detail={`${questions.filter(q => q.published).length} byatangajwe · ${questions.filter(q => !q.published).length} draft`} icon="questions" /><Stat label="Amasomo" value={lessons.length} detail={`${lessons.filter(l => l.published).length} yatangajwe · ${lessons.filter(l => !l.published).length} draft`} icon="lessons" /><Stat label="Ibyiciro" value={categories.length} detail={`${categories.filter(c => c.published).length} byatangajwe`} icon="categories" /><Stat label="Abakoresha" value={learnersReady ? learnerTotal : '—'} detail={learnersReady ? 'Konti zose za Supabase Auth' : 'Fungura abakoresha urebe umubare'} icon="users" /></div><div className="dashboard-columns"><section className="manage-panel"><div className="section-heading"><div><p className="eyebrow">GUCUNGA</p><h2>Ibice bya dashboard</h2></div></div><div className="manage-grid"><ManageCard icon="questions" title="Ibibazo" detail={`${questions.length} byose · ${questions.filter(q => !q.published).length} draft`} onClick={() => setView('questions')} /><ManageCard icon="lessons" title="Amasomo" detail={`${lessons.length} yose · ${lessons.filter(l => !l.published).length} draft`} onClick={() => setView('lessons')} /><ManageCard icon="categories" title="Ibyiciro" detail={`${categories.length} byo gutondekamo`} onClick={() => setView('categories')} /><ManageCard icon="users" title="Abakoresha" detail="Reba konti, gushakisha no guhagarika konti" onClick={() => setView('users')} /></div></section><aside className="review-panel"><div><p className="eyebrow">IBIKENEYE KWITABWAHO</p><h2>Ibikorwa byo gukurikirana</h2></div><ReviewRow label="Ibibazo bitaratangazwa" count={questions.filter(q => !q.published).length} onClick={() => { setStatusFilter('draft'); setView('questions'); }} /><ReviewRow label="Amasomo ataratangazwa" count={lessons.filter(l => !l.published).length} onClick={() => { setStatusFilter('draft'); setView('lessons'); }} /><ReviewRow label="Ibyiciro bitaratangazwa" count={categories.filter(c => !c.published).length} onClick={() => { setStatusFilter('draft'); setView('categories'); }} /><ReviewRow label="Ubutumwa butaratangazwa" count={announcements.filter(a => !a.published).length} onClick={() => { setStatusFilter('draft'); setView('notifications'); }} /><ReviewRow label="Ibibazo bidafite ibisobanuro" count={missingExplanations} onClick={() => { setStatusFilter('all'); setNeedsExplanation(true); setPage(1); setView('questions'); }} /><p className="footnote">Suzuma ibiri muri draft mbere yo kubitangaza ku bakoresha app.</p></aside></div></>}
+      {view === 'overview' && <><div className="dashboard-hero"><div><p className="eyebrow">AMATEGEKO Y’UMUHANDA · ADMIN</p><h2>Murakaza neza 👋</h2><p>Reba uko app ihagaze, ucunge abakoresha, kandi uvugurure ibikubiye muri app.</p></div><div className="hero-actions"><button className="primary" onClick={() => { openQuestion(); setView('questions'); }}>＋ Ikibazo gishya</button><button className="hero-secondary" onClick={() => { openLesson(); setView('lessons'); }}>＋ Isomo rishya</button></div><div className="hero-orb orb-one" /><div className="hero-orb orb-two" /></div><div className="section-heading dashboard-heading"><div><p className="eyebrow">INCAMAKE Y’IBIKUBIYE MURI APP</p><h2>Uko ibintu bihagaze</h2></div><span className="live-label"><i /> Bivuye muri Supabase</span></div><div className="stat-grid dashboard-stats"><Stat label="Ibibazo" value={questions.length} detail={`${questions.filter(q => q.published).length} byatangajwe · ${questions.filter(q => !q.published).length} draft`} icon="questions" /><Stat label="Amasomo" value={lessons.length} detail={`${lessons.filter(l => l.published).length} yatangajwe · ${lessons.filter(l => !l.published).length} draft`} icon="lessons" /><Stat label="Ibyiciro" value={categories.length} detail={`${categories.filter(c => c.published).length} byatangajwe`} icon="categories" /><Stat label="Abakoresha" value={learnersReady ? learnerTotal : '—'} detail={learnersReady ? 'Konti zose za Supabase Auth' : 'Fungura abakoresha urebe umubare'} icon="users" /></div><div className="dashboard-columns"><section className="manage-panel"><div className="section-heading"><div><p className="eyebrow">GUCUNGA</p><h2>Ibice bya dashboard</h2></div></div><div className="manage-grid"><ManageCard icon="questions" title="Ibibazo" detail={`${questions.length} byose · ${questions.filter(q => !q.published).length} draft`} onClick={() => setView('questions')} /><ManageCard icon="lessons" title="Amasomo" detail={`${lessons.length} yose · ${lessons.filter(l => !l.published).length} draft`} onClick={() => setView('lessons')} /><ManageCard icon="categories" title="Ibyiciro" detail={`${categories.length} byo gutondekamo`} onClick={() => setView('categories')} /><ManageCard icon="users" title="Abakoresha" detail="Reba konti, gushakisha no guhagarika konti" onClick={() => setView('users')} /></div></section><aside className="review-panel"><div><p className="eyebrow">IBIKENEYE KWITABWAHO</p><h2>Ibikorwa byo gukurikirana</h2></div><ReviewRow label="Ibibazo bitaratangazwa" count={questions.filter(q => !q.published).length} onClick={() => { setStatusFilter('draft'); setView('questions'); }} /><ReviewRow label="Amasomo ataratangazwa" count={lessons.filter(l => !l.published).length} onClick={() => { setStatusFilter('draft'); setView('lessons'); }} /><ReviewRow label="Ibyiciro bitaratangazwa" count={categories.filter(c => !c.published).length} onClick={() => { setStatusFilter('draft'); setView('categories'); }} /><ReviewRow label="Raporo nshya z’amakosa" count={newReports.length} onClick={() => { setReportStatus('new'); setView('reports'); }} /><ReviewRow label="Ubutumwa butaratangazwa" count={announcements.filter(a => !a.published).length} onClick={() => { setStatusFilter('draft'); setView('notifications'); }} /><ReviewRow label="Ibibazo bidafite ibisobanuro" count={missingExplanations} onClick={() => { setStatusFilter('all'); setNeedsExplanation(true); setPage(1); setView('questions'); }} /><p className="footnote">Suzuma ibiri muri draft mbere yo kubitangaza ku bakoresha app.</p></aside></div></>}
 
       {view === 'questions' && <>
         <div className="cm-toolbar">
@@ -516,7 +554,7 @@ export default function Home() {
         </div>
         <div className="cm-list cm-cards">
           <div className="cm-list-head"><b>{filteredQuestions.length} bibazo</b><span>{busy ? 'Biravugururwa...' : 'Bivuye muri Supabase'}</span></div>
-          {visibleQuestions.map(q => <QuestionRow key={q.id} question={q} category={categoryById.get(q.category_id)} image={imageUrl(q.image_path)} onOpen={() => openQuestion(q)} onToggle={() => void togglePublished('questions', q)} onDelete={() => void removeQuestion(q.id)} />)}
+          {visibleQuestions.map(q => <QuestionRow key={q.id} question={q} category={categoryById.get(q.category_id)} image={imageUrl(q.image_path)} openReports={openReportsByQuestion.get(q.id) ?? 0} onOpen={() => openQuestion(q)} onToggle={() => void togglePublished('questions', q)} onDelete={() => void removeQuestion(q.id)} />)}
           {filteredQuestions.length === 0 && <Empty text="Nta kibazo gihuye n'ishakisha cyangwa filters." />}
           <Pagination total={filteredQuestions.length} page={questionPage} pageSize={pageSize} onPageChange={setPage} />
         </div>
@@ -564,6 +602,20 @@ export default function Home() {
 
       {view === 'categories' && <><div className="toolbar"><ListControls search={search} onSearchChange={updateSearch} status={statusFilter} onStatusChange={updateStatusFilter} pageSize={pageSize} onPageSizeChange={updatePageSize} categories={categories} placeholder="Shakisha icyiciro..." showCategory={false} /></div><div className="category-layout"><form className="editor-card" onSubmit={saveCategory}><p className="eyebrow">{categories.some(c => c.id === categoryForm.id) ? 'HINDURA ICYICIRO' : 'ICYICIRO GISHYA'}</p><h2>{categories.some(c => c.id === categoryForm.id) ? 'Hindura icyiciro' : 'Ongeramo icyiciro'}</h2><label>Izina rigufi / ID<input required pattern="[A-Za-z0-9-]+" placeholder="urugero: ibimenyetso" value={categoryForm.id} readOnly={categories.some(c => c.id === categoryForm.id)} onChange={e => setCategoryForm({ ...categoryForm, id: e.target.value })} /></label><label>Izina rigaragara<input required value={categoryForm.title} onChange={e => setCategoryForm({ ...categoryForm, title: e.target.value })} /></label><label>Ibisobanuro bigufi<input value={categoryForm.subtitle} onChange={e => setCategoryForm({ ...categoryForm, subtitle: e.target.value })} /></label><div className="two-fields"><label>Ibara nyamukuru<input className="color-input" type="color" value={categoryForm.color} onChange={e => setCategoryForm({ ...categoryForm, color: e.target.value })} /></label><label>Ibara ryoroheje<input className="color-input" type="color" value={categoryForm.soft} onChange={e => setCategoryForm({ ...categoryForm, soft: e.target.value })} /></label></div><label>Agashushanyo muri app<select value={categoryForm.icon} onChange={e => setCategoryForm({ ...categoryForm, icon: e.target.value })}><option value="">Bisanzwe (nk’icyiciro cya mbere)</option>{categories.filter(c => c.icon_code).map(c => <option key={c.id} value={c.id}>Nk’icya “{c.title}”</option>)}</select></label><div className="category-preview" style={{ '--cat': categoryForm.color, '--cat-soft': categoryForm.soft } as CSSProperties}><span className="category-symbol"><Icon name="categories" /></span><span>{categoryForm.title.trim() || 'Uko icyiciro kizagaragara'}</span></div><button className="primary full" disabled={busy}>Bika icyiciro</button>{categoryForm.id && <button type="button" className="secondary full" onClick={() => setCategoryForm(emptyCategory())}>Reka guhindura</button>}</form><div className="category-grid">{visibleCategories.map(c => <article className="category-card" key={c.id}><div className="category-symbol" style={catStyle(c)}><Icon name="categories" /></div><h3>{c.title}</h3><p>{c.subtitle}</p><small>{c.id}</small><div className="category-meta"><span className={`pill ${c.published ? 'published' : ''}`}>{c.published ? 'Byatangajwe' : 'Draft'}</span><button onClick={() => void togglePublished('content_categories', c)}>{c.published ? 'Hisha' : 'Tangaza'}</button></div><div className="category-meta"><MoveButtons label={c.title} first={categories[0]?.id === c.id} last={categories[categories.length - 1]?.id === c.id} onMove={direction => moveCategory(c, direction)} /><span className="category-actions"><ActionIcon kind="edit" label="Hindura icyiciro" onClick={() => editCategory(c)} /><ActionIcon kind="delete" label="Siba icyiciro" onClick={() => void removeCategory(c)} /></span></div><small>{questions.filter(q => q.category_id === c.id).length} bibazo - {lessons.filter(l => l.category_id === c.id).length} masomo</small></article>)}</div><Pagination total={filteredCategories.length} page={categoryPage} pageSize={pageSize} onPageChange={setPage} /></div></>}
 
+      {view === 'reports' && (reportsError ? <div className="cm-setup"><Icon name="alert" /><div><strong>Imbonerahamwe ya raporo ntiraboneka muri Supabase.</strong><p>Kora migration <code>supabase/migrations/202611010002_question_reports.sql</code> muri Supabase SQL Editor, hanyuma ukande ↻ hejuru.</p><small>{reportsError}</small></div></div> : <>
+        <div className="cm-toolbar">
+          <SearchBox value={search} onChange={updateSearch} placeholder="Shakisha #nimero, ikibazo cyangwa igitekerezo..." />
+        </div>
+        <div className="cm-subbar">
+          <div className="cm-tabs" role="group" aria-label="Imimerere ya raporo">{([['new', 'Nshya'], ['resolved', 'Byakemutse'], ['all', 'Zose']] as const).map(([key, label]) => <button key={key} type="button" aria-pressed={reportStatus === key} className={reportStatus === key ? 'active' : ''} onClick={() => setReportStatus(key)}>{label}<span>{key === 'all' ? reports.length : reports.filter(r => r.status === key).length}</span></button>)}</div>
+        </div>
+        <div className="cm-list cm-cards">
+          <div className="cm-list-head"><b>{filteredReports.length} raporo</b><span>Zoherejwe n’abakoresha bakanze “Tanga ikosa” muri app.</span></div>
+          {filteredReports.map(report => { const question = questionById.get(report.question_id); return <ReportRow key={report.id} report={report} question={question} category={question ? categoryById.get(question.category_id) : undefined} sameQuestion={openReportsByQuestion.get(report.question_id) ?? 0} onOpenQuestion={question ? () => openQuestion(question) : undefined} onResolve={() => void setReportResolved(report, report.status === 'new')} onDelete={() => void removeReport(report)} />; })}
+          {filteredReports.length === 0 && <Empty text={reportStatus === 'new' && !search ? 'Nta raporo nshya. Byose bimeze neza!' : 'Nta raporo ihuye n’ishakisha.'} />}
+        </div>
+      </>)}
+
       {view === 'notifications' && (announcementsError ? <div className="cm-setup"><Icon name="alert" /><div><strong>Imbonerahamwe y’ubutumwa ntiraboneka muri Supabase.</strong><p>Kora migration <code>supabase/migrations/202610310001_notifications.sql</code> muri Supabase SQL Editor, hanyuma ukande ↻ hejuru.</p><small>{announcementsError}</small></div></div> : <>
         <div className="cm-toolbar">
           <SearchBox value={search} onChange={updateSearch} placeholder="Shakisha ubutumwa..." />
@@ -581,6 +633,7 @@ export default function Home() {
 
       {view === 'users' && <><div className="users-intro"><div className="users-intro-icon"><Icon name="users" /></div><div><h2>Konti z’abakoresha</h2><p>Genzura abakoresha biyandikishije, reba uko bakoresha app, uhagarike cyangwa wongere ufungure konti, kandi usibe konti iyo umukoresha abisabye.</p></div><div className="users-total"><strong>{learnerTotal}</strong><span>konti zose</span></div></div><div className="users-toolbar"><label className="user-search"><span>⌕</span><input type="search" placeholder="Shakisha email, telefone cyangwa ID..." value={learnerSearch} onChange={event => { setLearnerSearch(event.target.value); setLearnerPage(1); }} /><button type="button" disabled={!learnerSearch} onClick={() => { setLearnerSearch(''); setLearnerPage(1); }}>×</button></label><select value={learnerStatus} aria-label="Akayunguruzo ka konti" onChange={event => { setLearnerStatus(event.target.value as typeof learnerStatus); setLearnerPage(1); }}><option value="all">Konti zose</option><option value="active">Zikora</option><option value="suspended">Zahagaritswe</option></select><label className="page-size">Rows<select value={learnerPageSize} aria-label="Umubare w’abakoresha kuri page" onChange={event => { setLearnerPageSize(Number(event.target.value)); setLearnerPage(1); }}><option value={5}>5</option><option value={10}>10</option><option value={20}>20</option><option value={50}>50</option></select></label></div><div className="users-card"><div className="users-table-head"><div><strong>Abakoresha</strong><span>{busy ? 'Biravugururwa...' : `${learnerTotal} konti ziboneka`}</span></div><button className="secondary" onClick={() => void loadLearners()} disabled={busy}>↻ Ongera uvugurure</button></div>{learners.length ? <div className="users-table-wrap"><table className="users-table"><thead><tr><th>UMUKORESHA</th><th>YIYANDIKISHIJE</th><th>GUKORESHA APP</th><th>IMIMERERE</th><th>IBIKORWA</th></tr></thead><tbody>{learners.map(learner => { const suspended = Boolean(learner.bannedUntil && new Date(learner.bannedUntil) > new Date()); return <tr key={learner.id}><td><div className="user-cell"><span className="user-avatar">{(learner.email ?? learner.phone ?? 'U').slice(0,1).toUpperCase()}</span><span><strong>{learner.email ?? learner.phone ?? 'Konti idafite email/telefone'}</strong><small>{learner.phone && learner.email ? learner.phone : `ID: ${learner.id.slice(0,8)}…`}</small>{learner.isAdmin && <em>Admin</em>}</span></div></td><td>{formatDate(learner.createdAt)}</td><td><strong>{learner.completedLessons}</strong> amasomo{learner.progressUpdatedAt && <small className="table-subline">Yaherukaga: {formatDate(learner.progressUpdatedAt)}</small>}</td><td><span className={`user-status ${suspended ? 'suspended' : 'active'}`}><i />{suspended ? 'Yarahagaritswe' : 'Irakora'}</span></td><td>{learner.isAdmin ? <span className="protected-label">Admin irinzwe</span> : <span className="user-actions"><button className={`user-action ${suspended ? 'restore' : ''}`} disabled={busy} onClick={() => void changeLearnerStatus(learner)}>{suspended ? 'Ongera ufungure' : 'Hagarika konti'}</button><button className="user-action delete" disabled={busy} onClick={() => void deleteLearner(learner)}>Siba konti</button></span>}</td></tr>; })}</tbody></table></div> : <Empty text={learnersReady ? 'Nta konti zihuye n’ishakisha n’akayunguruzo.' : 'Shaka amakuru y’abakoresha...'} />}<Pagination total={learnerTotal} page={learnerPage} pageSize={learnerPageSize} onPageChange={setLearnerPage} /></div><p className="users-footnote">Abakoresha ni amakuru ava muri Supabase Auth. Ibyo bakora bibikwa kuri konti yabo; dashboard yerekana amasomo yarangiye gusa. Konti za admin ntizihagarikwa kandi ntizisibwa hano.</p></>}
       {drawer === 'question' && <Drawer eyebrow="UMWANDITSI W’IBIBAZO" title={questionForm.id ? `Hindura ikibazo${editingNumber != null ? ` #${editingNumber}` : ''}` : 'Ikibazo gishya'} onClose={closeDrawer} onSubmit={saveQuestion} footer={<><button type="button" className="secondary" onClick={closeDrawer}>Reka</button><button className="primary" disabled={busy}>{busy ? 'Birabikwa...' : 'Bika ikibazo'}</button></>}>
+        {editingReports.length > 0 && <div className="cm-report-panel"><strong><Icon name="flag" />Raporo {editingReports.length} zitarakemuka kuri iki kibazo</strong>{editingReports.map(report => <div key={report.id} className="cm-report-item"><span><b>{reportReasons[report.reason] ?? report.reason}</b>{report.comment && <> — “{report.comment}”</>}</span><button type="button" className="text-button" onClick={() => void setReportResolved(report, true)}>Byakemutse</button></div>)}</div>}
         <label className="cm-field">Ikibazo<textarea autoFocus required rows={3} value={questionForm.prompt} onChange={e => setQuestionForm({ ...questionForm, prompt: e.target.value })} /></label>
         <label className="cm-field">Icyiciro<select required value={questionForm.category_id} onChange={e => setQuestionForm({ ...questionForm, category_id: e.target.value })}><option value="">Hitamo icyiciro</option>{categories.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}</select></label>
         <fieldset className="cm-options"><legend>Ibisubizo<span className="cm-hint">Kanda inyuguti y’igisubizo nyacyo · ibisubizo 2 kugeza kuri 4</span></legend>
@@ -661,7 +714,7 @@ function isOnLocalDay(value: string, daysAgo: number) {
   return date >= start && date < end;
 }
 
-type IconName = View | 'search' | 'chevron' | 'check' | 'alert' | 'image' | 'up' | 'down' | 'info' | 'sparkle' | 'bulb' | 'clock' | 'clipboard' | 'trash';
+type IconName = View | 'search' | 'chevron' | 'check' | 'alert' | 'image' | 'up' | 'down' | 'info' | 'sparkle' | 'bulb' | 'clock' | 'clipboard' | 'trash' | 'flag';
 const iconPaths: Record<IconName, ReactNode> = {
   overview: <><rect x="3" y="3" width="7" height="9" rx="1.5" /><rect x="14" y="3" width="7" height="5" rx="1.5" /><rect x="14" y="12" width="7" height="9" rx="1.5" /><rect x="3" y="16" width="7" height="5" rx="1.5" /></>,
   questions: <><circle cx="12" cy="12" r="9" /><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5" /><path d="M12 17.5h.01" /></>,
@@ -681,6 +734,8 @@ const iconPaths: Record<IconName, ReactNode> = {
   bulb: <><path d="M9 18h6" /><path d="M10 22h4" /><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V18h6v-1.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z" /></>,
   clock: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></>,
   clipboard: <><rect x="8" y="2" width="8" height="4" rx="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /></>,
+  flag: <><path d="M4 22V4" /><path d="M4 4h12l-2 4 2 4H4" /></>,
+  reports: <><path d="M4 22V4" /><path d="M4 4h12l-2 4 2 4H4" /></>,
   trash: <><path d="M3 6h18" /><path d="M8 6V4h8v2" /><path d="m19 6-1 14H6L5 6" /><path d="M10 11v5M14 11v5" /></>,
 };
 function ConfirmDialog({ title, message, confirmLabel, tone = 'danger', requireText, onAnswer }: ConfirmOptions & { onAnswer: (ok: boolean) => void }) {
@@ -742,14 +797,31 @@ function PageSizeSelect({ value, onChange }: { value: number; onChange: (value: 
 function StatusSwitch({ published, label, onToggle }: { published: boolean; label: string; onToggle: () => void }) {
   return <button type="button" role="switch" aria-checked={published} className={`cm-switch ${published ? 'on' : ''}`} title={published ? 'Kanda uhishe' : 'Kanda utangaze'} onClick={onToggle}><span className="cm-switch-track"><span className="cm-switch-thumb" /></span><span className="sr-only">{label}: </span><span className="cm-switch-label">{published ? 'Byatangajwe' : 'Draft'}</span></button>;
 }
-function QuestionRow({ question, category, image, onOpen, onToggle, onDelete }: { question: Question; category?: Category; image: string | null; onOpen: () => void; onToggle: () => void; onDelete: () => void }) {
+function ReportRow({ report, question, category, sameQuestion, onOpenQuestion, onResolve, onDelete }: { report: QuestionReport; question?: Question; category?: Category; sameQuestion: number; onOpenQuestion?: () => void; onResolve: () => void; onDelete: () => void }) {
+  const resolved = report.status === 'resolved';
+  return <article className="cm-row cm-qrow" style={catStyle(category)}>
+    <span className={`cm-thumb cm-report-icon ${resolved ? 'resolved' : ''}`}><Icon name={resolved ? 'check' : 'flag'} /></span>
+    <div className="cm-report-main">
+      <strong>{question?.number != null ? `#${question.number} · ` : ''}{reportReasons[report.reason] ?? report.reason}</strong>
+      <span className="cm-body">{question ? question.prompt : 'Ikibazo ntikikiriho.'}</span>
+      {report.comment && <span className="cm-report-comment">“{report.comment}”</span>}
+      <span className="cm-meta"><span>{formatDate(report.created_at)}</span><span>{report.reporter_id ? 'Umukoresha winjiye' : 'Mushyitsi'}</span>{!resolved && sameQuestion > 1 && <span className="cm-chip danger">Raporo {sameQuestion} kuri iki kibazo</span>}{resolved && report.resolved_at && <span className="cm-chip">Byakemutse {formatDate(report.resolved_at)}</span>}</span>
+    </div>
+    <div className="cm-report-actions">
+      {onOpenQuestion && <button type="button" className="secondary" onClick={onOpenQuestion}>Fungura ikibazo</button>}
+      <button type="button" className={resolved ? 'secondary' : 'primary'} onClick={onResolve}>{resolved ? 'Ongera ufungure' : 'Byakemutse'}</button>
+      <ActionIcon kind="delete" label="Siba raporo" onClick={onDelete} />
+    </div>
+  </article>;
+}
+function QuestionRow({ question, category, image, openReports = 0, onOpen, onToggle, onDelete }: { question: Question; category?: Category; image: string | null; openReports?: number; onOpen: () => void; onToggle: () => void; onDelete: () => void }) {
   const answer = question.question_options?.find(option => option.is_correct)?.option_text;
   return <article className="cm-row cm-qrow" style={catStyle(category)}>
     <span className="cm-thumb">{image ? <img src={image} alt="" /> : <Icon name="questions" />}</span>
     <button type="button" className="cm-row-main" onClick={onOpen}>
       <strong>{question.prompt}</strong>
       {answer && <span className="cm-answer"><Icon name="check" /><span>{answer}</span></span>}
-      <span className="cm-meta">{question.number != null && <span className="cm-chip cm-num">#{question.number}</span>}<span className="cm-cat"><i /><span>{category?.title ?? question.category_id}</span></span><span className="cm-chip">{question.is_exam_question ? 'Ikizamini' : 'Inyongera'}</span>{!question.explanation?.trim() && <span className="cm-chip warn">Nta bisobanuro</span>}{question.created_at && <span>Yongewe {formatDate(question.created_at)}</span>}{question.updated_at && <span>Byahinduwe {formatDate(question.updated_at)}</span>}</span>
+      <span className="cm-meta">{question.number != null && <span className="cm-chip cm-num">#{question.number}</span>}<span className="cm-cat"><i /><span>{category?.title ?? question.category_id}</span></span><span className="cm-chip">{question.is_exam_question ? 'Ikizamini' : 'Inyongera'}</span>{!question.explanation?.trim() && <span className="cm-chip warn">Nta bisobanuro</span>}{openReports > 0 && <span className="cm-chip danger">⚑ Raporo {openReports}</span>}{question.created_at && <span>Yongewe {formatDate(question.created_at)}</span>}{question.updated_at && <span>Byahinduwe {formatDate(question.updated_at)}</span>}</span>
     </button>
     <StatusSwitch published={question.published} label={question.prompt} onToggle={onToggle} />
     <div className="cm-row-actions"><ActionIcon kind="edit" label="Hindura ikibazo" onClick={onOpen} /><ActionIcon kind="delete" label="Siba ikibazo" onClick={onDelete} /></div>

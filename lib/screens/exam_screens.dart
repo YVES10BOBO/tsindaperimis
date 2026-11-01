@@ -8,6 +8,7 @@ import '../data/content_repository.dart';
 import '../data/models.dart';
 import '../state/app_state.dart';
 import '../widgets/common.dart';
+import '../widgets/question_report.dart';
 import '../widgets/road_sign.dart';
 
 String formatDuration(Duration d) {
