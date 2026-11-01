@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/app_colors.dart';
+import '../data/content_repository.dart';
 import '../state/app_state.dart';
 import '../widgets/common.dart';
 import 'password_screens.dart';
@@ -40,6 +42,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late int _avatar;
   bool _initialized = false;
   bool _saving = false;
+  String? _error;
 
   @override
   void didChangeDependencies() {
@@ -65,21 +68,44 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _save() async {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
-    setState(() => _saving = true);
-    await Future<void>.delayed(const Duration(milliseconds: 600)); // TODO: PUT /users/me
-    if (!mounted) return;
-    AppScope.of(context).updateProfile(
-      name: _name.text,
-      phone: _phone.text,
-      email: _email.text,
-      district: _district ?? '',
-      licenseCategory: _license,
-      avatarColor: _avatar,
-    );
-    setState(() => _saving = false);
-    showComingSoon(context, 'Umwirondoro wawe wabitswe.');
-    Navigator.of(context).pop();
+    if (_saving || !(_formKey.currentState?.validate() ?? false)) return;
+    final AppState state = AppScope.of(context);
+    final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
+    final NavigatorState navigator = Navigator.of(context);
+    setState(() {
+      _saving = true;
+      _error = null;
+    });
+    try {
+      await ContentRepository.instance.saveProfile(
+        name: _name.text.trim(),
+        phone: _phone.text.trim(),
+        district: _district ?? '',
+        licenseCategory: _license,
+        avatarColor: _avatar,
+      );
+      state.updateProfile(
+        name: _name.text,
+        phone: _phone.text,
+        email: state.email,
+        district: _district ?? '',
+        licenseCategory: _license,
+        avatarColor: _avatar,
+      );
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+            const SnackBar(content: Text('Umwirondoro wawe wabitswe.')));
+      navigator.pop();
+    } on AuthException catch (error) {
+      if (mounted) setState(() => _error = error.message);
+    } catch (_) {
+      if (mounted) {
+        setState(() => _error = 'Ntibyashobotse kubika. Reba internet.');
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
   @override
@@ -164,20 +190,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 validator: validatePhone,
               ),
               const SizedBox(height: 14),
+              // The sign-in email: changing it needs a confirmed new address,
+              // so it is shown here but not editable.
               TextFormField(
                 controller: _email,
-                keyboardType: TextInputType.emailAddress,
+                enabled: false,
                 decoration: const InputDecoration(
-                  labelText: 'Email (si ngombwa)',
+                  labelText: 'Email yo kwinjira',
+                  helperText: 'Email ukoresha winjira ntishobora guhindurwa hano.',
                   prefixIcon: Icon(Icons.email_outlined),
                 ),
-                validator: (String? v) {
-                  final String e = (v ?? '').trim();
-                  if (e.isEmpty) return null;
-                  return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(e)
-                      ? null
-                      : 'Email ntiyanditse neza';
-                },
               ),
               const SizedBox(height: 14),
               DropdownButtonFormField<String>(
@@ -211,6 +233,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                 ],
               ),
+              if (_error != null) ...<Widget>[
+                const SizedBox(height: 20),
+                Text(_error!,
+                    style: const TextStyle(color: AppColors.error, fontSize: 13)),
+              ],
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: _saving ? null : _save,

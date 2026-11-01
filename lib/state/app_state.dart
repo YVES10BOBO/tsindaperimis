@@ -8,11 +8,18 @@ import '../data/models.dart';
 /// Imiterere ya app (umukoresha, iterambere, ibyo yabitse).
 class AppState extends ChangeNotifier {
   AppState() {
+    _restoreSettings();
     _restoreAccount();
     _restoreProgress();
   }
 
   StreamSubscription<void>? _signedOutSubscription;
+
+  void _restoreSettings() {
+    final String? saved = ContentRepository.instance.setting('theme_mode');
+    themeMode = ThemeMode.values.firstWhere((ThemeMode m) => m.name == saved,
+        orElse: () => ThemeMode.light);
+  }
 
   /// Ugarura konti yari yinjiye, kugira ngo umukoresha atongera kwinjira
   /// buri gihe afunguye app.
@@ -22,6 +29,7 @@ class AppState extends ChangeNotifier {
       _userName = account.name;
       email = account.email;
       _isGuest = false;
+      _applyProfile(account);
     }
     _signedOutSubscription =
         ContentRepository.instance.signedOutEvents.listen((_) {
@@ -123,6 +131,8 @@ class AppState extends ChangeNotifier {
     if (phone.trim().isNotEmpty) this.phone = phone.trim();
     if (email.trim().isNotEmpty) this.email = email.trim();
     _isGuest = false;
+    final account = ContentRepository.instance.signedInAccount;
+    if (account != null) _applyProfile(account);
     unawaited(
         ContentRepository.instance.syncProgressWithSupabase().then((saved) {
       if (saved != null) {
@@ -131,6 +141,15 @@ class AppState extends ChangeNotifier {
       }
     }));
     notifyListeners();
+  }
+
+  /// Umwirondoro ubitswe kuri konti (Supabase), ukurikira umukoresha
+  /// kuri telefoni yose yinjiriyeho.
+  void _applyProfile(SignedInAccount account) {
+    if (account.phone.isNotEmpty) phone = account.phone;
+    district = account.district;
+    licenseCategory = account.licenseCategory;
+    avatarColor = account.avatarColor;
   }
 
   void updateProfile({
@@ -152,6 +171,7 @@ class AppState extends ChangeNotifier {
 
   void setThemeMode(ThemeMode mode) {
     themeMode = mode;
+    unawaited(ContentRepository.instance.saveSetting('theme_mode', mode.name));
     notifyListeners();
   }
 
@@ -161,6 +181,8 @@ class AppState extends ChangeNotifier {
     phone = '';
     email = '';
     district = '';
+    licenseCategory = 'B';
+    avatarColor = 0;
     notifyListeners();
   }
 
@@ -178,8 +200,6 @@ class AppState extends ChangeNotifier {
     answeredByCategory.clear();
     correctByCategory.clear();
     examResults.clear();
-    licenseCategory = 'B';
-    avatarColor = 0;
     await ContentRepository.instance.clearLocalProgress();
     await ContentRepository.instance.signOutRemote();
     continueAsGuest();

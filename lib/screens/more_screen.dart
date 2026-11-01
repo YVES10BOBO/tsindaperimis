@@ -127,7 +127,9 @@ class MoreScreen extends StatelessWidget {
                       Text(
                         state.isGuest
                             ? 'Mushyitsi · iterambere ntiribikwa'
-                            : (state.isPremium ? 'Konti ya Premium' : 'Konti isanzwe'),
+                            : AppInfo.premiumEnabled && state.isPremium
+                                ? 'Konti ya Premium'
+                                : (state.email.isNotEmpty ? state.email : 'Konti isanzwe'),
                         style: TextStyle(color: AppColors.muted, fontSize: 13),
                       ),
                     ],
@@ -144,7 +146,7 @@ class MoreScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: 14),
-          if (!state.isPremium)
+          if (AppInfo.premiumEnabled && !state.isPremium)
             AppCard(
               color: AppColors.primaryDark,
               borderColor: AppColors.primaryDark,
@@ -222,12 +224,6 @@ class MoreScreen extends StatelessWidget {
                   title: 'Ururimi',
                   trailingText: 'Ikinyarwanda',
                   onTap: () => _chooseLanguage(context),
-                ),
-                SwitchListTile(
-                  secondary: Icon(Icons.alarm, color: AppColors.text),
-                  title: Text('Unyibutse kwiga buri munsi'),
-                  value: state.notificationsOn,
-                  onChanged: state.setNotifications,
                 ),
               ],
             ),
