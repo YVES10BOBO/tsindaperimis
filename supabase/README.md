@@ -40,6 +40,10 @@ Run `migrations/202611010001_question_numbers_and_dates.sql` to give every quest
 
 Run `migrations/202611010002_question_reports.sql` after the numbers migration. Learners tap **Tanga ikosa** under a question's explanation (practice, or the exam review), choose what is wrong and optionally comment; the report lands on the dashboard's **Raporo** page with the question's #number. Learners and guests can only send reports; only admins can read, resolve or delete them. A signed-in learner can have one open report per question.
 
+## Audio (listen buttons)
+
+Run `migrations/202611010003_audio.sql` to add `audio_path` to lessons and questions and create the public `audio` Storage bucket (admins upload; anyone can listen). In the dashboard, the lesson and question editors get an audio field with a player to check the recording before saving. In the app, the 🔊 button on a lesson or practice question appears only when a recording exists; it streams the file, so it needs internet. Device text-to-speech is not used because phones do not ship a Kinyarwanda voice.
+
 ## Password reset email
 
 The app resets passwords with a 6-digit code (no deep link needed): the learner enters their email, types the code from the email, then chooses a new password. In Supabase:

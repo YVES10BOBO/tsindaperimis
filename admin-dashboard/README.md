@@ -38,6 +38,8 @@ Responsive Next.js + TypeScript web dashboard for managing the Supabase driving-
 - Reorder categories, lessons within a category, and sections within a lesson; questions take 2–4 answers.
 - Edit category colours and app icon; delete a category once it has no lessons or questions.
 - Permanently delete a learner account (type SIBA to confirm). Admin accounts and your own account are protected.
+- Dashboard-wide search (Ctrl+K or "Shakisha hose"): questions (including `#57`), lessons, categories, messages and reports in one place.
+- Upload a recorded audio file per lesson and per question for the app's listen button. Requires [`../supabase/migrations/202611010003_audio.sql`](../supabase/migrations/202611010003_audio.sql).
 - Write, publish, schedule an end date for, and delete app notifications (Ubutumwa). Requires [`../supabase/migrations/202610310001_notifications.sql`](../supabase/migrations/202610310001_notifications.sql).
 - Row Level Security grants content writes only to users in `admin_users`.
 

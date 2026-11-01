@@ -4,6 +4,71 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/app_colors.dart';
 import '../data/content_repository.dart';
 import '../data/models.dart';
+import 'common.dart';
+import 'road_sign.dart';
+
+/// Shows a question with its correct answer and explanation (from search or
+/// bookmarks), with its code and the "Tanga ikosa" button.
+void showQuestionPreview(BuildContext context, Question question) {
+  showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    showDragHandle: true,
+    backgroundColor: AppColors.surface,
+    builder: (_) => _QuestionPreview(question: question),
+  );
+}
+
+class _QuestionPreview extends StatelessWidget {
+  const _QuestionPreview({required this.question});
+
+  final Question question;
+
+  @override
+  Widget build(BuildContext context) {
+    final Question q = question;
+    return SafeArea(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.85),
+        child: ListView(
+          shrinkWrap: true,
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+          children: <Widget>[
+            if (q.sign != null || q.imagePath != null) ...<Widget>[
+              Center(
+                child: RoadSignVisual(
+                    type: q.sign,
+                    imagePath: q.imagePath,
+                    size: 96,
+                    label: q.signLabel),
+              ),
+              SizedBox(height: 12),
+            ],
+            Text(q.text,
+                style: TextStyle(
+                    fontSize: 18, fontWeight: FontWeight.w700, height: 1.4)),
+            SizedBox(height: 12),
+            for (int i = 0; i < q.options.length; i++)
+              OptionTile(
+                letter: optionLetter(i),
+                text: q.options[i],
+                state: i == q.correctIndex
+                    ? OptionState.correct
+                    : OptionState.dimmed,
+              ),
+            if (q.explanation.trim().isNotEmpty) ...<Widget>[
+              SizedBox(height: 6),
+              Text(q.explanation,
+                  style: TextStyle(color: AppColors.bodyText, height: 1.5)),
+            ],
+            QuestionCode(question: q),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 /// Kode ihoraho y'ikibazo ("Kode: #57") n'akabuto "Tanga ikosa", bigaragara
 /// nyuma yo gusubiza. Raporo ijya kuri dashboard ya admin (Raporo).

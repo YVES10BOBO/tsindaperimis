@@ -6,6 +6,7 @@ import '../data/content_repository.dart';
 import '../data/models.dart';
 import '../state/app_state.dart';
 import '../widgets/common.dart';
+import '../widgets/question_report.dart';
 import 'auth_screen.dart';
 import 'delete_account_screen.dart';
 import 'info_screens.dart';
@@ -77,7 +78,9 @@ class MoreScreen extends StatelessWidget {
             title: Text(_themeLabel(mode)),
             subtitle: Text(subtitle),
             trailing: Icon(
-              selected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+              selected
+                  ? Icons.radio_button_checked
+                  : Icons.radio_button_unchecked,
               color: selected ? AppColors.primary : AppColors.muted,
             ),
             onTap: () {
@@ -91,9 +94,12 @@ class MoreScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              option(ThemeMode.light, Icons.light_mode_outlined, 'Inyuma h\'umweru'),
-              option(ThemeMode.dark, Icons.dark_mode_outlined, 'Inyuma hijimye, byiza nijoro'),
-              option(ThemeMode.system, Icons.phone_android, 'Bikurikira imiterere ya telefoni'),
+              option(ThemeMode.light, Icons.light_mode_outlined,
+                  'Inyuma h\'umweru'),
+              option(ThemeMode.dark, Icons.dark_mode_outlined,
+                  'Inyuma hijimye, byiza nijoro'),
+              option(ThemeMode.system, Icons.phone_android,
+                  'Bikurikira imiterere ya telefoni'),
             ],
           ),
         );
@@ -109,27 +115,34 @@ class MoreScreen extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.fromLTRB(20, 16, 20, 24),
         children: <Widget>[
-          Text('Ibindi', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800)),
+          Text('Ibindi',
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800)),
           SizedBox(height: 16),
           AppCard(
-            onTap: state.isGuest ? null : () => _push(context, const EditProfileScreen()),
+            onTap: state.isGuest
+                ? null
+                : () => _push(context, const EditProfileScreen()),
             child: Row(
               children: <Widget>[
-                UserAvatar(name: state.displayName, colorIndex: state.avatarColor),
+                UserAvatar(
+                    name: state.displayName, colorIndex: state.avatarColor),
                 SizedBox(width: 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(state.displayName,
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w800)),
                       SizedBox(height: 2),
                       Text(
                         state.isGuest
                             ? 'Mushyitsi · iterambere ntiribikwa'
                             : AppInfo.premiumEnabled && state.isPremium
                                 ? 'Konti ya Premium'
-                                : (state.email.isNotEmpty ? state.email : 'Konti isanzwe'),
+                                : (state.email.isNotEmpty
+                                    ? state.email
+                                    : 'Konti isanzwe'),
                         style: TextStyle(color: AppColors.muted, fontSize: 13),
                       ),
                     ],
@@ -137,7 +150,8 @@ class MoreScreen extends StatelessWidget {
                 ),
                 if (state.isGuest)
                   TextButton(
-                    onPressed: () => _push(context, const AuthScreen(isRegister: true)),
+                    onPressed: () =>
+                        _push(context, const AuthScreen(isRegister: true)),
                     child: Text('Iyandikishe'),
                   )
                 else
@@ -153,7 +167,8 @@ class MoreScreen extends StatelessWidget {
               onTap: () => _push(context, PremiumScreen()),
               child: Row(
                 children: <Widget>[
-                  Icon(Icons.workspace_premium, color: Color(0xFFFACC15), size: 32),
+                  Icon(Icons.workspace_premium,
+                      color: Color(0xFFFACC15), size: 32),
                   SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -161,10 +176,13 @@ class MoreScreen extends StatelessWidget {
                       children: <Widget>[
                         Text('Fungura Premium',
                             style: TextStyle(
-                                color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800)),
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800)),
                         SizedBox(height: 2),
                         Text('Ibizamini byose, ibibazo byinshi, nta matangazo',
-                            style: TextStyle(color: Color(0xFFC7D2FE), fontSize: 13)),
+                            style: TextStyle(
+                                color: Color(0xFFC7D2FE), fontSize: 13)),
                       ],
                     ),
                   ),
@@ -214,7 +232,9 @@ class MoreScreen extends StatelessWidget {
                   onTap: () => _push(context, NotificationsScreen()),
                 ),
                 _MenuTile(
-                  icon: AppColors.isDark ? Icons.dark_mode_outlined : Icons.light_mode_outlined,
+                  icon: AppColors.isDark
+                      ? Icons.dark_mode_outlined
+                      : Icons.light_mode_outlined,
                   title: 'Imiterere y\'amabara',
                   trailingText: _themeLabel(state.themeMode),
                   onTap: () => _chooseTheme(context, state),
@@ -256,7 +276,8 @@ class MoreScreen extends StatelessWidget {
                     applicationName: AppInfo.name,
                     applicationVersion: AppInfo.version,
                     children: <Widget>[
-                      Text('App yo kwiga amategeko y\'umuhanda no kwitegura ikizamini cy\'uruhushya rwo gutwara. '
+                      Text(
+                          'App yo kwiga amategeko y\'umuhanda no kwitegura ikizamini cy\'uruhushya rwo gutwara. '
                           'Ibirimo bigomba kugenzurwa n\'amabwiriza agezweho ya Polisi y\'u Rwanda.'),
                     ],
                   ),
@@ -269,7 +290,8 @@ class MoreScreen extends StatelessWidget {
                     onTap: () {
                       state.signOut();
                       Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute<void>(builder: (_) => WelcomeScreen()),
+                        MaterialPageRoute<void>(
+                            builder: (_) => WelcomeScreen()),
                         (Route<dynamic> r) => false,
                       );
                     },
@@ -303,12 +325,14 @@ class _MenuTile extends StatelessWidget {
     final Color color = this.color ?? AppColors.text;
     return ListTile(
       leading: Icon(icon, color: color),
-      title: Text(title, style: TextStyle(color: color, fontWeight: FontWeight.w600)),
+      title: Text(title,
+          style: TextStyle(color: color, fontWeight: FontWeight.w600)),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           if (trailingText != null)
-            Text(trailingText!, style: TextStyle(color: AppColors.muted, fontSize: 13)),
+            Text(trailingText!,
+                style: TextStyle(color: AppColors.muted, fontSize: 13)),
           Icon(Icons.chevron_right, color: AppColors.muted),
         ],
       ),
@@ -342,73 +366,90 @@ class BookmarksScreen extends StatelessWidget {
           ? EmptyState(
               icon: Icons.bookmark_border,
               title: 'Nta kintu urabika',
-              message: 'Kanda ikimenyetso cyo kubika ku isomo cyangwa ku kibazo kugira ngo kize hano.',
+              message:
+                  'Kanda ikimenyetso cyo kubika ku isomo cyangwa ku kibazo kugira ngo kize hano.',
             )
-          : ListView(
-              padding: EdgeInsets.fromLTRB(20, 8, 20, 24),
-              children: <Widget>[
-                if (lessons.isNotEmpty) ...<Widget>[
-                  SectionTitle('Amasomo'),
-                  SizedBox(height: 6),
-                  for (final Lesson l in lessons)
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 10),
-                      child: AppCard(
-                        radius: 14,
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute<void>(builder: (_) => LessonScreen(lesson: l)),
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(Icons.article_outlined, color: AppColors.primary),
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: Text(l.title,
-                                  style: TextStyle(fontWeight: FontWeight.w600)),
-                            ),
-                            Icon(Icons.chevron_right, color: AppColors.muted),
-                          ],
-                        ),
-                      ),
-                    ),
-                  SizedBox(height: 12),
-                ],
-                if (questions.isNotEmpty) ...<Widget>[
-                  SectionTitle('Ibibazo'),
-                  SizedBox(height: 6),
-                  for (final Question q in questions)
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 10),
-                      child: AppCard(
-                        radius: 14,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Expanded(
-                                  child: Text(q.text,
-                                      style: TextStyle(fontWeight: FontWeight.w700, height: 1.4)),
-                                ),
-                                IconButton(
-                                  tooltip: 'Kuramo',
-                                  icon: Icon(Icons.bookmark, color: AppColors.primary),
-                                  onPressed: () => state.toggleQuestionBookmark(q.id),
-                                ),
-                              ],
-                            ),
-                            Text('Igisubizo: ${q.correctAnswer}',
-                                style: TextStyle(
-                                    color: AppColors.success, fontWeight: FontWeight.w600)),
-                          ],
-                        ),
-                      ),
-                    ),
-                ],
-              ],
-            ),
+          // Built lazily: a learner can save many questions.
+          : Builder(builder: (BuildContext context) {
+              final List<Widget Function()> rows =
+                  _rows(context, state, lessons, questions);
+              return ListView.builder(
+                padding: EdgeInsets.fromLTRB(20, 8, 20, 24),
+                itemCount: rows.length,
+                itemBuilder: (BuildContext context, int i) => rows[i](),
+              );
+            }),
     );
+  }
+
+  List<Widget Function()> _rows(BuildContext context, AppState state,
+      List<Lesson> lessons, List<Question> questions) {
+    return <Widget Function()>[
+      if (lessons.isNotEmpty) ...<Widget Function()>[
+        () => SectionTitle('Amasomo (${lessons.length})'),
+        () => SizedBox(height: 6),
+        for (final Lesson l in lessons)
+          () => Padding(
+                padding: EdgeInsets.only(bottom: 10),
+                child: AppCard(
+                  radius: 14,
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                        builder: (_) => LessonScreen(lesson: l)),
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.article_outlined, color: AppColors.primary),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Text(l.title,
+                            style: TextStyle(fontWeight: FontWeight.w600)),
+                      ),
+                      Icon(Icons.chevron_right, color: AppColors.muted),
+                    ],
+                  ),
+                ),
+              ),
+        () => SizedBox(height: 12),
+      ],
+      if (questions.isNotEmpty) ...<Widget Function()>[
+        () => SectionTitle('Ibibazo (${questions.length})'),
+        () => SizedBox(height: 6),
+        for (final Question q in questions)
+          () => Padding(
+                padding: EdgeInsets.only(bottom: 10),
+                child: AppCard(
+                  radius: 14,
+                  onTap: () => showQuestionPreview(context, q),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Expanded(
+                            child: Text(q.text,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w700, height: 1.4)),
+                          ),
+                          IconButton(
+                            tooltip: 'Kuramo',
+                            icon:
+                                Icon(Icons.bookmark, color: AppColors.primary),
+                            onPressed: () => state.toggleQuestionBookmark(q.id),
+                          ),
+                        ],
+                      ),
+                      Text('Igisubizo: ${q.correctAnswer}',
+                          style: TextStyle(
+                              color: AppColors.success,
+                              fontWeight: FontWeight.w600)),
+                    ],
+                  ),
+                ),
+              ),
+      ],
+    ];
   }
 }
 
@@ -437,7 +478,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<AppNotification> items = ContentRepository.instance.notifications;
+    final List<AppNotification> items =
+        ContentRepository.instance.notifications;
     return Scaffold(
       appBar: AppBar(title: Text('Ubutumwa')),
       body: RefreshIndicator(
@@ -450,7 +492,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   EmptyState(
                     icon: Icons.notifications_none,
                     title: 'Nta butumwa buhari',
-                    message: 'Ubutumwa bushya buzagaragara hano. Kurura hasi kugira ngo urebe ubushya.',
+                    message:
+                        'Ubutumwa bushya buzagaragara hano. Kurura hasi kugira ngo urebe ubushya.',
                   ),
                 ],
               )
@@ -461,39 +504,46 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   Widget _buildList(List<AppNotification> items) {
     return ListView.separated(
-        physics: AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.fromLTRB(20, 8, 20, 24),
-        itemCount: items.length,
-        separatorBuilder: (_, __) => SizedBox(height: 10),
-        itemBuilder: (BuildContext context, int i) {
-          final AppNotification n = items[i];
-          return AppCard(
-            radius: 14,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                IconBadge(
-                    icon: n.icon, color: AppColors.primary, background: AppColors.primarySoft, size: 40),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(n.title, style: TextStyle(fontWeight: FontWeight.w700)),
-                      SizedBox(height: 2),
-                      Text(n.body, style: TextStyle(color: AppColors.muted, height: 1.4)),
-                      if (n.when.isNotEmpty) ...<Widget>[
-                        SizedBox(height: 4),
-                        Text(n.when, style: TextStyle(color: AppColors.muted, fontSize: 12)),
-                      ],
+      physics: AlwaysScrollableScrollPhysics(),
+      padding: EdgeInsets.fromLTRB(20, 8, 20, 24),
+      itemCount: items.length,
+      separatorBuilder: (_, __) => SizedBox(height: 10),
+      itemBuilder: (BuildContext context, int i) {
+        final AppNotification n = items[i];
+        return AppCard(
+          radius: 14,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              IconBadge(
+                  icon: n.icon,
+                  color: AppColors.primary,
+                  background: AppColors.primarySoft,
+                  size: 40),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(n.title,
+                        style: TextStyle(fontWeight: FontWeight.w700)),
+                    SizedBox(height: 2),
+                    Text(n.body,
+                        style: TextStyle(color: AppColors.muted, height: 1.4)),
+                    if (n.when.isNotEmpty) ...<Widget>[
+                      SizedBox(height: 4),
+                      Text(n.when,
+                          style:
+                              TextStyle(color: AppColors.muted, fontSize: 12)),
                     ],
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          );
-        },
-      );
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -525,7 +575,8 @@ class _PremiumScreenState extends State<PremiumScreen> {
     }
     // TODO: Hamagara backend (Payments module) ihuza na MTN MoMo / Airtel Money API.
     AppScope.of(context).activatePremium();
-    showComingSoon(context, 'Igerageza: Premium yafunguwe. Kwishyura nyabyo bizahuzwa na backend.');
+    showComingSoon(context,
+        'Igerageza: Premium yafunguwe. Kwishyura nyabyo bizahuzwa na backend.');
     Navigator.of(context).pop();
   }
 
@@ -537,7 +588,8 @@ class _PremiumScreenState extends State<PremiumScreen> {
         padding: EdgeInsets.fromLTRB(20, 8, 20, 24),
         children: <Widget>[
           Center(
-            child: Icon(Icons.workspace_premium, size: 64, color: Color(0xFFEAB308)),
+            child: Icon(Icons.workspace_premium,
+                size: 64, color: Color(0xFFEAB308)),
           ),
           SizedBox(height: 10),
           Text('Fungura Premium',
@@ -645,12 +697,18 @@ class _PayMethod extends StatelessWidget {
           Container(
             width: 36,
             height: 36,
-            decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(
+                color: color, borderRadius: BorderRadius.circular(10)),
             child: Icon(Icons.phone_android, color: Colors.white, size: 20),
           ),
           SizedBox(width: 12),
-          Expanded(child: Text(label, style: TextStyle(fontWeight: FontWeight.w700))),
-          Icon(selected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+          Expanded(
+              child:
+                  Text(label, style: TextStyle(fontWeight: FontWeight.w700))),
+          Icon(
+              selected
+                  ? Icons.radio_button_checked
+                  : Icons.radio_button_unchecked,
               color: selected ? AppColors.primary : AppColors.muted),
         ],
       ),

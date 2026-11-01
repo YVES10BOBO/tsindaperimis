@@ -6,9 +6,9 @@ import { configured, supabase } from '@/lib/supabase';
 
 type Category = { id: string; title: string; subtitle: string; icon_code: number; icon_font_family: string | null; icon_font_package: string | null; color_value: number; soft_color_value: number; sort_order: number; published: boolean };
 type Option = { id?: string; position: number; option_text: string; is_correct: boolean };
-type Question = { id: string; category_id: string; prompt: string; explanation: string; sign_type: string | null; sign_label: string | null; image_path: string | null; is_exam_question: boolean; sort_order: number; published: boolean; question_options: Option[]; number?: number | null; created_at?: string; updated_at?: string | null };
+type Question = { id: string; category_id: string; prompt: string; explanation: string; sign_type: string | null; sign_label: string | null; image_path: string | null; is_exam_question: boolean; sort_order: number; published: boolean; question_options: Option[]; audio_path?: string | null; number?: number | null; created_at?: string; updated_at?: string | null };
 type Section = { id?: string; position: number; heading: string; body: string; sign_type: string | null; sign_label: string | null; image_path: string | null };
-type Lesson = { id: string; category_id: string; title: string; minutes: number; sort_order: number; created_at: string; updated_at?: string | null; is_extra: boolean; published: boolean; lesson_sections: Section[] };
+type Lesson = { id: string; category_id: string; title: string; minutes: number; sort_order: number; created_at: string; updated_at?: string | null; audio_path?: string | null; is_extra: boolean; published: boolean; lesson_sections: Section[] };
 type Learner = { id: string; email: string | null; phone: string | null; createdAt: string; lastSignInAt: string | null; bannedUntil: string | null; isAdmin: boolean; progressUpdatedAt: string | null; completedLessons: number; hasProgress: boolean };
 type Announcement = { id: string; title: string; body: string; icon: string; published: boolean; published_at: string | null; expires_at: string | null; created_at: string; updated_at: string };
 type QuestionReport = { id: string; question_id: string; reason: string; comment: string | null; reporter_id: string | null; status: 'new' | 'resolved'; created_at: string; resolved_at: string | null };
@@ -16,10 +16,14 @@ type View = 'overview' | 'questions' | 'reports' | 'lessons' | 'categories' | 'n
 // Keys must match the question_reports.reason check constraint and the Flutter app.
 const reportReasons: Record<string, string> = { wrong_answer: 'Igisubizo nyacyo si cyo', typo: 'Amakosa mu nyandiko', image: 'Ifoto cyangwa icyapa si cyo', other: 'Ibindi' };
 type Notice = { kind: 'error' | 'success'; text: string };
+type SearchTarget =
+  | { kind: 'question'; item: Question } | { kind: 'lesson'; item: Lesson } | { kind: 'category'; item: Category }
+  | { kind: 'announcement'; item: Announcement } | { kind: 'report'; search: string } | { kind: 'users'; search: string }
+  | { kind: 'view'; view: View; search: string };
 type ConfirmOptions = { title: string; message: ReactNode; confirmLabel: string; tone?: 'danger' | 'warning' | 'primary'; requireText?: string };
 
-const emptyQuestion = () => ({ id: '', category_id: '', prompt: '', explanation: '', sign_type: '', sign_label: '', image_path: '', is_exam_question: true, published: false, options: ['', '', '', ''], correct: 0 });
-const emptyLesson = () => ({ id: '', category_id: '', title: '', minutes: 5, is_extra: false, published: false, sections: [{ heading: '', body: '', sign_type: '', sign_label: '', image_path: '' }] });
+const emptyQuestion = () => ({ id: '', category_id: '', prompt: '', explanation: '', sign_type: '', sign_label: '', image_path: '', audio_path: '', is_exam_question: true, published: false, options: ['', '', '', ''], correct: 0 });
+const emptyLesson = () => ({ id: '', category_id: '', title: '', minutes: 5, is_extra: false, published: false, audio_path: '', sections: [{ heading: '', body: '', sign_type: '', sign_label: '', image_path: '' }] });
 const emptyCategory = () => ({ id: '', title: '', subtitle: '', color: '#315c72', soft: '#e7f0f3', icon: '' });
 const emptyAnnouncement = () => ({ id: '', title: '', body: '', icon: 'info', published: false, expires_at: '' });
 // Keys must match the notifications.icon check constraint and the Flutter app's icon map.
@@ -73,6 +77,7 @@ export default function Home() {
   const [reports, setReports] = useState<QuestionReport[]>([]);
   const [reportsError, setReportsError] = useState<string | null>(null);
   const [reportStatus, setReportStatus] = useState<'new' | 'resolved' | 'all'>('new');
+  const [paletteOpen, setPaletteOpen] = useState(false);
   const [drawer, setDrawer] = useState<'question' | 'lesson' | 'announcement' | null>(null);
   const [formSnapshot, setFormSnapshot] = useState('');
   const [openSections, setOpenSections] = useState<number[]>([0]);
@@ -187,25 +192,44 @@ export default function Home() {
 
   // Deletes uploaded sign images that no question or lesson section uses any more.
   // Bundled app images (assets/...) are never touched.
-  const removeUnusedImages = async (paths: (string | null | undefined)[]) => {
+  const removeUnusedFiles = async (paths: (string | null | undefined)[]) => {
     if (!supabase) return;
     const db = supabase;
     const candidates = [...new Set(paths.filter((path): path is string => typeof path === 'string' && path !== '' && !path.startsWith('assets/')))];
     if (!candidates.length) return;
     try {
-      const unused: string[] = [];
+      const unusedImages: string[] = [];
+      const unusedAudio: string[] = [];
       for (const path of candidates) {
-        const [inQuestions, inSections] = await Promise.all([
-          db.from('questions').select('id', { count: 'exact', head: true }).eq('image_path', path),
-          db.from('lesson_sections').select('id', { count: 'exact', head: true }).eq('image_path', path),
-        ]);
-        if (!inQuestions.error && !inSections.error && !inQuestions.count && !inSections.count) unused.push(path);
+        // Recordings live under "recordings/" in the audio bucket; everything else is a sign image.
+        const isAudio = path.startsWith('recordings/');
+        const [inQuestions, inOther] = await Promise.all(isAudio
+          ? [db.from('questions').select('id', { count: 'exact', head: true }).eq('audio_path', path),
+             db.from('lessons').select('id', { count: 'exact', head: true }).eq('audio_path', path)]
+          : [db.from('questions').select('id', { count: 'exact', head: true }).eq('image_path', path),
+             db.from('lesson_sections').select('id', { count: 'exact', head: true }).eq('image_path', path)]);
+        if (!inQuestions.error && !inOther.error && !inQuestions.count && !inOther.count) (isAudio ? unusedAudio : unusedImages).push(path);
       }
-      if (unused.length) await db.storage.from('road-signs').remove(unused);
+      if (unusedImages.length) await db.storage.from('road-signs').remove(unusedImages);
+      if (unusedAudio.length) await db.storage.from('audio').remove(unusedAudio);
     } catch {
-      // Best effort: an image left behind is harmless, so never block the admin on cleanup.
+      // Best effort: a file left behind is harmless, so never block the admin on cleanup.
     }
   };
+
+  const uploadAudio = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return null;
+    if (!file.type.startsWith('audio/')) throw new Error('Hitamo dosiye y’amajwi gusa (MP3, M4A, WAV…).');
+    if (file.size > 20 * 1024 * 1024) throw new Error('Amajwi agomba kutarenza 20 MB.');
+    const ext = file.name.includes('.') ? file.name.split('.').pop()!.toLowerCase() : 'mp3';
+    const path = `recordings/${crypto.randomUUID()}.${ext}`;
+    const { error } = await requireClient().storage.from('audio').upload(path, file, { contentType: file.type, upsert: false });
+    if (error) throw error;
+    setUploadedPaths(paths => [...paths, path]);
+    return path;
+  };
+  const audioUrl = (path: string | null | undefined) => path && supabase ? supabase.storage.from('audio').getPublicUrl(path).data.publicUrl : null;
 
   const deleteLearner = async (learner: Learner) => {
     const label = learner.email ?? learner.phone ?? learner.id;
@@ -251,15 +275,16 @@ export default function Home() {
   const openQuestion = (q?: Question) => {
     if (!q) { showQuestion({ ...emptyQuestion(), category_id: categoryFilter !== 'all' ? categoryFilter : categories[0]?.id ?? '' }); return; }
     const options = [...q.question_options].sort((a, b) => a.position - b.position);
-    showQuestion({ id: q.id, category_id: q.category_id, prompt: q.prompt, explanation: q.explanation, sign_type: q.sign_type ?? '', sign_label: q.sign_label ?? '', image_path: q.image_path ?? '', is_exam_question: q.is_exam_question, published: q.published, options: options.map(o => o.option_text), correct: Math.max(0, options.findIndex(o => o.is_correct)) });
+    showQuestion({ id: q.id, category_id: q.category_id, prompt: q.prompt, explanation: q.explanation, sign_type: q.sign_type ?? '', sign_label: q.sign_label ?? '', image_path: q.image_path ?? '', audio_path: q.audio_path ?? '', is_exam_question: q.is_exam_question, published: q.published, options: options.map(o => o.option_text), correct: Math.max(0, options.findIndex(o => o.is_correct)) });
   };
 
   const saveQuestion = async (event: FormEvent) => {
     event.preventDefault(); setBusy(true); setNotice(null);
-    const previousImage = questions.find(q => q.id === questionForm.id)?.image_path;
+    const previousQuestion = questions.find(q => q.id === questionForm.id);
+    const previousImage = previousQuestion?.image_path;
     try {
       const db = requireClient();
-      const row = { id: questionForm.id || crypto.randomUUID(), category_id: questionForm.category_id, prompt: questionForm.prompt.trim(), explanation: questionForm.explanation.trim(), sign_type: questionForm.sign_type.trim() || null, sign_label: questionForm.sign_label.trim() || null, image_path: questionForm.image_path || null, is_exam_question: questionForm.is_exam_question, sort_order: questionForm.id ? (questions.find(q => q.id === questionForm.id)?.sort_order ?? questions.length) : questions.length, published: questionForm.published,
+      const row = { id: questionForm.id || crypto.randomUUID(), category_id: questionForm.category_id, prompt: questionForm.prompt.trim(), explanation: questionForm.explanation.trim(), sign_type: questionForm.sign_type.trim() || null, sign_label: questionForm.sign_label.trim() || null, image_path: questionForm.image_path || null, ...(audioReady ? { audio_path: questionForm.audio_path || null } : {}), is_exam_question: questionForm.is_exam_question, sort_order: questionForm.id ? (questions.find(q => q.id === questionForm.id)?.sort_order ?? questions.length) : questions.length, published: questionForm.published,
         // Saving in the editor is an edit; publishing or hiding is not. New questions get their number and date from the database.
         ...(questionMetaReady && questionForm.id ? { updated_at: new Date().toISOString() } : {}) };
       const { error } = await db.from('questions').upsert(row); if (error) throw error;
@@ -267,7 +292,7 @@ export default function Home() {
       const inserted = await db.from('question_options').insert(questionForm.options.map((option_text, position) => ({ id: `${row.id}-${position}-${crypto.randomUUID().slice(0, 8)}`, question_id: row.id, position, option_text: option_text.trim(), is_correct: position === questionForm.correct })));
       if (inserted.error) throw inserted.error;
       setQuestionForm(emptyQuestion()); setDrawer(null); setNotice({ kind: 'success', text: 'Ikibazo cyabitswe neza.' });
-      void removeUnusedImages([previousImage, ...uploadedPaths]); setUploadedPaths([]);
+      void removeUnusedFiles([previousImage, previousQuestion?.audio_path, ...uploadedPaths]); setUploadedPaths([]);
       await loadData();
     } catch (error) { sayError(error); }
     finally { setBusy(false); }
@@ -276,9 +301,9 @@ export default function Home() {
   const removeQuestion = async (id: string) => {
     const question = questions.find(q => q.id === id);
     if (!(await askConfirm({ title: 'Siba iki kibazo?', message: <>“{question?.prompt}” n’ibisubizo byacyo bizasibwa burundu, kandi abakoresha ntibazongera kukibona.</>, confirmLabel: 'Siba ikibazo' }))) return;
-    const image = question?.image_path;
+    const files = [question?.image_path, question?.audio_path];
     const { error } = await requireClient().from('questions').delete().eq('id', id);
-    if (error) sayError(error); else { setNotice({ kind: 'success', text: 'Ikibazo cyasibwe neza.' }); void removeUnusedImages([image]); await loadData(); }
+    if (error) sayError(error); else { setNotice({ kind: 'success', text: 'Ikibazo cyasibwe neza.' }); void removeUnusedFiles(files); await loadData(); }
   };
 
   const showLesson = (form: LessonForm) => {
@@ -288,25 +313,26 @@ export default function Home() {
   const openLesson = (lesson?: Lesson, categoryId?: string) => {
     if (!lesson) { showLesson({ ...emptyLesson(), category_id: categoryId ?? (categoryFilter !== 'all' ? categoryFilter : categories[0]?.id ?? '') }); return; }
     const sections = [...lesson.lesson_sections].sort((a, b) => a.position - b.position);
-    showLesson({ id: lesson.id, category_id: lesson.category_id, title: lesson.title, minutes: lesson.minutes, is_extra: lesson.is_extra, published: lesson.published, sections: sections.length ? sections.map(s => ({ ...s, sign_type: s.sign_type ?? '', sign_label: s.sign_label ?? '', image_path: s.image_path ?? '' })) : emptyLesson().sections });
+    showLesson({ id: lesson.id, category_id: lesson.category_id, title: lesson.title, minutes: lesson.minutes, is_extra: lesson.is_extra, published: lesson.published, audio_path: lesson.audio_path ?? '', sections: sections.length ? sections.map(s => ({ ...s, sign_type: s.sign_type ?? '', sign_label: s.sign_label ?? '', image_path: s.image_path ?? '' })) : emptyLesson().sections });
   };
 
   const saveLesson = async (event: FormEvent) => {
     event.preventDefault(); setBusy(true); setNotice(null);
     const existingLesson = lessons.find(l => l.id === lessonForm.id);
-    const previousImages = existingLesson?.lesson_sections.map(section => section.image_path) ?? [];
+    const previousFiles = [...(existingLesson?.lesson_sections.map(section => section.image_path) ?? []), existingLesson?.audio_path];
     // New lessons, and lessons moved to another category, go to the end of that category.
     const endOfCategory = Math.max(-1, ...lessons.filter(l => l.category_id === lessonForm.category_id && l.id !== lessonForm.id).map(l => l.sort_order)) + 1;
     try {
       const db = requireClient();
       const row = { id: lessonForm.id || `lesson-${crypto.randomUUID()}`, category_id: lessonForm.category_id, title: lessonForm.title.trim(), minutes: Number(lessonForm.minutes), sort_order: existingLesson && existingLesson.category_id === lessonForm.category_id ? existingLesson.sort_order : endOfCategory, is_extra: lessonForm.is_extra, published: lessonForm.published,
+        ...(audioReady ? { audio_path: lessonForm.audio_path || null } : {}),
         ...(lessonMetaReady && existingLesson ? { updated_at: new Date().toISOString() } : {}) };
       const { error } = await db.from('lessons').upsert(row); if (error) throw error;
       const removed = await db.from('lesson_sections').delete().eq('lesson_id', row.id); if (removed.error) throw removed.error;
       const sections = await db.from('lesson_sections').insert(lessonForm.sections.filter(s => s.heading.trim() && s.body.trim()).map((s, position) => ({ id: `${row.id}-${position}`, lesson_id: row.id, position, heading: s.heading.trim(), body: s.body.trim(), sign_type: s.sign_type || null, sign_label: s.sign_label || null, image_path: s.image_path || null })));
       if (sections.error) throw sections.error;
       setLessonForm(emptyLesson()); setDrawer(null); setNotice({ kind: 'success', text: 'Isomo ryabitswe neza.' });
-      void removeUnusedImages([...previousImages, ...uploadedPaths]); setUploadedPaths([]);
+      void removeUnusedFiles([...previousFiles, ...uploadedPaths]); setUploadedPaths([]);
       await loadData();
     } catch (error) { sayError(error); }
     finally { setBusy(false); }
@@ -315,9 +341,9 @@ export default function Home() {
   const removeLesson = async (id: string) => {
     const lesson = lessons.find(l => l.id === id);
     if (!(await askConfirm({ title: 'Siba iri somo?', message: <>“{lesson?.title}” n’ibice byaryo {lesson?.lesson_sections.length ?? 0} bizasibwa burundu.</>, confirmLabel: 'Siba isomo' }))) return;
-    const images = lesson?.lesson_sections.map(section => section.image_path) ?? [];
+    const files = [...(lesson?.lesson_sections.map(section => section.image_path) ?? []), lesson?.audio_path];
     const { error } = await requireClient().from('lessons').delete().eq('id', id);
-    if (error) sayError(error); else { setNotice({ kind: 'success', text: 'Isomo ryasibwe neza.' }); void removeUnusedImages(images); await loadData(); }
+    if (error) sayError(error); else { setNotice({ kind: 'success', text: 'Isomo ryasibwe neza.' }); void removeUnusedFiles(files); await loadData(); }
   };
 
   // Swaps an item with its neighbour, then renumbers the list and saves only the rows that moved.
@@ -439,6 +465,8 @@ export default function Home() {
   }, [questions, categories, search, categoryFilter, statusFilter, needsExplanation, questionSort]);
   // Present once the numbers/dates migration has run; until then saves leave these columns out.
   const questionMetaReady = questions.some(q => q.created_at !== undefined);
+  // Present once the audio migration has run; until then saves leave audio_path out.
+  const audioReady = questions.some(q => q.audio_path !== undefined) || lessons.some(l => l.audio_path !== undefined);
   const editingNumber = questions.find(q => q.id === questionForm.id)?.number;
   const editingReports = questionForm.id ? reports.filter(r => r.status === 'new' && r.question_id === questionForm.id) : [];
   const lessonMetaReady = lessons.some(l => l.updated_at !== undefined);
@@ -481,7 +509,11 @@ export default function Home() {
       return `#${question?.number ?? ''} ${question?.prompt ?? ''} ${report.comment ?? ''} ${reportReasons[report.reason] ?? ''}`.toLocaleLowerCase().includes(query);
     });
   }, [reports, reportStatus, search, questionById]);
+  const reportPage = Math.min(page, Math.max(1, Math.ceil(filteredReports.length / pageSize)));
+  const visibleReports = filteredReports.slice((reportPage - 1) * pageSize, reportPage * pageSize);
   const filteredAnnouncements = useMemo(() => announcements.filter(item => `${item.title} ${item.body}`.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()) && (statusFilter === 'all' || item.published === (statusFilter === 'published'))), [announcements, search, statusFilter]);
+  const announcementPage = Math.min(page, Math.max(1, Math.ceil(filteredAnnouncements.length / pageSize)));
+  const visibleAnnouncements = filteredAnnouncements.slice((announcementPage - 1) * pageSize, announcementPage * pageSize);
   const categoryById = useMemo(() => new Map(categories.map(category => [category.id, category])), [categories]);
   const lessonFiltersActive = Boolean(search.trim()) || statusFilter !== 'all' || categoryFilter !== 'all' || lessonDateFilter !== 'all';
   // Course-builder view: each category is a module holding its lessons in their app order.
@@ -508,7 +540,7 @@ export default function Home() {
     const current = drawer === 'question' ? questionForm : drawer === 'lesson' ? lessonForm : announcementForm;
     if (JSON.stringify(current) !== formSnapshot && !(await askConfirm({ title: 'Ufunge utabitse?', message: 'Hari impinduka utabitse. Nufunga ubu, zirasibama.', confirmLabel: 'Funga utabitse', tone: 'warning' }))) return;
     // Photos uploaded while editing but never saved are not used by anything.
-    void removeUnusedImages(uploadedPaths); setUploadedPaths([]);
+    void removeUnusedFiles(uploadedPaths); setUploadedPaths([]);
     setDrawer(null);
   }, [drawer, questionForm, lessonForm, announcementForm, formSnapshot, uploadedPaths, askConfirm]);
 
@@ -522,6 +554,32 @@ export default function Home() {
     return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = previousOverflow; };
   }, [drawer, closeDrawer, confirmState]);
 
+  // Ctrl/Cmd+K opens the dashboard-wide search (not over an open editor, so no edit is lost).
+  useEffect(() => {
+    if (!session || !isAdmin) return;
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k' && !drawer) {
+        event.preventDefault();
+        setPaletteOpen(open => !open);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [session, isAdmin, drawer]);
+
+  const goToResult = (target: SearchTarget) => {
+    setPaletteOpen(false);
+    setNotice(null);
+    setPage(1);
+    if (target.kind === 'question') { setView('questions'); openQuestion(target.item); }
+    else if (target.kind === 'lesson') { setView('lessons'); openLesson(target.item); }
+    else if (target.kind === 'category') { setView('categories'); setSearch(''); editCategory(target.item); }
+    else if (target.kind === 'announcement') { setView('notifications'); openAnnouncement(target.item); }
+    else if (target.kind === 'report') { setView('reports'); setReportStatus('all'); setSearch(target.search); }
+    else if (target.kind === 'users') { setView('users'); setLearnerSearch(target.search); setLearnerPage(1); }
+    else { setView(target.view); setSearch(target.search); if (target.view === 'reports') setReportStatus('all'); if (target.view === 'questions' || target.view === 'notifications') setStatusFilter('all'); }
+  };
+
   // Toasts close by themselves; errors stay longer so they can be read.
   useEffect(() => {
     if (!notice || !session || !isAdmin) return;
@@ -534,11 +592,12 @@ export default function Home() {
   if (!session || !isAdmin) return <main className="center"><form className="login-card" onSubmit={signIn}><Brand /><p className="eyebrow">AMATEGEKO Y’UMUHANDA</p><h1>Admin Dashboard</h1><p>Injira ukoresheje konti yemerewe gucunga ibikubiye muri app.</p>{notice && <div className={`notice ${notice.kind}`}>{notice.text}</div>}<label>Email<input type="email" autoComplete="username" required value={email} onChange={e => setEmail(e.target.value)} /></label><label>Ijambo ry’ibanga<input type="password" autoComplete="current-password" required value={password} onChange={e => setPassword(e.target.value)} /></label><button className="primary full" disabled={busy}>{busy ? 'Tegereza...' : 'Injira'}</button><small>Konti igomba kuba yanditswe muri <code>admin_users</code> ya Supabase.</small></form></main>;
 
   return <main className={`shell grid min-h-screen transition-[grid-template-columns] duration-300 ease-in-out ${menuOpen ? '' : 'sidebar-collapsed'}`}>
-    <aside className="sidebar sticky top-0 flex h-screen flex-col overflow-hidden transition-all duration-300"><Brand /><div className="side-label">IMICUNGIRE</div><nav className="sidebar-nav flex flex-col">{(['overview', 'questions', 'reports', 'lessons', 'categories', 'notifications', 'users'] as View[]).map(item => <button key={item} className={`nav-item ${view === item ? 'active' : ''}`} onClick={() => { setView(item); setNotice(null); setSearch(''); }}><span className="nav-icon"><Icon name={item} /></span>{{ overview: 'Incamake', questions: 'Ibibazo', reports: 'Raporo', lessons: 'Amasomo', categories: 'Ibyiciro', notifications: 'Ubutumwa', users: 'Abakoresha' }[item]}<span className="nav-count">{item === 'questions' ? questions.length : item === 'lessons' ? lessons.length : item === 'categories' ? categories.length : item === 'notifications' ? announcements.length || '' : item === 'reports' ? newReports.length || '' : item === 'users' ? learnerTotal || '' : ''}</span></button>)}</nav><div className="sidebar-bottom"><span className="avatar">{session.user.email?.slice(0, 1).toUpperCase() ?? 'A'}</span><span className="admin-email">{session.user.email}</span><button className="text-button" onClick={signOut}>Sohoka</button></div></aside>
-    <section className="workspace mx-auto w-full max-w-[1550px]"><header className="topbar"><div className="topbar-title"><button className="sidebar-toggle grid h-[42px] w-[42px] place-items-center rounded-xl border border-slate-300 bg-white text-xl text-brand-800 transition duration-200 hover:-translate-y-px hover:border-brand-100 hover:bg-brand-50" type="button" aria-label={menuOpen ? 'Funga sidebar' : 'Fungura sidebar'} aria-expanded={menuOpen} onClick={() => setMenuOpen(open => !open)}>{menuOpen ? '×' : '☰'}</button><div><span className="eyebrow">AMATEGEKO Y’UMUHANDA / ADMIN</span><h1>{{ overview: 'Incamake', questions: 'Gucunga ibibazo', lessons: 'Gucunga amasomo', categories: 'Gucunga ibyiciro', notifications: 'Gucunga ubutumwa', reports: 'Raporo z’abakoresha', users: 'Gucunga abakoresha' }[view]}</h1></div></div><div className="top-actions"><span className="secure"><i /> Konti ya admin</span><button className="refresh" onClick={() => view === 'users' ? void loadLearners() : void loadData()} title="Ongera uvugurure">↻</button></div></header>
+    <aside className="sidebar sticky top-0 flex h-screen flex-col overflow-hidden transition-all duration-300"><Brand /><div className="side-label">IMICUNGIRE</div><nav className="sidebar-nav flex flex-col">{(['overview', 'questions', 'reports', 'lessons', 'categories', 'notifications', 'users'] as View[]).map(item => <button key={item} className={`nav-item ${view === item ? 'active' : ''}`} onClick={() => { setView(item); setNotice(null); setSearch(''); setPage(1); }}><span className="nav-icon"><Icon name={item} /></span>{{ overview: 'Incamake', questions: 'Ibibazo', reports: 'Raporo', lessons: 'Amasomo', categories: 'Ibyiciro', notifications: 'Ubutumwa', users: 'Abakoresha' }[item]}<span className="nav-count">{item === 'questions' ? questions.length : item === 'lessons' ? lessons.length : item === 'categories' ? categories.length : item === 'notifications' ? announcements.length || '' : item === 'reports' ? newReports.length || '' : item === 'users' ? learnerTotal || '' : ''}</span></button>)}</nav><div className="sidebar-bottom"><span className="avatar">{session.user.email?.slice(0, 1).toUpperCase() ?? 'A'}</span><span className="admin-email">{session.user.email}</span><button className="text-button" onClick={signOut}>Sohoka</button></div></aside>
+    <section className="workspace mx-auto w-full max-w-[1550px]"><header className="topbar"><div className="topbar-title"><button className="sidebar-toggle grid h-[42px] w-[42px] place-items-center rounded-xl border border-slate-300 bg-white text-xl text-brand-800 transition duration-200 hover:-translate-y-px hover:border-brand-100 hover:bg-brand-50" type="button" aria-label={menuOpen ? 'Funga sidebar' : 'Fungura sidebar'} aria-expanded={menuOpen} onClick={() => setMenuOpen(open => !open)}>{menuOpen ? '×' : '☰'}</button><div><span className="eyebrow">AMATEGEKO Y’UMUHANDA / ADMIN</span><h1>{{ overview: 'Incamake', questions: 'Gucunga ibibazo', lessons: 'Gucunga amasomo', categories: 'Gucunga ibyiciro', notifications: 'Gucunga ubutumwa', reports: 'Raporo z’abakoresha', users: 'Gucunga abakoresha' }[view]}</h1></div></div><div className="top-actions"><button type="button" className="global-search" onClick={() => setPaletteOpen(true)} disabled={Boolean(drawer)}><Icon name="search" /><span>Shakisha hose</span><kbd>Ctrl K</kbd></button><span className="secure"><i /> Konti ya admin</span><button className="refresh" onClick={() => view === 'users' ? void loadLearners() : void loadData()} title="Ongera uvugurure">↻</button></div></header>
       <div className="cm-toast-region" aria-live="polite">{notice && <Toast notice={notice} onClose={() => setNotice(null)} />}</div>
       {confirmState && <ConfirmDialog {...confirmState} onAnswer={answerConfirm} />}
-      {view === 'overview' && <><div className="dashboard-hero"><div><p className="eyebrow">AMATEGEKO Y’UMUHANDA · ADMIN</p><h2>Murakaza neza 👋</h2><p>Reba uko app ihagaze, ucunge abakoresha, kandi uvugurure ibikubiye muri app.</p></div><div className="hero-actions"><button className="primary" onClick={() => { openQuestion(); setView('questions'); }}>＋ Ikibazo gishya</button><button className="hero-secondary" onClick={() => { openLesson(); setView('lessons'); }}>＋ Isomo rishya</button></div><div className="hero-orb orb-one" /><div className="hero-orb orb-two" /></div><div className="section-heading dashboard-heading"><div><p className="eyebrow">INCAMAKE Y’IBIKUBIYE MURI APP</p><h2>Uko ibintu bihagaze</h2></div><span className="live-label"><i /> Bivuye muri Supabase</span></div><div className="stat-grid dashboard-stats"><Stat label="Ibibazo" value={questions.length} detail={`${questions.filter(q => q.published).length} byatangajwe · ${questions.filter(q => !q.published).length} draft`} icon="questions" /><Stat label="Amasomo" value={lessons.length} detail={`${lessons.filter(l => l.published).length} yatangajwe · ${lessons.filter(l => !l.published).length} draft`} icon="lessons" /><Stat label="Ibyiciro" value={categories.length} detail={`${categories.filter(c => c.published).length} byatangajwe`} icon="categories" /><Stat label="Abakoresha" value={learnersReady ? learnerTotal : '—'} detail={learnersReady ? 'Konti zose za Supabase Auth' : 'Fungura abakoresha urebe umubare'} icon="users" /></div><div className="dashboard-columns"><section className="manage-panel"><div className="section-heading"><div><p className="eyebrow">GUCUNGA</p><h2>Ibice bya dashboard</h2></div></div><div className="manage-grid"><ManageCard icon="questions" title="Ibibazo" detail={`${questions.length} byose · ${questions.filter(q => !q.published).length} draft`} onClick={() => setView('questions')} /><ManageCard icon="lessons" title="Amasomo" detail={`${lessons.length} yose · ${lessons.filter(l => !l.published).length} draft`} onClick={() => setView('lessons')} /><ManageCard icon="categories" title="Ibyiciro" detail={`${categories.length} byo gutondekamo`} onClick={() => setView('categories')} /><ManageCard icon="users" title="Abakoresha" detail="Reba konti, gushakisha no guhagarika konti" onClick={() => setView('users')} /></div></section><aside className="review-panel"><div><p className="eyebrow">IBIKENEYE KWITABWAHO</p><h2>Ibikorwa byo gukurikirana</h2></div><ReviewRow label="Ibibazo bitaratangazwa" count={questions.filter(q => !q.published).length} onClick={() => { setStatusFilter('draft'); setView('questions'); }} /><ReviewRow label="Amasomo ataratangazwa" count={lessons.filter(l => !l.published).length} onClick={() => { setStatusFilter('draft'); setView('lessons'); }} /><ReviewRow label="Ibyiciro bitaratangazwa" count={categories.filter(c => !c.published).length} onClick={() => { setStatusFilter('draft'); setView('categories'); }} /><ReviewRow label="Raporo nshya z’amakosa" count={newReports.length} onClick={() => { setReportStatus('new'); setView('reports'); }} /><ReviewRow label="Ubutumwa butaratangazwa" count={announcements.filter(a => !a.published).length} onClick={() => { setStatusFilter('draft'); setView('notifications'); }} /><ReviewRow label="Ibibazo bidafite ibisobanuro" count={missingExplanations} onClick={() => { setStatusFilter('all'); setNeedsExplanation(true); setPage(1); setView('questions'); }} /><p className="footnote">Suzuma ibiri muri draft mbere yo kubitangaza ku bakoresha app.</p></aside></div></>}
+      {paletteOpen && <GlobalSearch questions={questions} lessons={lessons} categories={categories} announcements={announcements} reports={reports} questionById={questionById} onPick={goToResult} onClose={() => setPaletteOpen(false)} />}
+      {view === 'overview' && <><div className="dashboard-hero"><div><p className="eyebrow">AMATEGEKO Y’UMUHANDA · ADMIN</p><h2>Murakaza neza 👋</h2><p>Reba uko app ihagaze, ucunge abakoresha, kandi uvugurure ibikubiye muri app.</p></div><div className="hero-actions"><button className="primary" onClick={() => { openQuestion(); setView('questions'); }}>＋ Ikibazo gishya</button><button className="hero-secondary" onClick={() => { openLesson(); setView('lessons'); }}>＋ Isomo rishya</button></div><div className="hero-orb orb-one" /><div className="hero-orb orb-two" /></div><div className="section-heading dashboard-heading"><div><p className="eyebrow">INCAMAKE Y’IBIKUBIYE MURI APP</p><h2>Uko ibintu bihagaze</h2></div><span className="live-label"><i /> Bivuye muri Supabase</span></div><div className="stat-grid dashboard-stats"><Stat label="Ibibazo" value={questions.length} detail={`${questions.filter(q => q.published).length} byatangajwe · ${questions.filter(q => !q.published).length} draft`} icon="questions" onClick={() => setView('questions')} /><Stat label="Amasomo" value={lessons.length} detail={`${lessons.filter(l => l.published).length} yatangajwe · ${lessons.filter(l => !l.published).length} draft`} icon="lessons" onClick={() => setView('lessons')} /><Stat label="Ibyiciro" value={categories.length} detail={`${categories.filter(c => c.published).length} byatangajwe`} icon="categories" onClick={() => setView('categories')} /><Stat label="Abakoresha" value={learnersReady ? learnerTotal : '—'} detail={learnersReady ? 'Konti zose za Supabase Auth' : 'Fungura abakoresha urebe umubare'} icon="users" onClick={() => setView('users')} /></div><div className="dashboard-columns"><section className="manage-panel"><div className="section-heading"><div><p className="eyebrow">GUCUNGA</p><h2>Ibice bya dashboard</h2></div></div><div className="manage-grid"><ManageCard icon="questions" title="Ibibazo" detail={`${questions.length} byose · ${questions.filter(q => !q.published).length} draft`} onClick={() => setView('questions')} /><ManageCard icon="lessons" title="Amasomo" detail={`${lessons.length} yose · ${lessons.filter(l => !l.published).length} draft`} onClick={() => setView('lessons')} /><ManageCard icon="categories" title="Ibyiciro" detail={`${categories.length} byo gutondekamo`} onClick={() => setView('categories')} /><ManageCard icon="users" title="Abakoresha" detail="Reba konti, gushakisha no guhagarika konti" onClick={() => setView('users')} /></div></section><aside className="review-panel"><div><p className="eyebrow">IBIKENEYE KWITABWAHO</p><h2>Ibikorwa byo gukurikirana</h2></div><ReviewRow label="Ibibazo bitaratangazwa" count={questions.filter(q => !q.published).length} onClick={() => { setStatusFilter('draft'); setView('questions'); }} /><ReviewRow label="Amasomo ataratangazwa" count={lessons.filter(l => !l.published).length} onClick={() => { setStatusFilter('draft'); setView('lessons'); }} /><ReviewRow label="Ibyiciro bitaratangazwa" count={categories.filter(c => !c.published).length} onClick={() => { setStatusFilter('draft'); setView('categories'); }} /><ReviewRow label="Raporo nshya z’amakosa" count={newReports.length} onClick={() => { setReportStatus('new'); setView('reports'); }} /><ReviewRow label="Ubutumwa butaratangazwa" count={announcements.filter(a => !a.published).length} onClick={() => { setStatusFilter('draft'); setView('notifications'); }} /><ReviewRow label="Ibibazo bidafite ibisobanuro" count={missingExplanations} onClick={() => { setStatusFilter('all'); setNeedsExplanation(true); setPage(1); setView('questions'); }} /><p className="footnote">Suzuma ibiri muri draft mbere yo kubitangaza ku bakoresha app.</p></aside></div></>}
 
       {view === 'questions' && <>
         <div className="cm-toolbar">
@@ -600,19 +659,21 @@ export default function Home() {
         </div>}
       </>}
 
-      {view === 'categories' && <><div className="toolbar"><ListControls search={search} onSearchChange={updateSearch} status={statusFilter} onStatusChange={updateStatusFilter} pageSize={pageSize} onPageSizeChange={updatePageSize} categories={categories} placeholder="Shakisha icyiciro..." showCategory={false} /></div><div className="category-layout"><form className="editor-card" onSubmit={saveCategory}><p className="eyebrow">{categories.some(c => c.id === categoryForm.id) ? 'HINDURA ICYICIRO' : 'ICYICIRO GISHYA'}</p><h2>{categories.some(c => c.id === categoryForm.id) ? 'Hindura icyiciro' : 'Ongeramo icyiciro'}</h2><label>Izina rigufi / ID<input required pattern="[A-Za-z0-9-]+" placeholder="urugero: ibimenyetso" value={categoryForm.id} readOnly={categories.some(c => c.id === categoryForm.id)} onChange={e => setCategoryForm({ ...categoryForm, id: e.target.value })} /></label><label>Izina rigaragara<input required value={categoryForm.title} onChange={e => setCategoryForm({ ...categoryForm, title: e.target.value })} /></label><label>Ibisobanuro bigufi<input value={categoryForm.subtitle} onChange={e => setCategoryForm({ ...categoryForm, subtitle: e.target.value })} /></label><div className="two-fields"><label>Ibara nyamukuru<input className="color-input" type="color" value={categoryForm.color} onChange={e => setCategoryForm({ ...categoryForm, color: e.target.value })} /></label><label>Ibara ryoroheje<input className="color-input" type="color" value={categoryForm.soft} onChange={e => setCategoryForm({ ...categoryForm, soft: e.target.value })} /></label></div><label>Agashushanyo muri app<select value={categoryForm.icon} onChange={e => setCategoryForm({ ...categoryForm, icon: e.target.value })}><option value="">Bisanzwe (nk’icyiciro cya mbere)</option>{categories.filter(c => c.icon_code).map(c => <option key={c.id} value={c.id}>Nk’icya “{c.title}”</option>)}</select></label><div className="category-preview" style={{ '--cat': categoryForm.color, '--cat-soft': categoryForm.soft } as CSSProperties}><span className="category-symbol"><Icon name="categories" /></span><span>{categoryForm.title.trim() || 'Uko icyiciro kizagaragara'}</span></div><button className="primary full" disabled={busy}>Bika icyiciro</button>{categoryForm.id && <button type="button" className="secondary full" onClick={() => setCategoryForm(emptyCategory())}>Reka guhindura</button>}</form><div className="category-grid">{visibleCategories.map(c => <article className="category-card" key={c.id}><div className="category-symbol" style={catStyle(c)}><Icon name="categories" /></div><h3>{c.title}</h3><p>{c.subtitle}</p><small>{c.id}</small><div className="category-meta"><span className={`pill ${c.published ? 'published' : ''}`}>{c.published ? 'Byatangajwe' : 'Draft'}</span><button onClick={() => void togglePublished('content_categories', c)}>{c.published ? 'Hisha' : 'Tangaza'}</button></div><div className="category-meta"><MoveButtons label={c.title} first={categories[0]?.id === c.id} last={categories[categories.length - 1]?.id === c.id} onMove={direction => moveCategory(c, direction)} /><span className="category-actions"><ActionIcon kind="edit" label="Hindura icyiciro" onClick={() => editCategory(c)} /><ActionIcon kind="delete" label="Siba icyiciro" onClick={() => void removeCategory(c)} /></span></div><small>{questions.filter(q => q.category_id === c.id).length} bibazo - {lessons.filter(l => l.category_id === c.id).length} masomo</small></article>)}</div><Pagination total={filteredCategories.length} page={categoryPage} pageSize={pageSize} onPageChange={setPage} /></div></>}
+      {view === 'categories' && <><div className="toolbar"><ListControls search={search} onSearchChange={updateSearch} status={statusFilter} onStatusChange={updateStatusFilter} pageSize={pageSize} onPageSizeChange={updatePageSize} categories={categories} placeholder="Shakisha icyiciro..." showCategory={false} /></div><div className="category-layout"><form className="editor-card" onSubmit={saveCategory}><p className="eyebrow">{categories.some(c => c.id === categoryForm.id) ? 'HINDURA ICYICIRO' : 'ICYICIRO GISHYA'}</p><h2>{categories.some(c => c.id === categoryForm.id) ? 'Hindura icyiciro' : 'Ongeramo icyiciro'}</h2><label>Izina rigufi / ID<input required pattern="[A-Za-z0-9-]+" placeholder="urugero: ibimenyetso" value={categoryForm.id} readOnly={categories.some(c => c.id === categoryForm.id)} onChange={e => setCategoryForm({ ...categoryForm, id: e.target.value })} /></label><label>Izina rigaragara<input required value={categoryForm.title} onChange={e => setCategoryForm({ ...categoryForm, title: e.target.value })} /></label><label>Ibisobanuro bigufi<input value={categoryForm.subtitle} onChange={e => setCategoryForm({ ...categoryForm, subtitle: e.target.value })} /></label><div className="two-fields"><label>Ibara nyamukuru<input className="color-input" type="color" value={categoryForm.color} onChange={e => setCategoryForm({ ...categoryForm, color: e.target.value })} /></label><label>Ibara ryoroheje<input className="color-input" type="color" value={categoryForm.soft} onChange={e => setCategoryForm({ ...categoryForm, soft: e.target.value })} /></label></div><label>Agashushanyo muri app<select value={categoryForm.icon} onChange={e => setCategoryForm({ ...categoryForm, icon: e.target.value })}><option value="">Bisanzwe (nk’icyiciro cya mbere)</option>{categories.filter(c => c.icon_code).map(c => <option key={c.id} value={c.id}>Nk’icya “{c.title}”</option>)}</select></label><div className="category-preview" style={{ '--cat': categoryForm.color, '--cat-soft': categoryForm.soft } as CSSProperties}><span className="category-symbol"><Icon name="categories" /></span><span>{categoryForm.title.trim() || 'Uko icyiciro kizagaragara'}</span></div><button className="primary full" disabled={busy}>Bika icyiciro</button>{categoryForm.id && <button type="button" className="secondary full" onClick={() => setCategoryForm(emptyCategory())}>Reka guhindura</button>}</form><div className="category-grid">{visibleCategories.map(c => <article className="category-card" key={c.id}><button type="button" className="category-open" onClick={() => editCategory(c)}><div className="category-symbol" style={catStyle(c)}><Icon name="categories" /></div><h3>{c.title}</h3><p>{c.subtitle}</p><small>{c.id}</small></button><div className="category-meta"><span className={`pill ${c.published ? 'published' : ''}`}>{c.published ? 'Byatangajwe' : 'Draft'}</span><button onClick={() => void togglePublished('content_categories', c)}>{c.published ? 'Hisha' : 'Tangaza'}</button></div><div className="category-meta"><MoveButtons label={c.title} first={categories[0]?.id === c.id} last={categories[categories.length - 1]?.id === c.id} onMove={direction => moveCategory(c, direction)} /><span className="category-actions"><ActionIcon kind="edit" label="Hindura icyiciro" onClick={() => editCategory(c)} /><ActionIcon kind="delete" label="Siba icyiciro" onClick={() => void removeCategory(c)} /></span></div><small>{questions.filter(q => q.category_id === c.id).length} bibazo - {lessons.filter(l => l.category_id === c.id).length} masomo</small></article>)}</div><Pagination total={filteredCategories.length} page={categoryPage} pageSize={pageSize} onPageChange={setPage} /></div></>}
 
       {view === 'reports' && (reportsError ? <div className="cm-setup"><Icon name="alert" /><div><strong>Imbonerahamwe ya raporo ntiraboneka muri Supabase.</strong><p>Kora migration <code>supabase/migrations/202611010002_question_reports.sql</code> muri Supabase SQL Editor, hanyuma ukande ↻ hejuru.</p><small>{reportsError}</small></div></div> : <>
         <div className="cm-toolbar">
           <SearchBox value={search} onChange={updateSearch} placeholder="Shakisha #nimero, ikibazo cyangwa igitekerezo..." />
         </div>
         <div className="cm-subbar">
-          <div className="cm-tabs" role="group" aria-label="Imimerere ya raporo">{([['new', 'Nshya'], ['resolved', 'Byakemutse'], ['all', 'Zose']] as const).map(([key, label]) => <button key={key} type="button" aria-pressed={reportStatus === key} className={reportStatus === key ? 'active' : ''} onClick={() => setReportStatus(key)}>{label}<span>{key === 'all' ? reports.length : reports.filter(r => r.status === key).length}</span></button>)}</div>
+          <div className="cm-tabs" role="group" aria-label="Imimerere ya raporo">{([['new', 'Nshya'], ['resolved', 'Byakemutse'], ['all', 'Zose']] as const).map(([key, label]) => <button key={key} type="button" aria-pressed={reportStatus === key} className={reportStatus === key ? 'active' : ''} onClick={() => { setReportStatus(key); setPage(1); }}>{label}<span>{key === 'all' ? reports.length : reports.filter(r => r.status === key).length}</span></button>)}</div>
+          <PageSizeSelect value={pageSize} onChange={updatePageSize} />
         </div>
         <div className="cm-list cm-cards">
           <div className="cm-list-head"><b>{filteredReports.length} raporo</b><span>Zoherejwe n’abakoresha bakanze “Tanga ikosa” muri app.</span></div>
-          {filteredReports.map(report => { const question = questionById.get(report.question_id); return <ReportRow key={report.id} report={report} question={question} category={question ? categoryById.get(question.category_id) : undefined} sameQuestion={openReportsByQuestion.get(report.question_id) ?? 0} onOpenQuestion={question ? () => openQuestion(question) : undefined} onResolve={() => void setReportResolved(report, report.status === 'new')} onDelete={() => void removeReport(report)} />; })}
+          {visibleReports.map(report => { const question = questionById.get(report.question_id); return <ReportRow key={report.id} report={report} question={question} category={question ? categoryById.get(question.category_id) : undefined} sameQuestion={openReportsByQuestion.get(report.question_id) ?? 0} onOpenQuestion={question ? () => openQuestion(question) : undefined} onResolve={() => void setReportResolved(report, report.status === 'new')} onDelete={() => void removeReport(report)} />; })}
           {filteredReports.length === 0 && <Empty text={reportStatus === 'new' && !search ? 'Nta raporo nshya. Byose bimeze neza!' : 'Nta raporo ihuye n’ishakisha.'} />}
+          <Pagination total={filteredReports.length} page={reportPage} pageSize={pageSize} onPageChange={setPage} />
         </div>
       </>)}
 
@@ -623,11 +684,13 @@ export default function Home() {
         </div>
         <div className="cm-subbar">
           <StatusTabs value={statusFilter} onChange={updateStatusFilter} counts={{ all: announcements.length, published: announcements.filter(a => a.published).length, draft: announcements.filter(a => !a.published).length }} />
+          <PageSizeSelect value={pageSize} onChange={updatePageSize} />
         </div>
         <div className="cm-list cm-cards">
           <div className="cm-list-head"><b>{filteredAnnouncements.length} butumwa</b><span>Abakoresha babona ubutumwa bwatangajwe kandi butararangira.</span></div>
-          {filteredAnnouncements.map(item => <AnnouncementRow key={item.id} item={item} onOpen={() => openAnnouncement(item)} onToggle={() => void togglePublished('notifications', item)} onDelete={() => void removeAnnouncement(item)} />)}
+          {visibleAnnouncements.map(item => <AnnouncementRow key={item.id} item={item} onOpen={() => openAnnouncement(item)} onToggle={() => void togglePublished('notifications', item)} onDelete={() => void removeAnnouncement(item)} />)}
           {filteredAnnouncements.length === 0 && <Empty text={announcements.length ? 'Nta butumwa buhuye n’ishakisha cyangwa filters.' : 'Nta butumwa buhari. Kanda “+ Ubutumwa bushya” wandike ubwa mbere.'} />}
+          <Pagination total={filteredAnnouncements.length} page={announcementPage} pageSize={pageSize} onPageChange={setPage} />
         </div>
       </>)}
 
@@ -651,6 +714,7 @@ export default function Home() {
         <label className="cm-field">Ibisobanuro by’igisubizo<textarea rows={3} placeholder="Sobanura impamvu iki gisubizo ari cyo nyacyo..." value={questionForm.explanation} onChange={e => setQuestionForm({ ...questionForm, explanation: e.target.value })} />{!questionForm.explanation.trim() && <span className="cm-warn-text">Nta bisobanuro: abiga bazabona igisubizo gusa, batamenye impamvu.</span>}</label>
         <div className="cm-two"><label className="cm-field">Ubwoko bw’icyapa<input placeholder="urugero: danger" value={questionForm.sign_type} onChange={e => setQuestionForm({ ...questionForm, sign_type: e.target.value })} /></label><label className="cm-field">Agaciro/inyandiko<input placeholder="urugero: 10%" value={questionForm.sign_label} onChange={e => setQuestionForm({ ...questionForm, sign_label: e.target.value })} /></label></div>
         <ImageField label="Ifoto y’icyapa" src={imageUrl(questionForm.image_path)} onPick={async e => { try { const path = await uploadImage(e); if (path) setQuestionForm(f => ({ ...f, image_path: path })); } catch (error) { sayError(error); } }} onRemove={() => setQuestionForm({ ...questionForm, image_path: '' })} />
+        <AudioField ready={audioReady} label="Amajwi asoma ikibazo (si ngombwa)" src={audioUrl(questionForm.audio_path)} onPick={async e => { try { const path = await uploadAudio(e); if (path) setQuestionForm(f => ({ ...f, audio_path: path })); } catch (error) { sayError(error); } }} onRemove={() => setQuestionForm({ ...questionForm, audio_path: '' })} />
         <div className="cm-checks"><label className="cm-check"><input type="checkbox" checked={questionForm.is_exam_question} onChange={e => setQuestionForm({ ...questionForm, is_exam_question: e.target.checked })} /> Gishobora kujya mu kizamini cy’igerageza</label><label className="cm-check"><input type="checkbox" checked={questionForm.published} onChange={e => setQuestionForm({ ...questionForm, published: e.target.checked })} /> Tangaza: abakoresha ba app bakibone</label></div>
       </Drawer>}
 
@@ -666,6 +730,7 @@ export default function Home() {
       {drawer === 'lesson' && <Drawer wide eyebrow="UMWANDITSI W’AMASOMO" title={lessonForm.id ? 'Hindura isomo' : 'Isomo rishya'} onClose={closeDrawer} onSubmit={saveLesson} footer={<><button type="button" className="secondary" onClick={closeDrawer}>Reka</button><button className="primary" disabled={busy}>{busy ? 'Birabikwa...' : 'Bika isomo'}</button></>}>
         <label className="cm-field">Umutwe w’isomo<input autoFocus required value={lessonForm.title} onChange={e => setLessonForm({ ...lessonForm, title: e.target.value })} /></label>
         <div className="cm-two"><label className="cm-field">Icyiciro<select required value={lessonForm.category_id} onChange={e => setLessonForm({ ...lessonForm, category_id: e.target.value })}><option value="">Hitamo icyiciro</option>{categories.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}</select></label><label className="cm-field">Igihe (iminota)<input type="number" min={1} required value={lessonForm.minutes} onChange={e => setLessonForm({ ...lessonForm, minutes: Number(e.target.value) })} /></label></div>
+        <AudioField ready={audioReady} label="Amajwi y’isomo (si ngombwa)" src={audioUrl(lessonForm.audio_path)} onPick={async e => { try { const path = await uploadAudio(e); if (path) setLessonForm(f => ({ ...f, audio_path: path })); } catch (error) { sayError(error); } }} onRemove={() => setLessonForm({ ...lessonForm, audio_path: '' })} />
         <div className="cm-sections-head"><strong>Ibice by’isomo<span>{lessonForm.sections.length}</span></strong>{lessonForm.sections.length > 1 && <span className="cm-groups-actions"><button type="button" className="text-button" onClick={() => setOpenSections(lessonForm.sections.map((_, i) => i))}>Fungura byose</button><button type="button" className="text-button" onClick={() => setOpenSections([])}>Funga byose</button></span>}</div>
         {lessonForm.sections.map((section, i) => {
           const open = openSections.includes(i);
@@ -698,7 +763,7 @@ function Pagination({ total, page, pageSize, onPageChange }: { total: number; pa
   return <div className="pagination"><span className="pagination-count">{start}–{end} kuri {total}</span><div className="pagination-buttons"><button type="button" disabled={page <= 1} onClick={() => onPageChange(page - 1)}>Mbere</button><span>{page} / {pageCount}</span><button type="button" disabled={page >= pageCount} onClick={() => onPageChange(page + 1)}>Ibikurikira</button></div></div>;
 }
 function Brand() { return <div className="brand"><span className="brand-mark">A</span><span><b>AMATEGEKO</b><small>ADMIN CONSOLE</small></span></div>; }
-function Stat({ label, value, detail, icon }: { label: string; value: number | string; detail: string; icon: IconName }) { return <article className="stat-card"><span className="stat-icon"><Icon name={icon} /></span><span className="stat-label">{label}</span><strong>{value}</strong><small>{detail}</small></article>; }
+function Stat({ label, value, detail, icon, onClick }: { label: string; value: number | string; detail: string; icon: IconName; onClick: () => void }) { return <button type="button" className="stat-card" onClick={onClick}><span className="stat-icon"><Icon name={icon} /></span><span className="stat-label">{label}</span><strong>{value}</strong><small>{detail}</small></button>; }
 function ManageCard({ icon, title, detail, onClick }: { icon: IconName; title: string; detail: string; onClick: () => void }) { return <button className="manage-card" onClick={onClick}><span className="manage-icon"><Icon name={icon} /></span><span className="manage-copy"><strong>{title}</strong><small>{detail}</small></span><span className="manage-arrow">→</span></button>; }
 function ReviewRow({ label, count, onClick }: { label: string; count: number; onClick: () => void }) { return <button className="review-row" onClick={onClick}><span>{label}</span><strong className={count ? 'needs-review' : 'all-clear'}>{count}</strong><span className="review-arrow">→</span></button>; }
 function Empty({ text }: { text: string }) { return <div className="empty"><span>+</span><p>{text}</p></div>; }
@@ -714,7 +779,7 @@ function isOnLocalDay(value: string, daysAgo: number) {
   return date >= start && date < end;
 }
 
-type IconName = View | 'search' | 'chevron' | 'check' | 'alert' | 'image' | 'up' | 'down' | 'info' | 'sparkle' | 'bulb' | 'clock' | 'clipboard' | 'trash' | 'flag';
+type IconName = View | 'search' | 'chevron' | 'check' | 'alert' | 'image' | 'up' | 'down' | 'info' | 'sparkle' | 'bulb' | 'clock' | 'clipboard' | 'trash' | 'flag' | 'volume';
 const iconPaths: Record<IconName, ReactNode> = {
   overview: <><rect x="3" y="3" width="7" height="9" rx="1.5" /><rect x="14" y="3" width="7" height="5" rx="1.5" /><rect x="14" y="12" width="7" height="9" rx="1.5" /><rect x="3" y="16" width="7" height="5" rx="1.5" /></>,
   questions: <><circle cx="12" cy="12" r="9" /><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5" /><path d="M12 17.5h.01" /></>,
@@ -735,6 +800,7 @@ const iconPaths: Record<IconName, ReactNode> = {
   clock: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></>,
   clipboard: <><rect x="8" y="2" width="8" height="4" rx="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /></>,
   flag: <><path d="M4 22V4" /><path d="M4 4h12l-2 4 2 4H4" /></>,
+  volume: <><path d="M11 5 6 9H2v6h4l5 4z" /><path d="M15.5 8.5a5 5 0 0 1 0 7" /><path d="M19 5a10 10 0 0 1 0 14" /></>,
   reports: <><path d="M4 22V4" /><path d="M4 4h12l-2 4 2 4H4" /></>,
   trash: <><path d="M3 6h18" /><path d="M8 6V4h8v2" /><path d="m19 6-1 14H6L5 6" /><path d="M10 11v5M14 11v5" /></>,
 };
@@ -755,6 +821,49 @@ function ConfirmDialog({ title, message, confirmLabel, tone = 'danger', requireT
       {/* Cancel gets focus so pressing Enter by habit never deletes anything. */}
       <div className="cm-dialog-actions"><button type="button" className="secondary" autoFocus={!requireText} onClick={() => onAnswer(false)}>Reka</button><button type="submit" className={`cm-dialog-confirm ${tone}`} disabled={!ready}>{confirmLabel}</button></div>
     </form>
+  </div>;
+}
+// Dashboard-wide search: up to 5 matches per kind, plus "see all" links that open the page with the search filled in.
+function GlobalSearch({ questions, lessons, categories, announcements, reports, questionById, onPick, onClose }: { questions: Question[]; lessons: Lesson[]; categories: Category[]; announcements: Announcement[]; reports: QuestionReport[]; questionById: Map<string, Question>; onPick: (target: SearchTarget) => void; onClose: () => void }) {
+  const [query, setQuery] = useState('');
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+  const q = query.trim().toLocaleLowerCase();
+  const wantedNumber = /^#\d+$/.test(q) ? Number(q.slice(1)) : null;
+  const has = (text: string) => text.toLocaleLowerCase().includes(q);
+  const groups = useMemo(() => {
+    if (!q) return [];
+    const matchQuestions = wantedNumber !== null ? questions.filter(x => x.number === wantedNumber) : questions.filter(x => has(`#${x.number ?? ''} ${x.prompt} ${x.explanation} ${x.question_options?.map(o => o.option_text).join(' ') ?? ''}`));
+    const matchLessons = wantedNumber !== null ? [] : lessons.filter(x => has(`${x.title} ${x.lesson_sections?.map(s => `${s.heading} ${s.body}`).join(' ') ?? ''}`));
+    const matchCategories = wantedNumber !== null ? [] : categories.filter(x => has(`${x.title} ${x.subtitle} ${x.id}`));
+    const matchAnnouncements = wantedNumber !== null ? [] : announcements.filter(x => has(`${x.title} ${x.body}`));
+    const matchReports = reports.filter(x => { const question = questionById.get(x.question_id); return wantedNumber !== null ? question?.number === wantedNumber : has(`${x.comment ?? ''} ${reportReasons[x.reason] ?? ''} ${question?.prompt ?? ''}`); });
+    return [
+      { title: 'Ibibazo', view: 'questions' as View, total: matchQuestions.length, items: matchQuestions.slice(0, 5).map(x => ({ key: `q-${x.id}`, label: `${x.number != null ? `#${x.number} · ` : ''}${x.prompt}`, detail: x.question_options?.find(o => o.is_correct)?.option_text ?? '', target: { kind: 'question', item: x } as SearchTarget })) },
+      { title: 'Amasomo', view: 'lessons' as View, total: matchLessons.length, items: matchLessons.slice(0, 5).map(x => ({ key: `l-${x.id}`, label: x.title, detail: `${x.lesson_sections?.length ?? 0} bice · ${x.minutes} min`, target: { kind: 'lesson', item: x } as SearchTarget })) },
+      { title: 'Ibyiciro', view: 'categories' as View, total: matchCategories.length, items: matchCategories.slice(0, 5).map(x => ({ key: `c-${x.id}`, label: x.title, detail: x.subtitle, target: { kind: 'category', item: x } as SearchTarget })) },
+      { title: 'Ubutumwa', view: 'notifications' as View, total: matchAnnouncements.length, items: matchAnnouncements.slice(0, 5).map(x => ({ key: `n-${x.id}`, label: x.title, detail: x.body, target: { kind: 'announcement', item: x } as SearchTarget })) },
+      { title: 'Raporo', view: 'reports' as View, total: matchReports.length, items: matchReports.slice(0, 5).map(x => { const question = questionById.get(x.question_id); return { key: `r-${x.id}`, label: `${question?.number != null ? `#${question.number} · ` : ''}${reportReasons[x.reason] ?? x.reason}`, detail: x.comment ?? question?.prompt ?? '', target: { kind: 'report', search: question?.number != null ? `#${question.number}` : q } as SearchTarget }; }) },
+    ].filter(group => group.total > 0);
+  }, [q, wantedNumber, questions, lessons, categories, announcements, reports, questionById]);
+  const first = groups[0]?.items[0]?.target;
+  return <div className="cm-dialog-root cm-palette-root"><div className="cm-backdrop" onClick={onClose} />
+    <div className="cm-palette" role="dialog" aria-modal="true" aria-label="Shakisha muri dashboard yose">
+      <label className="cm-palette-input"><Icon name="search" /><span className="sr-only">Shakisha</span><input autoFocus type="search" placeholder="Shakisha ibibazo, #nimero, amasomo, ibyiciro, ubutumwa..." value={query} onChange={event => setQuery(event.target.value)} onKeyDown={event => { if (event.key === 'Enter' && first) onPick(first); }} /><kbd>Esc</kbd></label>
+      <div className="cm-palette-results">
+        {!q && <p className="cm-palette-hint">Andika ijambo, cyangwa <b>#57</b> ushake ikibazo cyihariye. Enter ifungura igisubizo cya mbere.</p>}
+        {q && groups.length === 0 && <p className="cm-palette-hint">Nta kintu kibonetse kuri “{query.trim()}”.</p>}
+        {groups.map(group => <section key={group.title}>
+          <h3>{group.title}<span>{group.total}</span></h3>
+          {group.items.map(item => <button key={item.key} type="button" className="cm-palette-item" onClick={() => onPick(item.target)}><strong>{item.label}</strong>{item.detail && <small>{item.detail}</small>}</button>)}
+          {group.total > group.items.length && <button type="button" className="cm-palette-more" onClick={() => onPick({ kind: 'view', view: group.view, search: query.trim() })}>Reba byose ({group.total}) →</button>}
+        </section>)}
+        {q && <button type="button" className="cm-palette-more" onClick={() => onPick({ kind: 'users', search: query.trim() })}>Shakisha “{query.trim()}” mu bakoresha →</button>}
+      </div>
+    </div>
   </div>;
 }
 function Toast({ notice, onClose }: { notice: Notice; onClose: () => void }) {
@@ -821,7 +930,7 @@ function QuestionRow({ question, category, image, openReports = 0, onOpen, onTog
     <button type="button" className="cm-row-main" onClick={onOpen}>
       <strong>{question.prompt}</strong>
       {answer && <span className="cm-answer"><Icon name="check" /><span>{answer}</span></span>}
-      <span className="cm-meta">{question.number != null && <span className="cm-chip cm-num">#{question.number}</span>}<span className="cm-cat"><i /><span>{category?.title ?? question.category_id}</span></span><span className="cm-chip">{question.is_exam_question ? 'Ikizamini' : 'Inyongera'}</span>{!question.explanation?.trim() && <span className="cm-chip warn">Nta bisobanuro</span>}{openReports > 0 && <span className="cm-chip danger">⚑ Raporo {openReports}</span>}{question.created_at && <span>Yongewe {formatDate(question.created_at)}</span>}{question.updated_at && <span>Byahinduwe {formatDate(question.updated_at)}</span>}</span>
+      <span className="cm-meta">{question.number != null && <span className="cm-chip cm-num">#{question.number}</span>}<span className="cm-cat"><i /><span>{category?.title ?? question.category_id}</span></span><span className="cm-chip">{question.is_exam_question ? 'Ikizamini' : 'Inyongera'}</span>{!question.explanation?.trim() && <span className="cm-chip warn">Nta bisobanuro</span>}{openReports > 0 && <span className="cm-chip danger">⚑ Raporo {openReports}</span>}{question.created_at && <span>Yongewe {formatDate(question.created_at)}</span>}{question.updated_at && <span>Byahinduwe {formatDate(question.updated_at)}</span>}{question.audio_path && <span className="cm-chip">Amajwi</span>}</span>
     </button>
     <StatusSwitch published={question.published} label={question.prompt} onToggle={onToggle} />
     <div className="cm-row-actions"><ActionIcon kind="edit" label="Hindura ikibazo" onClick={onOpen} /><ActionIcon kind="delete" label="Siba ikibazo" onClick={onDelete} /></div>
@@ -832,7 +941,7 @@ function LessonRow({ lesson, index, category, onMove, first = false, last = fals
     <span className="cm-index">{index ?? <Icon name="lessons" />}</span>
     <button type="button" className="cm-row-main" onClick={onOpen}>
       <strong>{lesson.title}</strong>
-      <span className="cm-meta">{category && <span className="cm-cat"><i /><span>{category.title}</span></span>}<span>{lesson.lesson_sections?.length ?? 0} bice</span><span>{lesson.minutes} min</span>{lesson.is_extra && <span className="cm-chip">Inyongera</span>}{category && <span>Yongewe {formatDate(lesson.created_at)}</span>}{lesson.updated_at && <span>Byahinduwe {formatDate(lesson.updated_at)}</span>}</span>
+      <span className="cm-meta">{category && <span className="cm-cat"><i /><span>{category.title}</span></span>}<span>{lesson.lesson_sections?.length ?? 0} bice</span><span>{lesson.minutes} min</span>{lesson.is_extra && <span className="cm-chip">Inyongera</span>}{category && <span>Yongewe {formatDate(lesson.created_at)}</span>}{lesson.updated_at && <span>Byahinduwe {formatDate(lesson.updated_at)}</span>}{lesson.audio_path && <span className="cm-chip">Amajwi</span>}</span>
     </button>
     {onMove && <MoveButtons label={lesson.title} first={first} last={last} onMove={onMove} />}
     <StatusSwitch published={lesson.published} label={lesson.title} onToggle={onToggle} />
@@ -841,6 +950,13 @@ function LessonRow({ lesson, index, category, onMove, first = false, last = fals
 }
 function Drawer({ eyebrow, title, wide = false, onClose, onSubmit, footer, children }: { eyebrow: string; title: string; wide?: boolean; onClose: () => void; onSubmit: (event: FormEvent) => void; footer: ReactNode; children: ReactNode }) {
   return <div className="cm-drawer-root"><div className="cm-backdrop" onClick={onClose} /><form className={`cm-drawer ${wide ? 'wide' : ''}`} role="dialog" aria-modal="true" aria-labelledby="cm-drawer-title" onSubmit={onSubmit}><header className="cm-drawer-head"><div><p className="eyebrow">{eyebrow}</p><h2 id="cm-drawer-title">{title}</h2></div><button type="button" className="cm-close" aria-label="Funga" onClick={onClose}>×</button></header><div className="cm-drawer-body">{children}</div><footer className="cm-drawer-foot">{footer}</footer></form></div>;
+}
+// Recording learners hear from the app's listen button; the player lets the admin check it before saving.
+function AudioField({ ready, label, src, onPick, onRemove }: { ready: boolean; label: string; src: string | null; onPick: (event: ChangeEvent<HTMLInputElement>) => void; onRemove: () => void }) {
+  if (!ready) return <div className="cm-field"><span>{label}</span><span className="cm-hint">Kora migration <code>202611010003_audio.sql</code> muri Supabase kugira ngo ushyireho amajwi.</span></div>;
+  return <div className="cm-field"><span>{label}</span>{src
+    ? <div className="cm-image cm-audio"><audio controls preload="none" src={src} /><div><label className="cm-upload">Hindura amajwi<input type="file" accept="audio/*" onChange={onPick} /></label><button type="button" className="cm-remove" onClick={onRemove}>Kuraho amajwi</button></div></div>
+    : <label className="cm-upload cm-dropzone"><Icon name="volume" /><span>Hitamo amajwi (MP3 cyangwa M4A, ≤ 20 MB)</span><input type="file" accept="audio/*" onChange={onPick} /></label>}</div>;
 }
 function ImageField({ label, src, onPick, onRemove }: { label: string; src: string | null; onPick: (event: ChangeEvent<HTMLInputElement>) => void; onRemove: () => void }) {
   return <div className="cm-field"><span>{label}</span>{src

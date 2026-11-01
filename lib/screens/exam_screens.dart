@@ -137,6 +137,7 @@ class ExamIntroScreen extends StatelessWidget {
                 padding: EdgeInsets.only(bottom: 10),
                 child: ExamHistoryTile(result: r),
               ),
+          if (state.examResults.length > 5) SeeAllExamsButton(count: state.examResults.length),
         ],
       ),
     );
@@ -182,6 +183,47 @@ class _Rule extends StatelessWidget {
           SizedBox(width: 8),
           Expanded(child: Text(text, style: TextStyle(height: 1.4))),
         ],
+      ),
+    );
+  }
+}
+
+/// "Reba ibizamini byose": shown under the latest 5 exams.
+class SeeAllExamsButton extends StatelessWidget {
+  const SeeAllExamsButton({super.key, required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: TextButton.icon(
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => ExamHistoryScreen()),
+        ),
+        icon: Icon(Icons.history),
+        label: Text('Reba ibizamini byose ($count)'),
+      ),
+    );
+  }
+}
+
+/// Ibizamini byose wakoze, bishya mbere; byubakwa uko umanuka.
+class ExamHistoryScreen extends StatelessWidget {
+  const ExamHistoryScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final List<ExamResult> results = AppScope.of(context).examResults;
+    return Scaffold(
+      appBar: AppBar(title: Text('Ibizamini byose (${results.length})')),
+      body: ListView.separated(
+        padding: EdgeInsets.fromLTRB(20, 8, 20, 24),
+        itemCount: results.length,
+        separatorBuilder: (_, __) => SizedBox(height: 10),
+        itemBuilder: (BuildContext context, int i) =>
+            ExamHistoryTile(result: results[i]),
       ),
     );
   }

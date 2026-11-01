@@ -5,6 +5,7 @@ import '../data/content_repository.dart';
 import '../data/exam_scope.dart';
 import '../data/models.dart';
 import '../state/app_state.dart';
+import '../widgets/audio_button.dart';
 import '../widgets/common.dart';
 import '../widgets/question_report.dart';
 import '../widgets/road_sign.dart';
@@ -389,12 +390,7 @@ class _PracticeQuizScreenState extends State<PracticeQuizScreen> {
                       ],
                     ),
                   ),
-                  IconButton(
-                    tooltip: 'Umva ikibazo',
-                    icon: const Icon(Icons.volume_up_outlined),
-                    onPressed: () =>
-                        showComingSoon(context, 'Amajwi azongerwamo vuba.'),
-                  ),
+                  AudioButton(audioPath: _q.audioPath, label: 'ikibazo'),
                   IconButton(
                     tooltip: 'Bika ikibazo',
                     icon: Icon(

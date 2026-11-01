@@ -5,6 +5,7 @@ import '../data/content_repository.dart';
 import '../data/exam_scope.dart';
 import '../data/models.dart';
 import '../state/app_state.dart';
+import '../widgets/audio_button.dart';
 import '../widgets/common.dart';
 import '../widgets/road_sign.dart';
 
@@ -25,12 +26,7 @@ class LessonScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(lesson.title),
         actions: <Widget>[
-          IconButton(
-            tooltip: 'Umva isomo',
-            icon: Icon(Icons.volume_up_outlined),
-            onPressed: () => showComingSoon(
-                context, 'Amajwi mu Kinyarwanda azongerwamo vuba.'),
-          ),
+          AudioButton(audioPath: lesson.audioPath, label: 'isomo'),
           IconButton(
             tooltip: bookmarked ? 'Kuramo mu byabitswe' : 'Bika',
             icon: Icon(bookmarked ? Icons.bookmark : Icons.bookmark_border,
