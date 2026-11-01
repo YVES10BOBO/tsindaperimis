@@ -248,6 +248,8 @@ class _ExamScreenState extends State<ExamScreen> {
   late final List<int?> _answers =
       List<int?>.filled(widget.questions.length, null);
   final Set<int> _flagged = <int>{};
+  // Questions the learner has already left, so an empty one counts as skipped.
+  final Set<int> _visited = <int>{};
   int _index = 0;
   Duration _left = _limit;
   Timer? _timer;
@@ -275,6 +277,25 @@ class _ExamScreenState extends State<ExamScreen> {
 
   int get _answeredCount => _answers.where((int? a) => a != null).length;
 
+  void _goTo(int i) => setState(() {
+        _visited.add(_index);
+        _index = i;
+      });
+
+  /// Uko buri kibazo gihagaze. Ntibigaragaza niba igisubizo ari cyo,
+  /// nk'uko bigenda mu kizamini nyacyo.
+  _QuestionState _stateOf(int i) {
+    if (_flagged.contains(i)) return _QuestionState.flagged;
+    if (_answers[i] != null) return _QuestionState.answered;
+    if (_visited.contains(i) && i != _index) return _QuestionState.skipped;
+    return _QuestionState.unseen;
+  }
+
+  int _countOf(_QuestionState state) => <int>[
+        for (int i = 0; i < _answers.length; i++)
+          if (_stateOf(i) == state) i
+      ].length;
+
   void _submit() {
     if (_submitted) return;
     _submitted = true;
@@ -293,23 +314,41 @@ class _ExamScreenState extends State<ExamScreen> {
   }
 
   Future<void> _confirmSubmit() async {
-    final int missing = widget.questions.length - _answeredCount;
-    final bool? ok = await showDialog<bool>(
+    final List<int> missing = <int>[
+      for (int i = 0; i < _answers.length; i++)
+        if (_answers[i] == null) i
+    ];
+    final String? choice = await showDialog<String>(
       context: context,
       builder: (BuildContext ctx) => AlertDialog(
         title: Text('Soza ikizamini?'),
-        content: Text(missing > 0
-            ? 'Usigaje ibibazo $missing utasubije. Ushaka gusoza?'
-            : 'Wasubije ibibazo byose. Ushaka gusoza?'),
+        content: Text(<String>[
+          if (missing.isEmpty)
+            'Wasubije ibibazo byose.'
+          else
+            'Ntiwasubije ibibazo ${missing.length}: ${missing.map((int i) => i + 1).join(', ')}. Ibitasubijwe bibarwa nk\'amakosa.',
+          if (_flagged.isNotEmpty)
+            'Ufite ibibazo ${_flagged.length} washyizeho "Uzagaruka".',
+        ].join('\n\n')),
         actions: <Widget>[
+          if (missing.isNotEmpty)
+            TextButton(
+                onPressed: () => Navigator.pop(ctx, 'review'),
+                child: Text('Subira ku cya ${missing.first + 1}'))
+          else
+            TextButton(
+                onPressed: () => Navigator.pop(ctx), child: Text('Oya')),
           TextButton(
-              onPressed: () => Navigator.pop(ctx, false), child: Text('Oya')),
-          TextButton(
-              onPressed: () => Navigator.pop(ctx, true), child: Text('Soza')),
+              onPressed: () => Navigator.pop(ctx, 'submit'),
+              child: Text('Soza')),
         ],
       ),
     );
-    if (ok == true) _submit();
+    if (choice == 'submit') {
+      _submit();
+    } else if (choice == 'review') {
+      _goTo(missing.first);
+    }
   }
 
   Future<void> _confirmExit() async {
@@ -354,12 +393,11 @@ class _ExamScreenState extends State<ExamScreen> {
                   for (int i = 0; i < widget.questions.length; i++)
                     _NavCell(
                       number: i + 1,
-                      answered: _answers[i] != null,
-                      flagged: _flagged.contains(i),
+                      state: _stateOf(i),
                       current: i == _index,
                       onTap: () {
                         Navigator.pop(ctx);
-                        setState(() => _index = i);
+                        _goTo(i);
                       },
                     ),
                 ],
@@ -369,9 +407,8 @@ class _ExamScreenState extends State<ExamScreen> {
                 spacing: 16,
                 runSpacing: 6,
                 children: <Widget>[
-                  _Legend(color: AppColors.primary, label: 'Wasubije'),
-                  _Legend(color: AppColors.warning, label: 'Uzagaruka'),
-                  _Legend(color: AppColors.border, label: 'Ntiwasubije'),
+                  for (final _QuestionState s in _QuestionState.values)
+                    _Legend(color: s.color, label: s.label),
                 ],
               ),
             ],
@@ -431,8 +468,16 @@ class _ExamScreenState extends State<ExamScreen> {
           children: <Widget>[
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
-              child: AppProgressBar(
-                  value: _answeredCount / total, color: AppColors.purple),
+              child: _ExamProgress(
+                states: <_QuestionState>[
+                  for (int i = 0; i < total; i++) _stateOf(i)
+                ],
+                current: _index,
+                answered: _answeredCount,
+                skipped: _countOf(_QuestionState.skipped),
+                flagged: _flagged.length,
+                onTap: _openNavigator,
+              ),
             ),
             Expanded(
               child: ListView(
@@ -490,8 +535,7 @@ class _ExamScreenState extends State<ExamScreen> {
                   SizedBox(width: 8),
                   Expanded(
                     child: OutlinedButton(
-                      onPressed:
-                          _index == 0 ? null : () => setState(() => _index--),
+                      onPressed: _index == 0 ? null : () => _goTo(_index - 1),
                       child: Text('Ibanza'),
                     ),
                   ),
@@ -502,9 +546,8 @@ class _ExamScreenState extends State<ExamScreen> {
                           ? ElevatedButton.styleFrom(
                               backgroundColor: AppColors.purple)
                           : null,
-                      onPressed: last
-                          ? _confirmSubmit
-                          : () => setState(() => _index++),
+                      onPressed:
+                          last ? _confirmSubmit : () => _goTo(_index + 1),
                       child: Text(last ? 'Soza' : 'Ikurikira'),
                     ),
                   ),
@@ -518,33 +561,126 @@ class _ExamScreenState extends State<ExamScreen> {
   }
 }
 
+enum _QuestionState {
+  answered('Wasubije'),
+  flagged('Uzagaruka'),
+  skipped('Wasimbutse'),
+  unseen('Ntiwarakigeraho');
+
+  const _QuestionState(this.label);
+  final String label;
+
+  Color get color => switch (this) {
+        _QuestionState.answered => AppColors.primary,
+        _QuestionState.flagged => AppColors.warning,
+        _QuestionState.skipped => AppColors.muted,
+        _QuestionState.unseen => AppColors.border,
+      };
+}
+
+/// Umurongo w'ikizamini: igice kimwe kuri buri kibazo. Kanda urebe ibibazo byose.
+class _ExamProgress extends StatelessWidget {
+  const _ExamProgress({
+    required this.states,
+    required this.current,
+    required this.answered,
+    required this.skipped,
+    required this.flagged,
+    required this.onTap,
+  });
+
+  final List<_QuestionState> states;
+  final int current;
+  final int answered;
+  final int skipped;
+  final int flagged;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      excludeSemantics: true,
+      label: 'Wasubije $answered kuri ${states.length}, wasimbutse $skipped, '
+          'uzagaruka $flagged. Kanda urebe ibibazo byose.',
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 6),
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: 12,
+                child: Row(
+                  children: <Widget>[
+                    for (int i = 0; i < states.length; i++) ...<Widget>[
+                      Expanded(
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 250),
+                          height: i == current ? 12 : 7,
+                          decoration: BoxDecoration(
+                            color: states[i].color,
+                            borderRadius: BorderRadius.circular(4),
+                            border: i == current
+                                ? Border.all(color: AppColors.purple, width: 2)
+                                : null,
+                          ),
+                        ),
+                      ),
+                      if (i < states.length - 1) SizedBox(width: 3),
+                    ],
+                  ],
+                ),
+              ),
+              SizedBox(height: 8),
+              Row(
+                children: <Widget>[
+                  _Legend(
+                      color: _QuestionState.answered.color,
+                      label: 'Wasubije $answered'),
+                  if (skipped > 0) ...<Widget>[
+                    SizedBox(width: 12),
+                    _Legend(
+                        color: _QuestionState.skipped.color,
+                        label: 'Wasimbutse $skipped'),
+                  ],
+                  if (flagged > 0) ...<Widget>[
+                    SizedBox(width: 12),
+                    _Legend(
+                        color: _QuestionState.flagged.color,
+                        label: 'Uzagaruka $flagged'),
+                  ],
+                  Spacer(),
+                  Icon(Icons.grid_view, size: 16, color: AppColors.muted),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _NavCell extends StatelessWidget {
   const _NavCell({
     required this.number,
-    required this.answered,
-    required this.flagged,
+    required this.state,
     required this.current,
     required this.onTap,
   });
 
   final int number;
-  final bool answered;
-  final bool flagged;
+  final _QuestionState state;
   final bool current;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    Color bg = AppColors.background;
-    Color fg = AppColors.text;
-    if (answered) {
-      bg = AppColors.primary;
-      fg = Colors.white;
-    }
-    if (flagged) {
-      bg = AppColors.warning;
-      fg = Colors.white;
-    }
+    final bool filled = state != _QuestionState.unseen;
+    final Color bg = filled ? state.color : AppColors.background;
+    final Color fg = filled ? Colors.white : AppColors.text;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(10),
