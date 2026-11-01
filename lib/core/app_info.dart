@@ -11,4 +11,8 @@ class AppInfo {
   /// Premium ihishwe kugeza kwishyura nyabyo (MTN MoMo / Airtel Money) bihujwe.
   /// Ubu ibirimo byose ni ubuntu; shyiramo `true` iyo kwishyura byakozwe.
   static const bool premiumEnabled = false;
+
+  /// Utubuto two kumva amajwi (🔊) duhishwe ku bakoresha kugeza amajwi yafashwe.
+  /// Shyiramo `true` iyo amajwi y'amasomo/ibibazo yashyizweho muri dashboard.
+  static const bool audioEnabled = false;
 }
