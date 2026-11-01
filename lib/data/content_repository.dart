@@ -207,6 +207,37 @@ class ContentRepository {
     });
   }
 
+  static const bool _supabaseConfigured =
+      String.fromEnvironment('SUPABASE_URL') != '' &&
+          String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY') != '';
+
+  /// The learner whose Supabase session is saved on this device, so the app
+  /// can reopen signed in. Works offline: the session is stored on the phone.
+  ({String name, String email})? get signedInAccount {
+    if (!_supabaseConfigured) return null;
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user == null) return null;
+      final name = (user.userMetadata?['full_name'] as String?)?.trim() ?? '';
+      return (name: name.isEmpty ? 'Umukoresha' : name, email: user.email ?? '');
+    } catch (_) {
+      return null; // Supabase did not initialise (e.g. first launch offline).
+    }
+  }
+
+  /// Fires when Supabase ends the session: sign-out, an expired or revoked
+  /// login, a suspended account, or an account deleted by an admin.
+  Stream<void> get signedOutEvents {
+    if (!_supabaseConfigured) return const Stream<void>.empty();
+    try {
+      return Supabase.instance.client.auth.onAuthStateChange
+          .where((AuthState s) => s.event == AuthChangeEvent.signedOut)
+          .map((_) {});
+    } catch (_) {
+      return const Stream<void>.empty();
+    }
+  }
+
   /// Ends the Supabase session so progress stops syncing to that account.
   Future<void> signOutRemote() async {
     const url = String.fromEnvironment('SUPABASE_URL');

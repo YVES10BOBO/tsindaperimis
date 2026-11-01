@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'core/app_colors.dart';
 import 'core/app_info.dart';
 import 'core/app_theme.dart';
+import 'screens/main_shell.dart';
 import 'screens/welcome_screen.dart';
 import 'state/app_state.dart';
 
@@ -15,6 +16,10 @@ class AmategekoApp extends StatefulWidget {
 
 class _AmategekoAppState extends State<AmategekoApp> with WidgetsBindingObserver {
   final AppState _state = AppState();
+
+  // Chosen once at launch: a learner whose login is saved goes straight in.
+  late final Widget _firstScreen =
+      _state.isGuest ? const WelcomeScreen() : const MainShell();
 
   @override
   void initState() {
@@ -60,7 +65,7 @@ class _AmategekoAppState extends State<AmategekoApp> with WidgetsBindingObserver
             title: AppInfo.name,
             debugShowCheckedModeBanner: false,
             theme: buildAppTheme(dark: dark),
-            home: const WelcomeScreen(),
+            home: _firstScreen,
           ),
         );
       },
