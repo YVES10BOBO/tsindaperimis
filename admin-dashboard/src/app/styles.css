@@ -345,6 +345,43 @@ code{background:#f3f6ff}
 .cm-setup p{margin:6px 0;line-height:1.5}
 .cm-setup small{color:#92400e;font-size:12px}
 
+/* Confirmation popup (replaces window.confirm/prompt) and toast messages */
+.cm-dialog-root{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:16px}
+.cm-dialog{position:relative;width:min(440px,100%);display:flex;flex-direction:column;gap:12px;padding:24px;border:var(--outline-w) solid var(--outline);border-radius:18px;background:#fff;box-shadow:0 24px 60px rgba(15,23,42,.28);animation:cm-pop .16s ease}
+.cm-dialog h2{margin:0;color:#111827;font:800 20px Manrope,sans-serif}
+.cm-dialog-message{color:#4b5563;font-size:14px;line-height:1.55;overflow-wrap:anywhere}
+.cm-dialog-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:14px}
+.cm-dialog-icon .cm-icon{width:24px;height:24px}
+.cm-dialog.danger .cm-dialog-icon{background:#fdecec;color:#b91c1c}
+.cm-dialog.warning .cm-dialog-icon{background:#fff4e0;color:#b45309}
+.cm-dialog.primary .cm-dialog-icon{background:#eaf1ff;color:#1d4ed8}
+.cm-dialog-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:8px}
+.cm-dialog-actions button{min-width:110px;height:44px}
+.cm-dialog-confirm{border:0;border-radius:12px;padding:0 18px;color:#fff;font-weight:700}
+.cm-dialog-confirm.danger{background:#b42318}
+.cm-dialog-confirm.danger:hover:not(:disabled){background:#912018}
+.cm-dialog-confirm.warning{background:#b45309}
+.cm-dialog-confirm.warning:hover:not(:disabled){background:#92400e}
+.cm-dialog-confirm.primary{background:#2563eb}
+.cm-dialog-confirm.primary:hover:not(:disabled){background:#1e3a8a}
+.cm-dialog-confirm:disabled{opacity:.45;cursor:not-allowed}
+.cm-dialog-actions button:focus-visible{outline:3px solid #93b4ff;outline-offset:2px}
+@keyframes cm-pop{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
+.cm-toast-region{position:fixed;right:20px;bottom:20px;z-index:70;display:flex;flex-direction:column;align-items:flex-end;gap:10px;pointer-events:none}
+.cm-toast{display:flex;align-items:flex-start;gap:12px;width:min(400px,calc(100vw - 32px));padding:14px 12px 14px 14px;border:var(--outline-w) solid;border-radius:14px;background:#fff;box-shadow:0 14px 34px rgba(15,23,42,.18);pointer-events:auto;animation:cm-toast-in .22s ease}
+.cm-toast p{flex:1;margin:2px 0 0;color:#111827;font-size:14px;font-weight:600;line-height:1.45}
+.cm-toast-icon{flex:none;width:30px;height:30px;display:grid;place-items:center;border-radius:50%}
+.cm-toast-icon .cm-icon{width:17px;height:17px}
+.cm-toast.success{border-color:#86efac}
+.cm-toast.success .cm-toast-icon{background:#16a34a;color:#fff}
+.cm-toast.error{border-color:#fca5a5}
+.cm-toast.error .cm-toast-icon{background:#b91c1c;color:#fff}
+.cm-toast>button{flex:none;width:30px;height:30px;border:0;border-radius:8px;background:none;color:#64748b;font-size:20px;line-height:1}
+.cm-toast>button:hover{background:#f1f5f9;color:#111827}
+@keyframes cm-toast-in{from{transform:translateY(12px);opacity:0}to{transform:none;opacity:1}}
+@media(prefers-reduced-motion:reduce){.cm-dialog,.cm-toast{animation:none}}
+@media(max-width:580px){.cm-toast-region{right:16px;left:16px;bottom:16px;align-items:stretch}.cm-toast{width:auto}.cm-dialog-actions{flex-direction:column-reverse}.cm-dialog-actions button{width:100%}}
+
 /* One shared outline for every dashboard component, matching the Amasomo/Ibibazo cards. */
 :root{--outline:#aebbd0;--outline-w:1.5px}
 .stat-card,.dashboard-stats .stat-card,.quick-card,.list-card,.editor-card,.category-card,.manage-panel,.review-panel,.manage-card,.users-card,.users-intro,.cm-list,.cm-group,.login-card,.cm-checks,.cm-image{border:var(--outline-w) solid var(--outline)}

@@ -13,6 +13,7 @@ type Learner = { id: string; email: string | null; phone: string | null; created
 type Announcement = { id: string; title: string; body: string; icon: string; published: boolean; published_at: string | null; expires_at: string | null; created_at: string; updated_at: string };
 type View = 'overview' | 'questions' | 'lessons' | 'categories' | 'notifications' | 'users';
 type Notice = { kind: 'error' | 'success'; text: string };
+type ConfirmOptions = { title: string; message: ReactNode; confirmLabel: string; tone?: 'danger' | 'warning' | 'primary'; requireText?: string };
 
 const emptyQuestion = () => ({ id: '', category_id: '', prompt: '', explanation: '', sign_type: '', sign_label: '', image_path: '', is_exam_question: true, published: false, options: ['', '', '', ''], correct: 0 });
 const emptyLesson = () => ({ id: '', category_id: '', title: '', minutes: 5, is_extra: false, published: false, sections: [{ heading: '', body: '', sign_type: '', sign_label: '', image_path: '' }] });
@@ -73,6 +74,10 @@ export default function Home() {
   const [needsExplanation, setNeedsExplanation] = useState(false);
 
   const sayError = (error: unknown) => setNotice({ kind: 'error', text: error instanceof Error ? error.message : String(error) });
+  // Styled replacement for window.confirm/prompt: resolves true when the admin confirms.
+  const [confirmState, setConfirmState] = useState<(ConfirmOptions & { resolve: (ok: boolean) => void }) | null>(null);
+  const askConfirm = useCallback((options: ConfirmOptions) => new Promise<boolean>(resolve => setConfirmState({ ...options, resolve })), []);
+  const answerConfirm = (ok: boolean) => { confirmState?.resolve(ok); setConfirmState(null); };
   const requireClient = () => { if (!supabase) throw new Error('Shyiramo URL na publishable key muri admin-dashboard/.env.local.'); return supabase; };
 
   const checkAdmin = useCallback(async (current: Session | null) => {
@@ -137,8 +142,11 @@ export default function Home() {
 
   const changeLearnerStatus = async (learner: Learner) => {
     const action = learner.bannedUntil && new Date(learner.bannedUntil) > new Date() ? 'restore' : 'suspend';
-    const prompt = action === 'suspend' ? `Uhagarike konti ya ${learner.email ?? learner.phone ?? learner.id}?` : `Wongere ufungure konti ya ${learner.email ?? learner.phone ?? learner.id}?`;
-    if (!confirm(prompt)) return;
+    const label = learner.email ?? learner.phone ?? learner.id;
+    const ok = await askConfirm(action === 'suspend'
+      ? { title: 'Hagarika konti?', message: `${label} ntazongera kwinjira muri app kugeza wongeye gufungura konti ye.`, confirmLabel: 'Hagarika konti', tone: 'warning' }
+      : { title: 'Ongera ufungure konti?', message: `${label} azongera kwinjira no gukoresha app.`, confirmLabel: 'Ongera ufungure', tone: 'primary' });
+    if (!ok) return;
     setBusy(true);
     try {
       const response = await fetch('/api/admin/users', {
@@ -191,8 +199,8 @@ export default function Home() {
 
   const deleteLearner = async (learner: Learner) => {
     const label = learner.email ?? learner.phone ?? learner.id;
-    const answer = prompt(`Gusiba konti ya ${label} bizasiba burundu konti n’iterambere rye ryose. Ntibishobora gusubizwa.\n\nAndika SIBA kugira ngo wemeze.`);
-    if (answer?.trim().toUpperCase() !== 'SIBA') return;
+    const ok = await askConfirm({ title: 'Siba konti burundu?', message: `Konti ya ${label} n’iterambere rye ryose bizasibwa burundu. Ntibishobora gusubizwa.`, confirmLabel: 'Siba konti', requireText: 'SIBA' });
+    if (!ok) return;
     setBusy(true);
     try {
       const response = await fetch('/api/admin/users', {
@@ -254,10 +262,11 @@ export default function Home() {
   };
 
   const removeQuestion = async (id: string) => {
-    if (!confirm('Urashaka gusiba iki kibazo?')) return;
-    const image = questions.find(q => q.id === id)?.image_path;
+    const question = questions.find(q => q.id === id);
+    if (!(await askConfirm({ title: 'Siba iki kibazo?', message: <>“{question?.prompt}” n’ibisubizo byacyo bizasibwa burundu, kandi abakoresha ntibazongera kukibona.</>, confirmLabel: 'Siba ikibazo' }))) return;
+    const image = question?.image_path;
     const { error } = await requireClient().from('questions').delete().eq('id', id);
-    if (error) sayError(error); else { setNotice({ kind: 'success', text: 'Ikibazo cyasibwe.' }); void removeUnusedImages([image]); await loadData(); }
+    if (error) sayError(error); else { setNotice({ kind: 'success', text: 'Ikibazo cyasibwe neza.' }); void removeUnusedImages([image]); await loadData(); }
   };
 
   const showLesson = (form: LessonForm) => {
@@ -291,10 +300,11 @@ export default function Home() {
   };
 
   const removeLesson = async (id: string) => {
-    if (!confirm('Urashaka gusiba iri somo?')) return;
-    const images = lessons.find(l => l.id === id)?.lesson_sections.map(section => section.image_path) ?? [];
+    const lesson = lessons.find(l => l.id === id);
+    if (!(await askConfirm({ title: 'Siba iri somo?', message: <>“{lesson?.title}” n’ibice byaryo {lesson?.lesson_sections.length ?? 0} bizasibwa burundu.</>, confirmLabel: 'Siba isomo' }))) return;
+    const images = lesson?.lesson_sections.map(section => section.image_path) ?? [];
     const { error } = await requireClient().from('lessons').delete().eq('id', id);
-    if (error) sayError(error); else { setNotice({ kind: 'success', text: 'Isomo ryasibwe.' }); void removeUnusedImages(images); await loadData(); }
+    if (error) sayError(error); else { setNotice({ kind: 'success', text: 'Isomo ryasibwe neza.' }); void removeUnusedImages(images); await loadData(); }
   };
 
   // Swaps an item with its neighbour, then renumbers the list and saves only the rows that moved.
@@ -345,11 +355,11 @@ export default function Home() {
       setNotice({ kind: 'error', text: `Ntushobora gusiba “${category.title}”: kirimo amasomo ${lessonCount} n’ibibazo ${questionCount}. Banza ubyimurire mu kindi cyiciro cyangwa ubisibe.` });
       return;
     }
-    if (!confirm(`Urashaka gusiba icyiciro “${category.title}”?`)) return;
+    if (!(await askConfirm({ title: 'Siba iki cyiciro?', message: <>Icyiciro “{category.title}” kizasibwa burundu. Nta masomo cyangwa ibibazo kirimo.</>, confirmLabel: 'Siba icyiciro' }))) return;
     const { error } = await requireClient().from('content_categories').delete().eq('id', category.id);
     if (error) { sayError(error); return; }
     if (categoryForm.id === category.id) setCategoryForm(emptyCategory());
-    setNotice({ kind: 'success', text: 'Icyiciro cyasibwe.' });
+    setNotice({ kind: 'success', text: 'Icyiciro cyasibwe neza.' });
     await loadData();
   };
 
@@ -376,14 +386,14 @@ export default function Home() {
   };
 
   const removeAnnouncement = async (item: Announcement) => {
-    if (!confirm(`Urashaka gusiba ubutumwa “${item.title}”? Abakoresha ntibazongera kububona.`)) return;
+    if (!(await askConfirm({ title: 'Siba ubu butumwa?', message: <>“{item.title}” buzasibwa burundu, kandi abakoresha ntibazongera kububona.</>, confirmLabel: 'Siba ubutumwa' }))) return;
     const { error } = await requireClient().from('notifications').delete().eq('id', item.id);
-    if (error) sayError(error); else { setNotice({ kind: 'success', text: 'Ubutumwa bwasibwe.' }); await loadData(); }
+    if (error) sayError(error); else { setNotice({ kind: 'success', text: 'Ubutumwa bwasibwe neza.' }); await loadData(); }
   };
 
   const togglePublished = async (table: 'questions' | 'lessons' | 'content_categories' | 'notifications', row: { id: string; published: boolean }) => {
     const { error } = await requireClient().from(table).update({ published: !row.published }).eq('id', row.id);
-    if (error) sayError(error); else await loadData();
+    if (error) sayError(error); else { setNotice({ kind: 'success', text: row.published ? 'Byahishwe: ubu ni draft, abakoresha ntibabibona.' : 'Byatangajwe: abakoresha barabibona.' }); await loadData(); }
   };
 
   const filteredQuestions = useMemo(() => questions.filter(q => {
@@ -436,22 +446,30 @@ export default function Home() {
     setOpenSections(open => open.map(i => i === index ? to : i === to ? index : i));
   };
 
-  const closeDrawer = useCallback(() => {
+  const closeDrawer = useCallback(async () => {
     const current = drawer === 'question' ? questionForm : drawer === 'lesson' ? lessonForm : announcementForm;
-    if (JSON.stringify(current) !== formSnapshot && !confirm('Hari impinduka utabitse. Urashaka gufunga utabitse?')) return;
+    if (JSON.stringify(current) !== formSnapshot && !(await askConfirm({ title: 'Ufunge utabitse?', message: 'Hari impinduka utabitse. Nufunga ubu, zirasibama.', confirmLabel: 'Funga utabitse', tone: 'warning' }))) return;
     // Photos uploaded while editing but never saved are not used by anything.
     void removeUnusedImages(uploadedPaths); setUploadedPaths([]);
     setDrawer(null);
-  }, [drawer, questionForm, lessonForm, announcementForm, formSnapshot, uploadedPaths]);
+  }, [drawer, questionForm, lessonForm, announcementForm, formSnapshot, uploadedPaths, askConfirm]);
 
   useEffect(() => {
     if (!drawer) return;
-    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') closeDrawer(); };
+    // While a confirmation popup is open, Escape belongs to that popup.
+    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape' && !confirmState) void closeDrawer(); };
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     window.addEventListener('keydown', onKey);
     return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = previousOverflow; };
-  }, [drawer, closeDrawer]);
+  }, [drawer, closeDrawer, confirmState]);
+
+  // Toasts close by themselves; errors stay longer so they can be read.
+  useEffect(() => {
+    if (!notice || !session || !isAdmin) return;
+    const timeout = window.setTimeout(() => setNotice(null), notice.kind === 'success' ? 4000 : 9000);
+    return () => window.clearTimeout(timeout);
+  }, [notice, session, isAdmin]);
 
   if (!authReady) return <main className="center"><span className="spinner" /> Kugenzura konti...</main>;
   if (!configured || !supabase) return <main className="center"><section className="login-card"><Brand /><h1>Huza Supabase</h1><p>Copy admin-dashboard/.env.example to admin-dashboard/.env.local, then add your project URL and publishable key.</p></section></main>;
@@ -460,7 +478,8 @@ export default function Home() {
   return <main className={`shell grid min-h-screen transition-[grid-template-columns] duration-300 ease-in-out ${menuOpen ? '' : 'sidebar-collapsed'}`}>
     <aside className="sidebar sticky top-0 flex h-screen flex-col overflow-hidden transition-all duration-300"><Brand /><div className="side-label">IMICUNGIRE</div><nav className="sidebar-nav flex flex-col">{(['overview', 'questions', 'lessons', 'categories', 'notifications', 'users'] as View[]).map(item => <button key={item} className={`nav-item ${view === item ? 'active' : ''}`} onClick={() => { setView(item); setNotice(null); setSearch(''); }}><span className="nav-icon"><Icon name={item} /></span>{{ overview: 'Incamake', questions: 'Ibibazo', lessons: 'Amasomo', categories: 'Ibyiciro', notifications: 'Ubutumwa', users: 'Abakoresha' }[item]}<span className="nav-count">{item === 'questions' ? questions.length : item === 'lessons' ? lessons.length : item === 'categories' ? categories.length : item === 'notifications' ? announcements.length || '' : item === 'users' ? learnerTotal || '' : ''}</span></button>)}</nav><div className="sidebar-bottom"><span className="avatar">{session.user.email?.slice(0, 1).toUpperCase() ?? 'A'}</span><span className="admin-email">{session.user.email}</span><button className="text-button" onClick={signOut}>Sohoka</button></div></aside>
     <section className="workspace mx-auto w-full max-w-[1550px]"><header className="topbar"><div className="topbar-title"><button className="sidebar-toggle grid h-[42px] w-[42px] place-items-center rounded-xl border border-slate-300 bg-white text-xl text-brand-800 transition duration-200 hover:-translate-y-px hover:border-brand-100 hover:bg-brand-50" type="button" aria-label={menuOpen ? 'Funga sidebar' : 'Fungura sidebar'} aria-expanded={menuOpen} onClick={() => setMenuOpen(open => !open)}>{menuOpen ? '×' : '☰'}</button><div><span className="eyebrow">AMATEGEKO Y’UMUHANDA / ADMIN</span><h1>{{ overview: 'Incamake', questions: 'Gucunga ibibazo', lessons: 'Gucunga amasomo', categories: 'Gucunga ibyiciro', notifications: 'Gucunga ubutumwa', users: 'Gucunga abakoresha' }[view]}</h1></div></div><div className="top-actions"><span className="secure"><i /> Konti ya admin</span><button className="refresh" onClick={() => view === 'users' ? void loadLearners() : void loadData()} title="Ongera uvugurure">↻</button></div></header>
-      {notice && <div className={`notice ${notice.kind}`}>{notice.text}<button aria-label="Funga ubutumwa" onClick={() => setNotice(null)}>×</button></div>}
+      <div className="cm-toast-region" aria-live="polite">{notice && <Toast notice={notice} onClose={() => setNotice(null)} />}</div>
+      {confirmState && <ConfirmDialog {...confirmState} onAnswer={answerConfirm} />}
       {view === 'overview' && <><div className="dashboard-hero"><div><p className="eyebrow">AMATEGEKO Y’UMUHANDA · ADMIN</p><h2>Murakaza neza 👋</h2><p>Reba uko app ihagaze, ucunge abakoresha, kandi uvugurure ibikubiye muri app.</p></div><div className="hero-actions"><button className="primary" onClick={() => { openQuestion(); setView('questions'); }}>＋ Ikibazo gishya</button><button className="hero-secondary" onClick={() => { openLesson(); setView('lessons'); }}>＋ Isomo rishya</button></div><div className="hero-orb orb-one" /><div className="hero-orb orb-two" /></div><div className="section-heading dashboard-heading"><div><p className="eyebrow">INCAMAKE Y’IBIKUBIYE MURI APP</p><h2>Uko ibintu bihagaze</h2></div><span className="live-label"><i /> Bivuye muri Supabase</span></div><div className="stat-grid dashboard-stats"><Stat label="Ibibazo" value={questions.length} detail={`${questions.filter(q => q.published).length} byatangajwe · ${questions.filter(q => !q.published).length} draft`} icon="questions" /><Stat label="Amasomo" value={lessons.length} detail={`${lessons.filter(l => l.published).length} yatangajwe · ${lessons.filter(l => !l.published).length} draft`} icon="lessons" /><Stat label="Ibyiciro" value={categories.length} detail={`${categories.filter(c => c.published).length} byatangajwe`} icon="categories" /><Stat label="Abakoresha" value={learnersReady ? learnerTotal : '—'} detail={learnersReady ? 'Konti zose za Supabase Auth' : 'Fungura abakoresha urebe umubare'} icon="users" /></div><div className="dashboard-columns"><section className="manage-panel"><div className="section-heading"><div><p className="eyebrow">GUCUNGA</p><h2>Ibice bya dashboard</h2></div></div><div className="manage-grid"><ManageCard icon="questions" title="Ibibazo" detail={`${questions.length} byose · ${questions.filter(q => !q.published).length} draft`} onClick={() => setView('questions')} /><ManageCard icon="lessons" title="Amasomo" detail={`${lessons.length} yose · ${lessons.filter(l => !l.published).length} draft`} onClick={() => setView('lessons')} /><ManageCard icon="categories" title="Ibyiciro" detail={`${categories.length} byo gutondekamo`} onClick={() => setView('categories')} /><ManageCard icon="users" title="Abakoresha" detail="Reba konti, gushakisha no guhagarika konti" onClick={() => setView('users')} /></div></section><aside className="review-panel"><div><p className="eyebrow">IBIKENEYE KWITABWAHO</p><h2>Ibikorwa byo gukurikirana</h2></div><ReviewRow label="Ibibazo bitaratangazwa" count={questions.filter(q => !q.published).length} onClick={() => { setStatusFilter('draft'); setView('questions'); }} /><ReviewRow label="Amasomo ataratangazwa" count={lessons.filter(l => !l.published).length} onClick={() => { setStatusFilter('draft'); setView('lessons'); }} /><ReviewRow label="Ibyiciro bitaratangazwa" count={categories.filter(c => !c.published).length} onClick={() => { setStatusFilter('draft'); setView('categories'); }} /><ReviewRow label="Ubutumwa butaratangazwa" count={announcements.filter(a => !a.published).length} onClick={() => { setStatusFilter('draft'); setView('notifications'); }} /><ReviewRow label="Ibibazo bidafite ibisobanuro" count={missingExplanations} onClick={() => { setStatusFilter('all'); setNeedsExplanation(true); setPage(1); setView('questions'); }} /><p className="footnote">Suzuma ibiri muri draft mbere yo kubitangaza ku bakoresha app.</p></aside></div></>}
 
       {view === 'questions' && <>
@@ -621,7 +640,7 @@ function isOnLocalDay(value: string, daysAgo: number) {
   return date >= start && date < end;
 }
 
-type IconName = View | 'search' | 'chevron' | 'check' | 'alert' | 'image' | 'up' | 'down' | 'info' | 'sparkle' | 'bulb' | 'clock' | 'clipboard';
+type IconName = View | 'search' | 'chevron' | 'check' | 'alert' | 'image' | 'up' | 'down' | 'info' | 'sparkle' | 'bulb' | 'clock' | 'clipboard' | 'trash';
 const iconPaths: Record<IconName, ReactNode> = {
   overview: <><rect x="3" y="3" width="7" height="9" rx="1.5" /><rect x="14" y="3" width="7" height="5" rx="1.5" /><rect x="14" y="12" width="7" height="9" rx="1.5" /><rect x="3" y="16" width="7" height="5" rx="1.5" /></>,
   questions: <><circle cx="12" cy="12" r="9" /><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5" /><path d="M12 17.5h.01" /></>,
@@ -641,7 +660,30 @@ const iconPaths: Record<IconName, ReactNode> = {
   bulb: <><path d="M9 18h6" /><path d="M10 22h4" /><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V18h6v-1.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z" /></>,
   clock: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></>,
   clipboard: <><rect x="8" y="2" width="8" height="4" rx="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /></>,
+  trash: <><path d="M3 6h18" /><path d="M8 6V4h8v2" /><path d="m19 6-1 14H6L5 6" /><path d="M10 11v5M14 11v5" /></>,
 };
+function ConfirmDialog({ title, message, confirmLabel, tone = 'danger', requireText, onAnswer }: ConfirmOptions & { onAnswer: (ok: boolean) => void }) {
+  const [typed, setTyped] = useState('');
+  const ready = !requireText || typed.trim().toUpperCase() === requireText;
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') onAnswer(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onAnswer]);
+  return <div className="cm-dialog-root"><div className="cm-backdrop" onClick={() => onAnswer(false)} />
+    <form className={`cm-dialog ${tone}`} role="alertdialog" aria-modal="true" aria-labelledby="cm-dialog-title" aria-describedby="cm-dialog-message" onSubmit={event => { event.preventDefault(); if (ready) onAnswer(true); }}>
+      <span className="cm-dialog-icon"><Icon name={tone === 'danger' ? 'trash' : tone === 'warning' ? 'alert' : 'info'} /></span>
+      <h2 id="cm-dialog-title">{title}</h2>
+      <div id="cm-dialog-message" className="cm-dialog-message">{message}</div>
+      {requireText && <label className="cm-field">Andika {requireText} kugira ngo wemeze<input autoFocus autoComplete="off" value={typed} onChange={event => setTyped(event.target.value)} /></label>}
+      {/* Cancel gets focus so pressing Enter by habit never deletes anything. */}
+      <div className="cm-dialog-actions"><button type="button" className="secondary" autoFocus={!requireText} onClick={() => onAnswer(false)}>Reka</button><button type="submit" className={`cm-dialog-confirm ${tone}`} disabled={!ready}>{confirmLabel}</button></div>
+    </form>
+  </div>;
+}
+function Toast({ notice, onClose }: { notice: Notice; onClose: () => void }) {
+  return <div className={`cm-toast ${notice.kind}`} role={notice.kind === 'error' ? 'alert' : 'status'}><span className="cm-toast-icon"><Icon name={notice.kind === 'error' ? 'alert' : 'check'} /></span><p>{notice.text}</p><button type="button" aria-label="Funga ubutumwa" onClick={onClose}>×</button></div>;
+}
 function AnnouncementRow({ item, onOpen, onToggle, onDelete }: { item: Announcement; onOpen: () => void; onToggle: () => void; onDelete: () => void }) {
   const kind = announcementIcons.find(choice => choice.key === item.icon) ?? announcementIcons[0];
   const expired = Boolean(item.expires_at && new Date(item.expires_at) < new Date());
