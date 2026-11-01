@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../core/app_colors.dart';
+import '../core/app_info.dart';
 import '../data/content_repository.dart';
 
 /// Akabuto "Umva": gacuranga amajwi yafashwe y'isomo cyangwa y'ikibazo.
@@ -83,6 +84,7 @@ class _AudioButtonState extends State<AudioButton> {
 
   @override
   Widget build(BuildContext context) {
+    if (!AppInfo.audioEnabled) return SizedBox.shrink();
     final String? url = ContentRepository.instance.audioUrl(widget.audioPath);
     if (url == null) return SizedBox.shrink();
     final bool playing = _player.playing;
