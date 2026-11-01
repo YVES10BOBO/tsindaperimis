@@ -15,6 +15,16 @@ import 'more_questions.dart';
 import 'pdf_reference_data.dart';
 import 'questions_data.dart';
 
+/// Konti yinjiye n'umwirondoro wayo ubitswe muri Supabase (user metadata).
+typedef SignedInAccount = ({
+  String name,
+  String email,
+  String phone,
+  String district,
+  String licenseCategory,
+  int avatarColor,
+});
+
 /// Offline-first content store. Bundled content is written to SQLite once;
 /// when Supabase is configured, published rows refresh that local cache.
 class ContentRepository {
@@ -53,7 +63,7 @@ class ContentRepository {
         var refreshBundledContent = false;
         _db = await openDatabase(
           p.join(dir, 'amategeko_content.db'),
-          version: 5,
+          version: 6,
           onCreate: (db, _) async {
             await db.execute(
                 'CREATE TABLE categories (id TEXT PRIMARY KEY, title TEXT, subtitle TEXT, icon_code INTEGER, icon_font TEXT, icon_package TEXT, color INTEGER, soft_color INTEGER, sort_order INTEGER)');
@@ -67,6 +77,7 @@ class ContentRepository {
                 'CREATE TABLE options (id TEXT PRIMARY KEY, question_id TEXT, position INTEGER, option_text TEXT, is_correct INTEGER)');
             await _createProgressTables(db);
             await _createNotificationsTable(db);
+            await _createSettingsTable(db);
           },
           onUpgrade: (db, oldVersion, _) async {
             if (oldVersion < 2) await _createProgressTables(db);
@@ -78,6 +89,7 @@ class ContentRepository {
             }
             if (oldVersion < 4) refreshBundledContent = true;
             if (oldVersion < 5) await _createNotificationsTable(db);
+            if (oldVersion < 6) await _createSettingsTable(db);
           },
         );
         if (refreshBundledContent) {
@@ -87,6 +99,7 @@ class ContentRepository {
         }
         await _loadSqlite();
         await _loadCachedNotifications();
+        await _loadSettings();
       } catch (_) {
         // Keep bundled content on unsupported devices or a corrupt old cache.
       }
@@ -95,6 +108,32 @@ class ContentRepository {
       _refreshFromSupabase(),
       refreshNotifications(),
     ]);
+  }
+
+  Future<void> _createSettingsTable(DatabaseExecutor db) async {
+    await db.execute(
+        'CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)');
+  }
+
+  final Map<String, String> _settings = <String, String>{};
+
+  /// A preference saved on this phone (e.g. the theme), read once at launch.
+  String? setting(String key) => _settings[key];
+
+  Future<void> saveSetting(String key, String value) async {
+    _settings[key] = value;
+    final db = _db;
+    if (db == null) return;
+    await db.insert('settings', {'key': key, 'value': value},
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<void> _loadSettings() async {
+    final db = _db;
+    if (db == null) return;
+    for (final row in await db.query('settings')) {
+      _settings[row['key'] as String] = row['value'] as String;
+    }
   }
 
   Future<void> _createNotificationsTable(DatabaseExecutor db) async {
@@ -213,16 +252,52 @@ class ContentRepository {
 
   /// The learner whose Supabase session is saved on this device, so the app
   /// can reopen signed in. Works offline: the session is stored on the phone.
-  ({String name, String email})? get signedInAccount {
+  SignedInAccount? get signedInAccount {
     if (!_supabaseConfigured) return null;
     try {
       final user = Supabase.instance.client.auth.currentUser;
       if (user == null) return null;
-      final name = (user.userMetadata?['full_name'] as String?)?.trim() ?? '';
-      return (name: name.isEmpty ? 'Umukoresha' : name, email: user.email ?? '');
+      final meta = user.userMetadata ?? const <String, dynamic>{};
+      // Metadata can be edited by hand in Supabase, so read it defensively.
+      String text(String key) {
+        final value = meta[key];
+        return value is String ? value.trim() : '';
+      }
+
+      final name = text('full_name');
+      final license = text('license_category');
+      final avatar = meta['avatar_color'];
+      return (
+        name: name.isEmpty ? 'Umukoresha' : name,
+        email: user.email ?? '',
+        phone: text('phone'),
+        district: text('district'),
+        licenseCategory: license.isEmpty ? 'B' : license,
+        avatarColor: avatar is num ? avatar.toInt() : 0,
+      );
     } catch (_) {
       return null; // Supabase did not initialise (e.g. first launch offline).
     }
+  }
+
+  /// Saves the profile in the learner's Supabase account, so it follows them
+  /// to any phone they sign in on.
+  Future<void> saveProfile({
+    required String name,
+    required String phone,
+    required String district,
+    required String licenseCategory,
+    required int avatarColor,
+  }) async {
+    await Supabase.instance.client.auth.updateUser(UserAttributes(
+      data: <String, dynamic>{
+        'full_name': name,
+        'phone': phone,
+        'district': district,
+        'license_category': licenseCategory,
+        'avatar_color': avatarColor,
+      },
+    ));
   }
 
   /// Fires when Supabase ends the session: sign-out, an expired or revoked

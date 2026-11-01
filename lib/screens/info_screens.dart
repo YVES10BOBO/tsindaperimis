@@ -91,8 +91,12 @@ class FaqScreen extends StatelessWidget {
         'Ku ipaji yo kwinjira, kanda "Wibagiwe ijambo ry\'ibanga?", wandike email yawe, hanyuma wandike kode y\'imibare 6 twakoherereje kuri email. Nyuma yaho uhitamo ijambo ry\'ibanga rishya.'),
     _DocSection('Nasiba nte konti yanjye?',
         'Injira, ujye muri Ibindi → Siba konti, wandike ijambo ry\'ibanga ryawe kugira ngo wemeze. Konti yawe n\'iterambere ryawe bisibwa burundu.'),
-    _DocSection('Premium ni iki kandi nishyura nte?',
-        'Premium izaguha ibindi bikoresho nk\'ibizamini by\'igerageza bitagira umubare. Kwishyura bizakorwa hakoreshejwe MTN Mobile Money cyangwa Airtel Money.'),
+    if (AppInfo.premiumEnabled)
+      _DocSection('Premium ni iki kandi nishyura nte?',
+          'Premium izaguha ibindi bikoresho nk\'ibizamini by\'igerageza bitagira umubare. Kwishyura bizakorwa hakoreshejwe MTN Mobile Money cyangwa Airtel Money.')
+    else
+      _DocSection('Ese app irishyurwa?',
+          'Oya. Ubu ibirimo byose muri app ni ubuntu: amasomo, imyitozo n\'ibizamini by\'igerageza.'),
     _DocSection('Nabona ikosa mu kibazo cyangwa mu isomo. Nkora iki?',
         'Twandikire kuri $kContactEmail, utubwire ikibazo n\'icyiciro kirimo. Tuzabikosora vuba.'),
   ];
@@ -168,7 +172,8 @@ class TermsScreen extends StatelessWidget {
             'Ugomba gutanga amakuru y\'ukuri igihe wiyandikisha, no kurinda ijambo ry\'ibanga ryawe. Uri wowe ubazwa ibikorwa byose bikorerwa kuri konti yawe.'),
         _DocSection('Imikoreshereze yemewe',
             'Ntiwemerewe gukoporora, kugurisha cyangwa gukwirakwiza ibirimo muri app utabiherewe uburenganzira, kugerageza kwinjira mu buryo butemewe, cyangwa gukoresha app mu buryo bunyuranyije n\'amategeko.'),
-        _DocSection('Premium no kwishyura',
+        if (AppInfo.premiumEnabled)
+          _DocSection('Premium no kwishyura',
             'Bimwe mu bikoresho bishobora gusaba kwishyura. Igiciro, igihe ifatabuguzi rimara n\'uko ryongerwa bizagaragazwa mbere yo kwishyura. Kwishyura bikorwa binyuze kuri MTN Mobile Money cyangwa Airtel Money. [Andika hano amabwiriza yo gusubizwa amafaranga.]'),
         _DocSection('Uburenganzira ku bihangano',
             'Ibirimo byose muri app (inyandiko, amashusho, ibibazo, ikirango) ni umutungo wa $kCompanyName cyangwa ab\'abatanze uburenganzira bwo kubikoresha.'),
