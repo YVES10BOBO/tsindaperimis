@@ -6,9 +6,9 @@ import { configured, supabase } from '@/lib/supabase';
 
 type Category = { id: string; title: string; subtitle: string; icon_code: number; icon_font_family: string | null; icon_font_package: string | null; color_value: number; soft_color_value: number; sort_order: number; published: boolean };
 type Option = { id?: string; position: number; option_text: string; is_correct: boolean };
-type Question = { id: string; category_id: string; prompt: string; explanation: string; sign_type: string | null; sign_label: string | null; image_path: string | null; is_exam_question: boolean; sort_order: number; published: boolean; question_options: Option[] };
+type Question = { id: string; category_id: string; prompt: string; explanation: string; sign_type: string | null; sign_label: string | null; image_path: string | null; is_exam_question: boolean; sort_order: number; published: boolean; question_options: Option[]; number?: number | null; created_at?: string; updated_at?: string | null };
 type Section = { id?: string; position: number; heading: string; body: string; sign_type: string | null; sign_label: string | null; image_path: string | null };
-type Lesson = { id: string; category_id: string; title: string; minutes: number; sort_order: number; created_at: string; is_extra: boolean; published: boolean; lesson_sections: Section[] };
+type Lesson = { id: string; category_id: string; title: string; minutes: number; sort_order: number; created_at: string; updated_at?: string | null; is_extra: boolean; published: boolean; lesson_sections: Section[] };
 type Learner = { id: string; email: string | null; phone: string | null; createdAt: string; lastSignInAt: string | null; bannedUntil: string | null; isAdmin: boolean; progressUpdatedAt: string | null; completedLessons: number; hasProgress: boolean };
 type Announcement = { id: string; title: string; body: string; icon: string; published: boolean; published_at: string | null; expires_at: string | null; created_at: string; updated_at: string };
 type View = 'overview' | 'questions' | 'lessons' | 'categories' | 'notifications' | 'users';
@@ -59,6 +59,7 @@ export default function Home() {
   const [page, setPage] = useState(1);
   const [lessonDateFilter, setLessonDateFilter] = useState<'all' | 'today' | 'yesterday'>('all');
   const [lessonSort, setLessonSort] = useState<'newest' | 'oldest' | 'manual'>('newest');
+  const [questionSort, setQuestionSort] = useState<'number' | 'newest' | 'edited'>('number');
   const [questionForm, setQuestionForm] = useState(emptyQuestion);
   const [lessonForm, setLessonForm] = useState(emptyLesson);
   const [categoryForm, setCategoryForm] = useState(emptyCategory);
@@ -249,7 +250,9 @@ export default function Home() {
     const previousImage = questions.find(q => q.id === questionForm.id)?.image_path;
     try {
       const db = requireClient();
-      const row = { id: questionForm.id || crypto.randomUUID(), category_id: questionForm.category_id, prompt: questionForm.prompt.trim(), explanation: questionForm.explanation.trim(), sign_type: questionForm.sign_type.trim() || null, sign_label: questionForm.sign_label.trim() || null, image_path: questionForm.image_path || null, is_exam_question: questionForm.is_exam_question, sort_order: questionForm.id ? (questions.find(q => q.id === questionForm.id)?.sort_order ?? questions.length) : questions.length, published: questionForm.published };
+      const row = { id: questionForm.id || crypto.randomUUID(), category_id: questionForm.category_id, prompt: questionForm.prompt.trim(), explanation: questionForm.explanation.trim(), sign_type: questionForm.sign_type.trim() || null, sign_label: questionForm.sign_label.trim() || null, image_path: questionForm.image_path || null, is_exam_question: questionForm.is_exam_question, sort_order: questionForm.id ? (questions.find(q => q.id === questionForm.id)?.sort_order ?? questions.length) : questions.length, published: questionForm.published,
+        // Saving in the editor is an edit; publishing or hiding is not. New questions get their number and date from the database.
+        ...(questionMetaReady && questionForm.id ? { updated_at: new Date().toISOString() } : {}) };
       const { error } = await db.from('questions').upsert(row); if (error) throw error;
       const remove = await db.from('question_options').delete().eq('question_id', row.id); if (remove.error) throw remove.error;
       const inserted = await db.from('question_options').insert(questionForm.options.map((option_text, position) => ({ id: `${row.id}-${position}-${crypto.randomUUID().slice(0, 8)}`, question_id: row.id, position, option_text: option_text.trim(), is_correct: position === questionForm.correct })));
@@ -287,7 +290,8 @@ export default function Home() {
     const endOfCategory = Math.max(-1, ...lessons.filter(l => l.category_id === lessonForm.category_id && l.id !== lessonForm.id).map(l => l.sort_order)) + 1;
     try {
       const db = requireClient();
-      const row = { id: lessonForm.id || `lesson-${crypto.randomUUID()}`, category_id: lessonForm.category_id, title: lessonForm.title.trim(), minutes: Number(lessonForm.minutes), sort_order: existingLesson && existingLesson.category_id === lessonForm.category_id ? existingLesson.sort_order : endOfCategory, is_extra: lessonForm.is_extra, published: lessonForm.published };
+      const row = { id: lessonForm.id || `lesson-${crypto.randomUUID()}`, category_id: lessonForm.category_id, title: lessonForm.title.trim(), minutes: Number(lessonForm.minutes), sort_order: existingLesson && existingLesson.category_id === lessonForm.category_id ? existingLesson.sort_order : endOfCategory, is_extra: lessonForm.is_extra, published: lessonForm.published,
+        ...(lessonMetaReady && existingLesson ? { updated_at: new Date().toISOString() } : {}) };
       const { error } = await db.from('lessons').upsert(row); if (error) throw error;
       const removed = await db.from('lesson_sections').delete().eq('lesson_id', row.id); if (removed.error) throw removed.error;
       const sections = await db.from('lesson_sections').insert(lessonForm.sections.filter(s => s.heading.trim() && s.body.trim()).map((s, position) => ({ id: `${row.id}-${position}`, lesson_id: row.id, position, heading: s.heading.trim(), body: s.body.trim(), sign_type: s.sign_type || null, sign_label: s.sign_label || null, image_path: s.image_path || null })));
@@ -396,11 +400,27 @@ export default function Home() {
     if (error) sayError(error); else { setNotice({ kind: 'success', text: row.published ? 'Byahishwe: ubu ni draft, abakoresha ntibabibona.' : 'Byatangajwe: abakoresha barabibona.' }); await loadData(); }
   };
 
-  const filteredQuestions = useMemo(() => questions.filter(q => {
-    const category = categories.find(c => c.id === q.category_id)?.title ?? '';
-    const text = `${q.prompt} ${q.explanation} ${category} ${q.question_options?.map(option => option.option_text).join(' ') ?? ''}`.toLocaleLowerCase();
-    return text.includes(search.trim().toLocaleLowerCase()) && (categoryFilter === 'all' || q.category_id === categoryFilter) && (statusFilter === 'all' || q.published === (statusFilter === 'published')) && (!needsExplanation || !q.explanation?.trim());
-  }), [questions, categories, search, categoryFilter, statusFilter, needsExplanation]);
+  const filteredQuestions = useMemo(() => {
+    const query = search.trim().toLocaleLowerCase();
+    // "#57" finds exactly question 57; plain words search the text.
+    const wantedNumber = /^#\d+$/.test(query) ? Number(query.slice(1)) : null;
+    const time = (value?: string | null) => value ? Date.parse(value) : 0;
+    return questions.filter(q => {
+      const category = categories.find(c => c.id === q.category_id)?.title ?? '';
+      const text = `#${q.number ?? ''} ${q.prompt} ${q.explanation} ${category} ${q.question_options?.map(option => option.option_text).join(' ') ?? ''}`.toLocaleLowerCase();
+      const matches = wantedNumber !== null ? q.number === wantedNumber : text.includes(query);
+      return matches && (categoryFilter === 'all' || q.category_id === categoryFilter) && (statusFilter === 'all' || q.published === (statusFilter === 'published')) && (!needsExplanation || !q.explanation?.trim());
+    }).sort((a, b) => {
+      const byNumber = (a.number ?? Number.MAX_SAFE_INTEGER) - (b.number ?? Number.MAX_SAFE_INTEGER) || a.sort_order - b.sort_order;
+      if (questionSort === 'newest') return time(b.created_at) - time(a.created_at) || -byNumber;
+      if (questionSort === 'edited') return time(b.updated_at) - time(a.updated_at) || byNumber;
+      return byNumber;
+    });
+  }, [questions, categories, search, categoryFilter, statusFilter, needsExplanation, questionSort]);
+  // Present once the numbers/dates migration has run; until then saves leave these columns out.
+  const questionMetaReady = questions.some(q => q.created_at !== undefined);
+  const editingNumber = questions.find(q => q.id === questionForm.id)?.number;
+  const lessonMetaReady = lessons.some(l => l.updated_at !== undefined);
   const filteredLessons = useMemo(() => lessons.filter(l => {
     const category = categories.find(c => c.id === l.category_id)?.title ?? '';
     const text = `${l.title} ${category} ${l.lesson_sections?.map(section => `${section.heading} ${section.body}`).join(' ') ?? ''}`.toLocaleLowerCase();
@@ -484,8 +504,9 @@ export default function Home() {
 
       {view === 'questions' && <>
         <div className="cm-toolbar">
-          <SearchBox value={search} onChange={updateSearch} placeholder="Shakisha ikibazo, igisubizo cyangwa icyiciro..." />
+          <SearchBox value={search} onChange={updateSearch} placeholder={questionMetaReady ? 'Shakisha ikibazo, igisubizo, cyangwa #nimero...' : 'Shakisha ikibazo, igisubizo cyangwa icyiciro...'} />
           <select className="cm-select" aria-label="Icyiciro" value={categoryFilter} onChange={event => updateCategoryFilter(event.target.value)}><option value="all">Ibyiciro byose</option>{categories.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}</select>
+          {questionMetaReady && <select className="cm-select" aria-label="Uko ibibazo bikurikirana" value={questionSort} onChange={event => { setQuestionSort(event.target.value as typeof questionSort); setPage(1); }}><option value="number">Nimero (#1, #2, …)</option><option value="newest">Ibyongewe vuba</option><option value="edited">Ibyahinduwe vuba</option></select>}
           <button className="primary" onClick={() => openQuestion()}>+ Ikibazo gishya</button>
         </div>
         <div className="cm-subbar">
@@ -559,7 +580,7 @@ export default function Home() {
       </>)}
 
       {view === 'users' && <><div className="users-intro"><div className="users-intro-icon"><Icon name="users" /></div><div><h2>Konti z’abakoresha</h2><p>Genzura abakoresha biyandikishije, reba uko bakoresha app, uhagarike cyangwa wongere ufungure konti, kandi usibe konti iyo umukoresha abisabye.</p></div><div className="users-total"><strong>{learnerTotal}</strong><span>konti zose</span></div></div><div className="users-toolbar"><label className="user-search"><span>⌕</span><input type="search" placeholder="Shakisha email, telefone cyangwa ID..." value={learnerSearch} onChange={event => { setLearnerSearch(event.target.value); setLearnerPage(1); }} /><button type="button" disabled={!learnerSearch} onClick={() => { setLearnerSearch(''); setLearnerPage(1); }}>×</button></label><select value={learnerStatus} aria-label="Akayunguruzo ka konti" onChange={event => { setLearnerStatus(event.target.value as typeof learnerStatus); setLearnerPage(1); }}><option value="all">Konti zose</option><option value="active">Zikora</option><option value="suspended">Zahagaritswe</option></select><label className="page-size">Rows<select value={learnerPageSize} aria-label="Umubare w’abakoresha kuri page" onChange={event => { setLearnerPageSize(Number(event.target.value)); setLearnerPage(1); }}><option value={5}>5</option><option value={10}>10</option><option value={20}>20</option><option value={50}>50</option></select></label></div><div className="users-card"><div className="users-table-head"><div><strong>Abakoresha</strong><span>{busy ? 'Biravugururwa...' : `${learnerTotal} konti ziboneka`}</span></div><button className="secondary" onClick={() => void loadLearners()} disabled={busy}>↻ Ongera uvugurure</button></div>{learners.length ? <div className="users-table-wrap"><table className="users-table"><thead><tr><th>UMUKORESHA</th><th>YIYANDIKISHIJE</th><th>GUKORESHA APP</th><th>IMIMERERE</th><th>IBIKORWA</th></tr></thead><tbody>{learners.map(learner => { const suspended = Boolean(learner.bannedUntil && new Date(learner.bannedUntil) > new Date()); return <tr key={learner.id}><td><div className="user-cell"><span className="user-avatar">{(learner.email ?? learner.phone ?? 'U').slice(0,1).toUpperCase()}</span><span><strong>{learner.email ?? learner.phone ?? 'Konti idafite email/telefone'}</strong><small>{learner.phone && learner.email ? learner.phone : `ID: ${learner.id.slice(0,8)}…`}</small>{learner.isAdmin && <em>Admin</em>}</span></div></td><td>{formatDate(learner.createdAt)}</td><td><strong>{learner.completedLessons}</strong> amasomo{learner.progressUpdatedAt && <small className="table-subline">Yaherukaga: {formatDate(learner.progressUpdatedAt)}</small>}</td><td><span className={`user-status ${suspended ? 'suspended' : 'active'}`}><i />{suspended ? 'Yarahagaritswe' : 'Irakora'}</span></td><td>{learner.isAdmin ? <span className="protected-label">Admin irinzwe</span> : <span className="user-actions"><button className={`user-action ${suspended ? 'restore' : ''}`} disabled={busy} onClick={() => void changeLearnerStatus(learner)}>{suspended ? 'Ongera ufungure' : 'Hagarika konti'}</button><button className="user-action delete" disabled={busy} onClick={() => void deleteLearner(learner)}>Siba konti</button></span>}</td></tr>; })}</tbody></table></div> : <Empty text={learnersReady ? 'Nta konti zihuye n’ishakisha n’akayunguruzo.' : 'Shaka amakuru y’abakoresha...'} />}<Pagination total={learnerTotal} page={learnerPage} pageSize={learnerPageSize} onPageChange={setLearnerPage} /></div><p className="users-footnote">Abakoresha ni amakuru ava muri Supabase Auth. Ibyo bakora bibikwa kuri konti yabo; dashboard yerekana amasomo yarangiye gusa. Konti za admin ntizihagarikwa kandi ntizisibwa hano.</p></>}
-      {drawer === 'question' && <Drawer eyebrow="UMWANDITSI W’IBIBAZO" title={questionForm.id ? 'Hindura ikibazo' : 'Ikibazo gishya'} onClose={closeDrawer} onSubmit={saveQuestion} footer={<><button type="button" className="secondary" onClick={closeDrawer}>Reka</button><button className="primary" disabled={busy}>{busy ? 'Birabikwa...' : 'Bika ikibazo'}</button></>}>
+      {drawer === 'question' && <Drawer eyebrow="UMWANDITSI W’IBIBAZO" title={questionForm.id ? `Hindura ikibazo${editingNumber != null ? ` #${editingNumber}` : ''}` : 'Ikibazo gishya'} onClose={closeDrawer} onSubmit={saveQuestion} footer={<><button type="button" className="secondary" onClick={closeDrawer}>Reka</button><button className="primary" disabled={busy}>{busy ? 'Birabikwa...' : 'Bika ikibazo'}</button></>}>
         <label className="cm-field">Ikibazo<textarea autoFocus required rows={3} value={questionForm.prompt} onChange={e => setQuestionForm({ ...questionForm, prompt: e.target.value })} /></label>
         <label className="cm-field">Icyiciro<select required value={questionForm.category_id} onChange={e => setQuestionForm({ ...questionForm, category_id: e.target.value })}><option value="">Hitamo icyiciro</option>{categories.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}</select></label>
         <fieldset className="cm-options"><legend>Ibisubizo<span className="cm-hint">Kanda inyuguti y’igisubizo nyacyo · ibisubizo 2 kugeza kuri 4</span></legend>
@@ -728,7 +749,7 @@ function QuestionRow({ question, category, image, onOpen, onToggle, onDelete }: 
     <button type="button" className="cm-row-main" onClick={onOpen}>
       <strong>{question.prompt}</strong>
       {answer && <span className="cm-answer"><Icon name="check" /><span>{answer}</span></span>}
-      <span className="cm-meta"><span className="cm-cat"><i /><span>{category?.title ?? question.category_id}</span></span><span className="cm-chip">{question.is_exam_question ? 'Ikizamini' : 'Inyongera'}</span>{!question.explanation?.trim() && <span className="cm-chip warn">Nta bisobanuro</span>}</span>
+      <span className="cm-meta">{question.number != null && <span className="cm-chip cm-num">#{question.number}</span>}<span className="cm-cat"><i /><span>{category?.title ?? question.category_id}</span></span><span className="cm-chip">{question.is_exam_question ? 'Ikizamini' : 'Inyongera'}</span>{!question.explanation?.trim() && <span className="cm-chip warn">Nta bisobanuro</span>}{question.created_at && <span>Yongewe {formatDate(question.created_at)}</span>}{question.updated_at && <span>Byahinduwe {formatDate(question.updated_at)}</span>}</span>
     </button>
     <StatusSwitch published={question.published} label={question.prompt} onToggle={onToggle} />
     <div className="cm-row-actions"><ActionIcon kind="edit" label="Hindura ikibazo" onClick={onOpen} /><ActionIcon kind="delete" label="Siba ikibazo" onClick={onDelete} /></div>
@@ -739,7 +760,7 @@ function LessonRow({ lesson, index, category, onMove, first = false, last = fals
     <span className="cm-index">{index ?? <Icon name="lessons" />}</span>
     <button type="button" className="cm-row-main" onClick={onOpen}>
       <strong>{lesson.title}</strong>
-      <span className="cm-meta">{category && <span className="cm-cat"><i /><span>{category.title}</span></span>}<span>{lesson.lesson_sections?.length ?? 0} bice</span><span>{lesson.minutes} min</span>{lesson.is_extra && <span className="cm-chip">Inyongera</span>}{category && <span>Yongewe {formatDate(lesson.created_at)}</span>}</span>
+      <span className="cm-meta">{category && <span className="cm-cat"><i /><span>{category.title}</span></span>}<span>{lesson.lesson_sections?.length ?? 0} bice</span><span>{lesson.minutes} min</span>{lesson.is_extra && <span className="cm-chip">Inyongera</span>}{category && <span>Yongewe {formatDate(lesson.created_at)}</span>}{lesson.updated_at && <span>Byahinduwe {formatDate(lesson.updated_at)}</span>}</span>
     </button>
     {onMove && <MoveButtons label={lesson.title} first={first} last={last} onMove={onMove} />}
     <StatusSwitch published={lesson.published} label={lesson.title} onToggle={onToggle} />

@@ -583,6 +583,7 @@ class _FeedbackCard extends StatelessWidget {
           const SizedBox(height: 6),
           Text(question.explanation,
               style: TextStyle(height: 1.5, color: AppColors.bodyText)),
+          QuestionCode(question: question),
         ],
       ),
     );

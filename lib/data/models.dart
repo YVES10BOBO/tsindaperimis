@@ -97,9 +97,14 @@ class Question {
     this.signLabel,
     this.imagePath,
     this.isExamQuestion = true,
+    this.number,
   });
 
   final String id;
+
+  /// Nimero ihoraho (#57) iva muri dashboard. Ntihinduka n'iyo ibibazo bivanze;
+  /// ifasha umukoresha kuvuga ikibazo kirimo ikosa. Null ku bibazo biri muri app.
+  final int? number;
   final String categoryId;
   final String text;
   final List<String> options;
@@ -154,6 +159,7 @@ class Question {
       signLabel: signLabel,
       imagePath: imagePath,
       isExamQuestion: isExamQuestion,
+      number: number,
     );
   }
 }
