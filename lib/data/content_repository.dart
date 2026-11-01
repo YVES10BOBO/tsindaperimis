@@ -150,6 +150,41 @@ class ContentRepository {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
+  /// Questions this phone already reported, so the button can show "sent".
+  Set<String> get _reportedQuestions {
+    final raw = _settings['reported_questions'];
+    if (raw == null) return <String>{};
+    try {
+      return (jsonDecode(raw) as List<dynamic>).cast<String>().toSet();
+    } catch (_) {
+      return <String>{};
+    }
+  }
+
+  bool hasReported(String questionId) =>
+      _reportedQuestions.contains(questionId);
+
+  /// Sends a learner's report about a question to the admin dashboard (Raporo).
+  Future<void> reportQuestion({
+    required String questionId,
+    required String reason,
+    String? comment,
+  }) async {
+    final text = comment?.trim() ?? '';
+    try {
+      await Supabase.instance.client.from('question_reports').insert({
+        'question_id': questionId,
+        'reason': reason,
+        if (text.isNotEmpty) 'comment': text,
+      });
+    } on PostgrestException catch (error) {
+      // This learner already has an open report on it: treat it as sent.
+      if (error.code != '23505') rethrow;
+    }
+    await saveSetting('reported_questions',
+        jsonEncode(<String>[..._reportedQuestions, questionId]));
+  }
+
   Future<void> _loadSettings() async {
     final db = _db;
     if (db == null) return;

@@ -36,6 +36,10 @@ After the admin migration, run `migrations/202610310001_notifications.sql`. Admi
 
 Run `migrations/202611010001_question_numbers_and_dates.sql` to give every question a permanent number (`#57`) plus "added" and "last edited" dates, and lessons a "last edited" date. Existing questions are numbered in their current dashboard order and get the migration time as their added date. In the dashboard, search `#57` to open a question directly and sort by number, newest added, or recently edited. Learners still get random order and shuffled answers; the app shows "Ikibazo #57" under the explanation so they can report a mistake. Until the migration runs, the dashboard and app work as before without numbers.
 
+## Question reports (Tanga ikosa)
+
+Run `migrations/202611010002_question_reports.sql` after the numbers migration. Learners tap **Tanga ikosa** under a question's explanation (practice, or the exam review), choose what is wrong and optionally comment; the report lands on the dashboard's **Raporo** page with the question's #number. Learners and guests can only send reports; only admins can read, resolve or delete them. A signed-in learner can have one open report per question.
+
 ## Password reset email
 
 The app resets passwords with a 6-digit code (no deep link needed): the learner enters their email, types the code from the email, then chooses a new password. In Supabase:

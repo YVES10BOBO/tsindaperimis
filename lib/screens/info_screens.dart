@@ -98,7 +98,7 @@ class FaqScreen extends StatelessWidget {
       _DocSection('Ese app irishyurwa?',
           'Oya. Ubu ibirimo byose muri app ni ubuntu: amasomo, imyitozo n\'ibizamini by\'igerageza.'),
     _DocSection('Nabona ikosa mu kibazo cyangwa mu isomo. Nkora iki?',
-        'Twandikire kuri $kContactEmail, utubwire ikibazo n\'icyiciro kirimo. Tuzabikosora vuba.'),
+        'Nyuma yo gusubiza ikibazo, kanda "Tanga ikosa" munsi y\'ibisobanuro, uhitemo ikitari cyo, wohereze. Ku makosa ari mu masomo, twandikire kuri $kContactEmail. Tuzabikosora vuba.'),
   ];
 
   @override

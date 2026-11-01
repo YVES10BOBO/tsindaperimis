@@ -407,28 +407,6 @@ class _PasswordFieldState extends State<PasswordField> {
   }
 }
 
-/// Nimero ihoraho y'ikibazo ("Ikibazo #57"), igaragara nyuma yo gusubiza
-/// kugira ngo umukoresha ashobore kuvuga ikibazo kirimo ikosa.
-class QuestionCode extends StatelessWidget {
-  const QuestionCode({super.key, required this.question});
-
-  final Question question;
-
-  @override
-  Widget build(BuildContext context) {
-    final int? number = question.number;
-    if (number == null) return const SizedBox.shrink();
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: Text('Ikibazo #$number',
-          style: TextStyle(
-              color: AppColors.muted,
-              fontSize: 12,
-              fontWeight: FontWeight.w600)),
-    );
-  }
-}
-
 void showComingSoon(BuildContext context, String message) {
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
