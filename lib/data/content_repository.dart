@@ -82,7 +82,7 @@ class ContentRepository {
         var refreshBundledContent = false;
         _db = await openDatabase(
           p.join(dir, 'amategeko_content.db'),
-          version: 6,
+          version: 7,
           onCreate: (db, _) async {
             await db.execute(
                 'CREATE TABLE categories (id TEXT PRIMARY KEY, title TEXT, subtitle TEXT, icon_code INTEGER, icon_font TEXT, icon_package TEXT, color INTEGER, soft_color INTEGER, sort_order INTEGER)');
@@ -91,7 +91,7 @@ class ContentRepository {
             await db.execute(
                 'CREATE TABLE sections (id TEXT PRIMARY KEY, lesson_id TEXT, position INTEGER, heading TEXT, body TEXT, sign_type TEXT, sign_label TEXT, image_path TEXT)');
             await db.execute(
-                'CREATE TABLE questions (id TEXT PRIMARY KEY, category_id TEXT, prompt TEXT, explanation TEXT, sign_type TEXT, sign_label TEXT, image_path TEXT, is_exam_question INTEGER, sort_order INTEGER)');
+                'CREATE TABLE questions (id TEXT PRIMARY KEY, category_id TEXT, prompt TEXT, explanation TEXT, sign_type TEXT, sign_label TEXT, image_path TEXT, is_exam_question INTEGER, sort_order INTEGER, number INTEGER)');
             await db.execute(
                 'CREATE TABLE options (id TEXT PRIMARY KEY, question_id TEXT, position INTEGER, option_text TEXT, is_correct INTEGER)');
             await _createProgressTables(db);
@@ -109,6 +109,9 @@ class ContentRepository {
             if (oldVersion < 4) refreshBundledContent = true;
             if (oldVersion < 5) await _createNotificationsTable(db);
             if (oldVersion < 6) await _createSettingsTable(db);
+            if (oldVersion < 7) {
+              await db.execute('ALTER TABLE questions ADD COLUMN number INTEGER');
+            }
           },
         );
         if (refreshBundledContent) {
@@ -629,6 +632,7 @@ class ContentRepository {
                   'signLabel': q.signLabel,
                   'imagePath': q.imagePath,
                   'isExamQuestion': q.isExamQuestion,
+                  'number': q.number,
                 })
             .toList(),
       };
@@ -651,6 +655,7 @@ class ContentRepository {
             signLabel: q['signLabel'] as String?,
             imagePath: q['imagePath'] as String?,
             isExamQuestion: q['isExamQuestion'] as bool,
+            number: q['number'] as int?,
           );
         }).toList(),
       );
@@ -713,7 +718,8 @@ class ContentRepository {
           'sign_label': q.signLabel,
           'image_path': q.imagePath,
           'is_exam_question': q.isExamQuestion ? 1 : 0,
-          'sort_order': qi
+          'sort_order': qi,
+          'number': q.number
         });
         for (var oi = 0; oi < q.options.length; oi++) {
           await tx.insert('options', {
@@ -777,7 +783,8 @@ class ContentRepository {
           sign: _sign(q['sign_type'] as String?),
           signLabel: q['sign_label'] as String?,
           imagePath: q['image_path'] as String?,
-          isExamQuestion: q['is_exam_question'] == 1);
+          isExamQuestion: q['is_exam_question'] == 1,
+          number: q['number'] as int?);
     }).toList();
   }
 
@@ -858,7 +865,8 @@ class ContentRepository {
             sign: _sign(q['sign_type'] as String?),
             signLabel: q['sign_label'] as String?,
             imagePath: q['image_path'] as String?,
-            isExamQuestion: q['is_exam_question'] as bool? ?? true);
+            isExamQuestion: q['is_exam_question'] as bool? ?? true,
+            number: (q['number'] as num?)?.toInt());
       }).toList();
       if (hydratedCategories.isNotEmpty && hydratedQuestions.isNotEmpty) {
         _categories = hydratedCategories;
@@ -943,7 +951,8 @@ class ContentRepository {
           'sign_label': q.signLabel,
           'image_path': q.imagePath,
           'is_exam_question': q.isExamQuestion ? 1 : 0,
-          'sort_order': qi
+          'sort_order': qi,
+          'number': q.number
         });
         for (var oi = 0; oi < q.options.length; oi++) {
           await tx.insert('options', {

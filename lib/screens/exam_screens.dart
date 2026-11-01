@@ -897,6 +897,7 @@ class ExamReviewScreen extends StatelessWidget {
                 SizedBox(height: 10),
                 Text(q.explanation,
                     style: TextStyle(color: AppColors.bodyText, height: 1.5)),
+                QuestionCode(question: q),
               ],
             ),
           );

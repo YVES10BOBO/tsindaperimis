@@ -32,6 +32,10 @@ See [`../admin-dashboard/README.md`](../admin-dashboard/README.md) for setup. Ru
 
 After the admin migration, run `migrations/202610310001_notifications.sql`. Admins write, publish, and delete messages from the dashboard's **Ubutumwa** page; the app shows published messages that have not passed their optional end date, and keeps the last copy for offline use. Until this migration runs, the dashboard shows a setup notice on that page and the app shows an empty Ubutumwa screen.
 
+## Question numbers and dates
+
+Run `migrations/202611010001_question_numbers_and_dates.sql` to give every question a permanent number (`#57`) plus "added" and "last edited" dates, and lessons a "last edited" date. Existing questions are numbered in their current dashboard order and get the migration time as their added date. In the dashboard, search `#57` to open a question directly and sort by number, newest added, or recently edited. Learners still get random order and shuffled answers; the app shows "Ikibazo #57" under the explanation so they can report a mistake. Until the migration runs, the dashboard and app work as before without numbers.
+
 ## Password reset email
 
 The app resets passwords with a 6-digit code (no deep link needed): the learner enters their email, types the code from the email, then chooses a new password. In Supabase:
