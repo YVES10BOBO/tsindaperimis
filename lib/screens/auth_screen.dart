@@ -38,7 +38,9 @@ class _AuthScreenState extends State<AuthScreen> {
   Future<void> _submit() async {
     if (_loading ||
         _awaitingEmailConfirmation ||
-        !(_formKey.currentState?.validate() ?? false)) return;
+        !(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
     setState(() {
       _loading = true;
       _error = null;
@@ -73,9 +75,10 @@ class _AuthScreenState extends State<AuthScreen> {
     } on AuthException catch (error) {
       if (mounted) setState(() => _error = error.message);
     } catch (error) {
-      if (mounted)
+      if (mounted) {
         setState(() => _error =
             'Ntibyashobotse kwinjira. Reba internet na Supabase Auth settings.');
+      }
       debugPrint('Supabase authentication failed: $error');
     } finally {
       if (mounted && _loading) setState(() => _loading = false);

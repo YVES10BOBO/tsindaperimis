@@ -30,7 +30,9 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
   Future<void> _delete() async {
     if (_deleting ||
         !_understood ||
-        !(_formKey.currentState?.validate() ?? false)) return;
+        !(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
     final AppState state = AppScope.of(context);
     final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
     final NavigatorState navigator = Navigator.of(context);

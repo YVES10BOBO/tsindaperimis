@@ -81,11 +81,16 @@ class PasswordStrength extends StatelessWidget {
     int score = 0;
     if (password.length >= 8) score++;
     if (RegExp(r'[A-Za-z]').hasMatch(password) &&
-        RegExp(r'\d').hasMatch(password)) score++;
-    if (RegExp(r'[A-Z]').hasMatch(password) &&
-        RegExp(r'[a-z]').hasMatch(password)) score++;
-    if (RegExp(r'[^A-Za-z0-9]').hasMatch(password) || password.length >= 12)
+        RegExp(r'\d').hasMatch(password)) {
       score++;
+    }
+    if (RegExp(r'[A-Z]').hasMatch(password) &&
+        RegExp(r'[a-z]').hasMatch(password)) {
+      score++;
+    }
+    if (RegExp(r'[^A-Za-z0-9]').hasMatch(password) || password.length >= 12) {
+      score++;
+    }
 
     final List<String> labels = <String>[
       'Rifite intege nke cyane',
@@ -737,8 +742,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 validator: (String? v) {
                   final String? base = validateNewPassword(v);
                   if (base != null) return base;
-                  if (v == _current.text)
+                  if (v == _current.text) {
                     return 'Rigomba gutandukana n\'irya mbere';
+                  }
                   return null;
                 },
                 onChanged: (_) => setState(() {}),

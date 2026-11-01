@@ -4,3 +4,10 @@ analyzer:
     - android/**
     - web/**
 include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # AppColors is a global that changes with light/dark mode. A const widget
+    # is never rebuilt, so it would keep the old colours after a theme switch.
+    prefer_const_constructors: false
+    prefer_const_literals_to_create_immutables: false
