@@ -15,6 +15,25 @@ import 'more_questions.dart';
 import 'pdf_reference_data.dart';
 import 'questions_data.dart';
 
+/// Icons a category can show. The database stores an icon's code point, which
+/// is matched to one of these constant icons: release builds can only shrink
+/// the icon font when every icon is a constant, not built from a runtime number.
+const List<IconData> _categoryIcons = <IconData>[
+  Icons.menu_book,
+  Icons.report,
+  Icons.traffic,
+  Icons.add_road,
+  Icons.directions_car,
+  Icons.alt_route,
+  Icons.health_and_safety,
+];
+final Map<int, IconData> _categoryIconByCode = <int, IconData>{
+  for (final IconData icon in _categoryIcons) icon.codePoint: icon,
+};
+IconData _categoryIcon(Object? code) =>
+    _categoryIconByCode[code is num ? code.toInt() : null] ??
+    Icons.category_outlined;
+
 /// Konti yinjiye n'umwirondoro wayo ubitswe muri Supabase (user metadata).
 typedef SignedInAccount = ({
   String name,
@@ -641,7 +660,9 @@ class ContentRepository {
     if (db == null ||
         Sqflite.firstIntValue(
                 await db.rawQuery('SELECT COUNT(*) FROM categories')) !=
-            0) return;
+            0) {
+      return;
+    }
     await db.transaction((tx) async {
       for (var ci = 0; ci < _categories.length; ci++) {
         final c = _categories[ci];
@@ -738,9 +759,7 @@ class ContentRepository {
           id: c['id'] as String,
           title: c['title'] as String,
           subtitle: c['subtitle'] as String,
-          icon: IconData(c['icon_code'] as int,
-              fontFamily: c['icon_font'] as String?,
-              fontPackage: c['icon_package'] as String?),
+          icon: _categoryIcon(c['icon_code']),
           color: Color(c['color'] as int),
           softColor: Color(c['soft_color'] as int),
           lessons: childLessons);
@@ -802,9 +821,7 @@ class ContentRepository {
                 id: c['id'] as String,
                 title: c['title'] as String,
                 subtitle: c['subtitle'] as String,
-                icon: IconData(c['icon_code'] as int,
-                    fontFamily: c['icon_font_family'] as String?,
-                    fontPackage: c['icon_font_package'] as String?),
+                icon: _categoryIcon(c['icon_code']),
                 color: Color((c['color_value'] as num).toInt()),
                 softColor: Color((c['soft_color_value'] as num).toInt()),
                 lessons: lessonList

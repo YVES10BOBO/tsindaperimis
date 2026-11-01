@@ -1,3 +1,5 @@
+// Web-only helper, run in Chrome to download seed.sql; never part of the app.
+// ignore_for_file: avoid_web_libraries_in_flutter, deprecated_member_use
 import 'dart:convert';
 import 'dart:html' as html;
 

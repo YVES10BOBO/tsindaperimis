@@ -243,7 +243,7 @@ class ExamScreen extends StatefulWidget {
 }
 
 class _ExamScreenState extends State<ExamScreen> {
-  static Duration _limit = Duration(minutes: ExamConfig.durationMinutes);
+  static final Duration _limit = Duration(minutes: ExamConfig.durationMinutes);
 
   late final List<int?> _answers =
       List<int?>.filled(widget.questions.length, null);

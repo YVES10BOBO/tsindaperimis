@@ -371,7 +371,7 @@ class RoadSign extends StatelessWidget {
             aspectRatio: 1,
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: active ? color : color.withOpacity(0.22),
+                color: active ? color : color.withValues(alpha: 0.22),
                 shape: BoxShape.circle,
               ),
             ),
