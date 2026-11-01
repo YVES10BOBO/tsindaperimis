@@ -8,7 +8,31 @@ import '../data/models.dart';
 /// Imiterere ya app (umukoresha, iterambere, ibyo yabitse).
 class AppState extends ChangeNotifier {
   AppState() {
+    _restoreAccount();
     _restoreProgress();
+  }
+
+  StreamSubscription<void>? _signedOutSubscription;
+
+  /// Ugarura konti yari yinjiye, kugira ngo umukoresha atongera kwinjira
+  /// buri gihe afunguye app.
+  void _restoreAccount() {
+    final account = ContentRepository.instance.signedInAccount;
+    if (account != null) {
+      _userName = account.name;
+      email = account.email;
+      _isGuest = false;
+    }
+    _signedOutSubscription =
+        ContentRepository.instance.signedOutEvents.listen((_) {
+      if (!_isGuest) continueAsGuest();
+    });
+  }
+
+  @override
+  void dispose() {
+    _signedOutSubscription?.cancel();
+    super.dispose();
   }
 
   String? _userName;
