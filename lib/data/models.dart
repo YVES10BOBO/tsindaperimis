@@ -64,7 +64,11 @@ class Lesson {
     required this.minutes,
     required this.sections,
     this.isExtra = false,
+    this.audioPath,
   });
+
+  /// Amajwi y'isomo yafashwe (Supabase Storage, bucket "audio"), niba ahari.
+  final String? audioPath;
 
   final String id;
   final String categoryId;
@@ -98,7 +102,11 @@ class Question {
     this.imagePath,
     this.isExamQuestion = true,
     this.number,
+    this.audioPath,
   });
+
+  /// Amajwi asoma ikibazo (Supabase Storage, bucket "audio"), niba ahari.
+  final String? audioPath;
 
   final String id;
 
@@ -160,6 +168,7 @@ class Question {
       imagePath: imagePath,
       isExamQuestion: isExamQuestion,
       number: number,
+      audioPath: audioPath,
     );
   }
 }

@@ -283,6 +283,7 @@ code{background:#f3f6ff}
 .cm-image{display:flex;align-items:center;gap:14px;padding:10px;border:1px solid #e5e9f0;border-radius:12px;background:#f7f9fc}
 .cm-image img{width:72px;height:72px;object-fit:contain;border:1px solid #e5e9f0;border-radius:8px;background:#fff}
 .cm-image>div{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.cm-audio audio{flex:1;min-width:0;max-width:340px;height:40px}
 .cm-upload{position:relative;display:inline-flex;align-items:center;gap:8px;color:#1d4ed8;font-size:13px;font-weight:600;cursor:pointer}
 .cm-upload input{position:absolute;inset:0;width:100%;opacity:0;cursor:pointer}
 .cm-upload:focus-within{outline:3px solid #93b4ff;outline-offset:2px;border-radius:8px}
@@ -394,6 +395,56 @@ code{background:#f3f6ff}
 @keyframes cm-toast-in{from{transform:translateY(12px);opacity:0}to{transform:none;opacity:1}}
 @media(prefers-reduced-motion:reduce){.cm-dialog,.cm-toast{animation:none}}
 @media(max-width:580px){.cm-toast-region{right:16px;left:16px;bottom:16px;align-items:stretch}.cm-toast{width:auto}.cm-dialog-actions{flex-direction:column-reverse}.cm-dialog-actions button{width:100%}}
+
+/* Hover, press and keyboard-focus feedback for every clickable element. */
+button.stat-card{width:100%;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.category-open{display:block;width:100%;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.category-open:hover h3{color:#1d4ed8;text-decoration:underline;text-underline-offset:3px}
+.text-button{border-radius:8px;transition:background .15s,color .15s}
+.text-button:hover{background:#eaf1ff;color:#1e3a8a}
+.secondary:hover:not(:disabled){background:#dbe7ff;border-color:#93b4ff}
+.refresh{cursor:pointer;transition:background .15s,transform .15s}
+.refresh:hover{background:#eaf1ff;transform:rotate(-30deg)}
+.cm-tabs button{cursor:pointer;transition:background .15s,color .15s}
+.cm-tabs button:hover:not(.active){background:#f4f7fc;color:#1e3a8a}
+.cm-segment button{cursor:pointer;transition:background .15s,color .15s}
+.cm-segment button:hover:not([aria-pressed=true]){background:#eaf1ff;color:#1e3a8a}
+.cm-flag{cursor:pointer;transition:background .15s,border-color .15s}
+.cm-flag:hover:not(.active){background:#fffaf0;border-color:#d97706}
+.cm-group-toggle{cursor:pointer;transition:background .15s}
+.cm-group-toggle:hover{background:#f6f9ff}
+.cm-section-head{cursor:pointer;border-radius:12px;transition:background .15s}
+.cm-section-head:hover{background:#f6f9ff}
+.cm-search:hover,.user-search:hover{border-color:#7f93b3}
+.cm-select,.cm-rows-select select,.filter-controls select,.users-toolbar>select,.page-size select{cursor:pointer;transition:border-color .15s}
+.cm-select:hover,.cm-rows-select select:hover,.filter-controls select:hover,.users-toolbar>select:hover,.page-size select:hover{border-color:#7f93b3}
+.cm-search button:hover,.search-wrap>button:hover,.user-search button:hover{background:#dbe7ff}
+.cm-move button,.cm-option-remove,.cm-option-add,.cm-add,.cm-close,.icon-action,.pagination-buttons button{cursor:pointer}
+button:not(:disabled):active,.cm-upload:active{transform:scale(.97)}
+button:focus-visible,a:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #93b4ff;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){button:not(:disabled):active,.refresh:hover{transform:none}}
+
+/* Dashboard-wide search (Ctrl+K) */
+.global-search{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 10px 0 12px;border:var(--outline-w) solid var(--outline);border-radius:10px;background:#fff;color:#4b5563;font-size:13px;font-weight:600;cursor:pointer;transition:border-color .15s,background .15s}
+.global-search:hover:not(:disabled){border-color:#2563eb;background:#f6f9ff;color:#1e3a8a}
+.global-search .cm-icon{width:16px;height:16px}
+.global-search kbd,.cm-palette-input kbd{padding:2px 6px;border:1px solid #cbd5e1;border-radius:6px;background:#f7f9fc;color:#64748b;font:600 11px 'DM Sans',sans-serif}
+.cm-palette-root{align-items:start;padding-top:10vh}
+.cm-palette{position:relative;width:min(660px,100%);display:flex;flex-direction:column;overflow:hidden;border:var(--outline-w) solid var(--outline);border-radius:18px;background:#fff;box-shadow:0 24px 60px rgba(15,23,42,.28);animation:cm-pop .16s ease}
+.cm-palette-input{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid #e5e9f0;color:#64748b}
+.cm-palette-input input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#111827;font-size:16px}
+.cm-palette-results{max-height:60vh;overflow:auto;padding:8px 8px 12px}
+.cm-palette-results section{padding:6px 0}
+.cm-palette-results h3{display:flex;align-items:center;gap:8px;margin:6px 10px;color:#6b7280;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.cm-palette-results h3 span{padding:1px 7px;border-radius:999px;background:#eef2f8;color:#475569;letter-spacing:0}
+.cm-palette-item{width:100%;display:flex;flex-direction:column;gap:2px;padding:10px 12px;border:0;border-radius:10px;background:none;text-align:left;cursor:pointer}
+.cm-palette-item:hover,.cm-palette-item:focus-visible{background:#eaf1ff}
+.cm-palette-item strong{overflow:hidden;color:#111827;font-size:14px;font-weight:600;text-overflow:ellipsis;white-space:nowrap}
+.cm-palette-item small{overflow:hidden;color:#6b7280;font-size:12.5px;text-overflow:ellipsis;white-space:nowrap}
+.cm-palette-more{margin:2px 4px;padding:8px;border:0;border-radius:8px;background:none;color:#1d4ed8;font-size:13px;font-weight:600;cursor:pointer}
+.cm-palette-more:hover{background:#eaf1ff}
+.cm-palette-hint{margin:16px 12px;color:#6b7280;font-size:14px;line-height:1.5}
+@media(max-width:700px){.global-search span,.global-search kbd{display:none}.global-search{padding:0 10px}}
 
 /* One shared outline for every dashboard component, matching the Amasomo/Ibibazo cards. */
 :root{--outline:#aebbd0;--outline-w:1.5px}

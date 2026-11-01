@@ -82,16 +82,16 @@ class ContentRepository {
         var refreshBundledContent = false;
         _db = await openDatabase(
           p.join(dir, 'amategeko_content.db'),
-          version: 7,
+          version: 8,
           onCreate: (db, _) async {
             await db.execute(
                 'CREATE TABLE categories (id TEXT PRIMARY KEY, title TEXT, subtitle TEXT, icon_code INTEGER, icon_font TEXT, icon_package TEXT, color INTEGER, soft_color INTEGER, sort_order INTEGER)');
             await db.execute(
-                'CREATE TABLE lessons (id TEXT PRIMARY KEY, category_id TEXT, title TEXT, minutes INTEGER, sort_order INTEGER, is_extra INTEGER)');
+                'CREATE TABLE lessons (id TEXT PRIMARY KEY, category_id TEXT, title TEXT, minutes INTEGER, sort_order INTEGER, is_extra INTEGER, audio_path TEXT)');
             await db.execute(
                 'CREATE TABLE sections (id TEXT PRIMARY KEY, lesson_id TEXT, position INTEGER, heading TEXT, body TEXT, sign_type TEXT, sign_label TEXT, image_path TEXT)');
             await db.execute(
-                'CREATE TABLE questions (id TEXT PRIMARY KEY, category_id TEXT, prompt TEXT, explanation TEXT, sign_type TEXT, sign_label TEXT, image_path TEXT, is_exam_question INTEGER, sort_order INTEGER, number INTEGER)');
+                'CREATE TABLE questions (id TEXT PRIMARY KEY, category_id TEXT, prompt TEXT, explanation TEXT, sign_type TEXT, sign_label TEXT, image_path TEXT, is_exam_question INTEGER, sort_order INTEGER, number INTEGER, audio_path TEXT)');
             await db.execute(
                 'CREATE TABLE options (id TEXT PRIMARY KEY, question_id TEXT, position INTEGER, option_text TEXT, is_correct INTEGER)');
             await _createProgressTables(db);
@@ -111,6 +111,11 @@ class ContentRepository {
             if (oldVersion < 6) await _createSettingsTable(db);
             if (oldVersion < 7) {
               await db.execute('ALTER TABLE questions ADD COLUMN number INTEGER');
+            }
+            if (oldVersion < 8) {
+              await db.execute('ALTER TABLE lessons ADD COLUMN audio_path TEXT');
+              await db
+                  .execute('ALTER TABLE questions ADD COLUMN audio_path TEXT');
             }
           },
         );
@@ -148,6 +153,17 @@ class ContentRepository {
     if (db == null) return;
     await db.insert('settings', {'key': key, 'value': value},
         conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  /// Web address of a recording in the "audio" bucket, or null when there is
+  /// no recording (the listen button is then hidden).
+  String? audioUrl(String? path) {
+    if (path == null || path.isEmpty || !_supabaseConfigured) return null;
+    try {
+      return Supabase.instance.client.storage.from('audio').getPublicUrl(path);
+    } catch (_) {
+      return null;
+    }
   }
 
   /// Questions this phone already reported, so the button can show "sent".
@@ -725,7 +741,8 @@ class ContentRepository {
             'title': l.title,
             'minutes': l.minutes,
             'sort_order': li,
-            'is_extra': l.isExtra ? 1 : 0
+            'is_extra': l.isExtra ? 1 : 0,
+            'audio_path': l.audioPath
           });
           for (var si = 0; si < l.sections.length; si++) {
             final s = l.sections[si];
@@ -754,7 +771,8 @@ class ContentRepository {
           'image_path': q.imagePath,
           'is_exam_question': q.isExamQuestion ? 1 : 0,
           'sort_order': qi,
-          'number': q.number
+          'number': q.number,
+          'audio_path': q.audioPath
         });
         for (var oi = 0; oi < q.options.length; oi++) {
           await tx.insert('options', {
@@ -794,6 +812,7 @@ class ContentRepository {
             title: l['title'] as String,
             minutes: l['minutes'] as int,
             isExtra: l['is_extra'] == 1,
+            audioPath: l['audio_path'] as String?,
             sections: childSections);
       }).toList();
       return LearnCategory(
@@ -819,7 +838,8 @@ class ContentRepository {
           signLabel: q['sign_label'] as String?,
           imagePath: q['image_path'] as String?,
           isExamQuestion: q['is_exam_question'] == 1,
-          number: q['number'] as int?);
+          number: q['number'] as int?,
+          audioPath: q['audio_path'] as String?);
     }).toList();
   }
 
@@ -874,6 +894,7 @@ class ContentRepository {
                           title: l['title'] as String,
                           minutes: l['minutes'] as int,
                           isExtra: l['is_extra'] == true,
+                          audioPath: l['audio_path'] as String?,
                           sections: sectionList
                               .where((s) => s['lesson_id'] == l['id'])
                               .map<LessonSection>((s) => LessonSection(
@@ -901,7 +922,8 @@ class ContentRepository {
             signLabel: q['sign_label'] as String?,
             imagePath: q['image_path'] as String?,
             isExamQuestion: q['is_exam_question'] as bool? ?? true,
-            number: (q['number'] as num?)?.toInt());
+            number: (q['number'] as num?)?.toInt(),
+            audioPath: q['audio_path'] as String?);
       }).toList();
       if (hydratedCategories.isNotEmpty && hydratedQuestions.isNotEmpty) {
         _categories = hydratedCategories;
@@ -958,7 +980,8 @@ class ContentRepository {
             'title': l.title,
             'minutes': l.minutes,
             'sort_order': li,
-            'is_extra': l.isExtra ? 1 : 0
+            'is_extra': l.isExtra ? 1 : 0,
+            'audio_path': l.audioPath
           });
           for (var si = 0; si < l.sections.length; si++) {
             final s = l.sections[si];
@@ -987,7 +1010,8 @@ class ContentRepository {
           'image_path': q.imagePath,
           'is_exam_question': q.isExamQuestion ? 1 : 0,
           'sort_order': qi,
-          'number': q.number
+          'number': q.number,
+          'audio_path': q.audioPath
         });
         for (var oi = 0; oi < q.options.length; oi++) {
           await tx.insert('options', {
@@ -1043,6 +1067,24 @@ class ContentRepository {
             l.sections.any((s) =>
                 s.heading.toLowerCase().contains(q) ||
                 s.body.toLowerCase().contains(q)))
+        .toList();
+  }
+
+  /// Questions whose text, answers or explanation contain the words, or the
+  /// exact question when the query is a code like "#57".
+  List<Question> searchQuestions(String query) {
+    final q = query.trim().toLowerCase();
+    if (q.isEmpty) return <Question>[];
+    final code = RegExp(r'^#(\d+)$').firstMatch(q);
+    if (code != null) {
+      final number = int.parse(code.group(1)!);
+      return _all.where((x) => x.number == number).toList();
+    }
+    return _all
+        .where((x) =>
+            x.text.toLowerCase().contains(q) ||
+            x.explanation.toLowerCase().contains(q) ||
+            x.options.any((o) => o.toLowerCase().contains(q)))
         .toList();
   }
 

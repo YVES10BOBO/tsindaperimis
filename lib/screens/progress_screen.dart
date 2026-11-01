@@ -5,6 +5,7 @@ import '../data/content_repository.dart';
 import '../data/models.dart';
 import '../state/app_state.dart';
 import '../widgets/common.dart';
+import 'category_screen.dart';
 import 'exam_screens.dart';
 
 class ProgressScreen extends StatelessWidget {
@@ -17,7 +18,8 @@ class ProgressScreen extends StatelessWidget {
     LearnCategory? weakest;
     double low = 2;
     for (final LearnCategory c in repo.categories) {
-      final double lessons = c.lessons.isEmpty ? 0 : state.completedIn(c) / c.lessons.length;
+      final double lessons =
+          c.lessons.isEmpty ? 0 : state.completedIn(c) / c.lessons.length;
       final double score = (lessons + state.categoryAccuracy(c.id)) / 2;
       if (score < low) {
         low = score;
@@ -45,7 +47,8 @@ class ProgressScreen extends StatelessWidget {
           AppCard(
             child: Row(
               children: <Widget>[
-                ProgressRing(value: readiness, size: 104, stroke: 11, fontSize: 24),
+                ProgressRing(
+                    value: readiness, size: 104, stroke: 11, fontSize: 24),
                 SizedBox(width: 18),
                 Expanded(
                   child: Column(
@@ -54,12 +57,16 @@ class ProgressScreen extends StatelessWidget {
                       Text(
                         readiness >= 0.8
                             ? 'Witeguye neza!'
-                            : (readiness >= 0.5 ? 'Uri mu nzira nziza' : 'Komeza wige'),
-                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
+                            : (readiness >= 0.5
+                                ? 'Uri mu nzira nziza'
+                                : 'Komeza wige'),
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w800),
                       ),
                       SizedBox(height: 6),
                       Text(_advice(state, repo),
-                          style: TextStyle(color: AppColors.muted, height: 1.4)),
+                          style:
+                              TextStyle(color: AppColors.muted, height: 1.4)),
                     ],
                   ),
                 ),
@@ -76,10 +83,14 @@ class ProgressScreen extends StatelessWidget {
             childAspectRatio: 1.55,
             children: <Widget>[
               StatTile(
-                  value: '${state.completedLessons.length}/${repo.totalLessons}',
+                  value:
+                      '${state.completedLessons.length}/${repo.totalLessons}',
                   label: 'Amasomo warangije'),
-              StatTile(value: '${state.totalAnswered}', label: 'Ibibazo wakoze'),
-              StatTile(value: '${state.examResults.length}', label: 'Ibizamini wakoze'),
+              StatTile(
+                  value: '${state.totalAnswered}', label: 'Ibibazo wakoze'),
+              StatTile(
+                  value: '${state.examResults.length}',
+                  label: 'Ibizamini wakoze'),
               StatTile(
                   value: '${(state.averageExamRatio * 100).round()}%',
                   label: 'Impuzandengo y\'ibizamini'),
@@ -113,6 +124,8 @@ class ProgressScreen extends StatelessWidget {
                 padding: EdgeInsets.only(bottom: 10),
                 child: ExamHistoryTile(result: r),
               ),
+          if (state.examResults.length > 5)
+            SeeAllExamsButton(count: state.examResults.length),
         ],
       ),
     );
@@ -132,27 +145,38 @@ class _CategoryProgress extends StatelessWidget {
     final double acc = state.categoryAccuracy(category.id);
     final int answered = state.answeredByCategory[category.id] ?? 0;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Row(
+    return InkWell(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute<void>(
+            builder: (_) => CategoryScreen(category: category)),
+      ),
+      borderRadius: BorderRadius.circular(10),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Icon(category.icon, color: category.color, size: 20),
-            SizedBox(width: 8),
-            Expanded(
-              child: Text(category.title,
-                  style: TextStyle(fontWeight: FontWeight.w600)),
+            Row(
+              children: <Widget>[
+                Icon(category.icon, color: category.color, size: 20),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(category.title,
+                      style: TextStyle(fontWeight: FontWeight.w600)),
+                ),
+                Text(answered == 0 ? '—' : '${(acc * 100).round()}%',
+                    style: TextStyle(fontWeight: FontWeight.w700)),
+              ],
             ),
-            Text(answered == 0 ? '—' : '${(acc * 100).round()}%',
-                style: TextStyle(fontWeight: FontWeight.w700)),
+            SizedBox(height: 6),
+            AppProgressBar(
+                value: total == 0 ? 0 : done / total, color: category.color),
+            SizedBox(height: 4),
+            Text('Amasomo $done/$total · Ibibazo $answered',
+                style: TextStyle(fontSize: 12, color: AppColors.muted)),
           ],
         ),
-        SizedBox(height: 6),
-        AppProgressBar(value: total == 0 ? 0 : done / total, color: category.color),
-        SizedBox(height: 4),
-        Text('Amasomo $done/$total · Ibibazo $answered',
-            style: TextStyle(fontSize: 12, color: AppColors.muted)),
-      ],
+      ),
     );
   }
 }
