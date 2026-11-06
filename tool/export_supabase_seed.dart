@@ -10,7 +10,6 @@ import 'package:amategeko_app/data/extended_data.dart';
 import 'package:amategeko_app/data/models.dart';
 import 'package:amategeko_app/data/more_questions.dart';
 import 'package:amategeko_app/data/pdf_reference_data.dart';
-import 'package:amategeko_app/data/questions_data.dart';
 
 String sql(String value) => "'${value.replaceAll("'", "''")}'";
 String nullable(String? value) => value == null ? 'NULL' : sql(value);
@@ -23,7 +22,6 @@ String buildSeedSql() {
     'begin;\n',
   );
   final questions = <Question>[
-    ...questionBank,
     ...vehicleQuestions,
     ...drivingQuestions,
     ...moreQuestions,

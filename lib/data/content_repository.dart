@@ -13,7 +13,6 @@ import 'extended_data.dart';
 import 'models.dart';
 import 'more_questions.dart';
 import 'pdf_reference_data.dart';
-import 'questions_data.dart';
 
 /// Icons a category can show. The database stores an icon's code point, which
 /// is matched to one of these constant icons: release builds can only shrink
@@ -55,7 +54,6 @@ class ContentRepository {
   Future<void> _progressQueue = Future<void>.value();
   List<LearnCategory> _categories = learnCategories;
   List<Question> _all = <Question>[
-    ...questionBank,
     ...vehicleQuestions,
     ...drivingQuestions,
     ...moreQuestions,
