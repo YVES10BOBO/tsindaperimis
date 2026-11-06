@@ -37,9 +37,13 @@ class RoadSignVisual extends StatelessWidget {
         );
       }
       try {
-        final url = Supabase.instance.client.storage
-            .from('road-signs')
-            .getPublicUrl(path);
+        // A full web address (e.g. Cloudinary) is used as it is; anything else
+        // is a file in the Supabase "road-signs" bucket.
+        final url = path.startsWith('https://') || path.startsWith('http://')
+            ? path
+            : Supabase.instance.client.storage
+                .from('road-signs')
+                .getPublicUrl(path);
         return ClipRRect(
           borderRadius: BorderRadius.circular(12),
           child: Image.network(
