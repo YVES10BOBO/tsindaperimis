@@ -195,7 +195,7 @@ export default function Home() {
   const removeUnusedFiles = async (paths: (string | null | undefined)[]) => {
     if (!supabase) return;
     const db = supabase;
-    const candidates = [...new Set(paths.filter((path): path is string => typeof path === 'string' && path !== '' && !path.startsWith('assets/')))];
+    const candidates = [...new Set(paths.filter((path): path is string => typeof path === 'string' && path !== '' && !path.startsWith('assets/') && !/^https?:\/\//i.test(path)))];
     if (!candidates.length) return;
     try {
       const unusedImages: string[] = [];
@@ -252,9 +252,11 @@ export default function Home() {
 
   const imageUrl = (path: string | null | undefined) => {
     if (!path) return null;
-    const bundledPrefix = 'assets/images/road_signs/pdf/';
+    if (/^https?:\/\//i.test(path)) return path;
+    // Pictures bundled in the app (assets/images/road_signs/pdf, pdf2, ...) are copied to public/road-signs/.
+    const bundledPrefix = 'assets/images/road_signs/';
     if (path.startsWith(bundledPrefix)) {
-      return path.replace(bundledPrefix, '/road-signs/pdf/');
+      return path.replace(bundledPrefix, '/road-signs/');
     }
     return supabase ? supabase.storage.from('road-signs').getPublicUrl(path).data.publicUrl : null;
   };

@@ -48,3 +48,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Source books used to build the question bank (someone else's work: kept out of git)
+/questions_sources/
