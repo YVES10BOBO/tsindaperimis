@@ -59,7 +59,7 @@ const List<Question> pdfQuestionBank = <Question>[
   ),
   Question(
     id: 'pdf-q-005',
-    categoryId: 'imyitwarire',
+    categoryId: 'amategeko',
     text:
         'Ibyo aribyo byose abakozi babifitiye ububasha bashobora gutegeka kugenda:',
     options: <String>[
@@ -134,8 +134,7 @@ const List<Question> pdfQuestionBank = <Question>[
     options: <String>[
       'Butarenga ibiro 5000',
       'Burenga ibiro 5000',
-      'Butarenga ibiro 3500',
-      'Burenga ibiro 5000'
+      'Butarenga ibiro 3500'
     ],
     correctIndex: 1,
     explanation: '',
@@ -256,7 +255,7 @@ const List<Question> pdfQuestionBank = <Question>[
   ),
   Question(
     id: 'pdf-q-020',
-    categoryId: 'modoka',
+    categoryId: 'amategeko',
     text: 'Imyaka y\'ifatizo ku bayobozi b\'amatungo ni:',
     options: <String>['12', '14', '15'],
     correctIndex: 0,
@@ -264,7 +263,7 @@ const List<Question> pdfQuestionBank = <Question>[
   ),
   Question(
     id: 'pdf-q-021',
-    categoryId: 'modoka',
+    categoryId: 'amategeko',
     text:
         'Ku bayobozi b\'inyamaswa zikurura zaba ziziritse cyangwa zitaziritse ku cyo zikurura no ku bayobozi b\'inyamaswa zikoreye cyangwa zigenderwaho, imyaka y\'ifatizo ni:',
     options: <String>['12', '15', '18', '14'],
@@ -273,7 +272,7 @@ const List<Question> pdfQuestionBank = <Question>[
   ),
   Question(
     id: 'pdf-q-022',
-    categoryId: 'modoka',
+    categoryId: 'amategeko',
     text: 'Imyaka fatizo ku bayobozi b\'inyamaswa ziri mu nzego A na B ni:',
     options: <String>[
       'Imyaka 20',
@@ -286,7 +285,7 @@ const List<Question> pdfQuestionBank = <Question>[
   ),
   Question(
     id: 'pdf-q-023',
-    categoryId: 'modoka',
+    categoryId: 'amategeko',
     text: 'Umuyobozi w\'imyaka 19 ashobora kuyobora:',
     options: <String>[
       'Ibinyabiziga byo mu nzego C na D',
@@ -299,7 +298,7 @@ const List<Question> pdfQuestionBank = <Question>[
   ),
   Question(
     id: 'pdf-q-024',
-    categoryId: 'modoka',
+    categoryId: 'amategeko',
     text:
         'Imyaka fatizo ku bayobozi b\'ibinyabiziga biri mu nzego C, D, E na F ni:',
     options: <String>['25', '21', '20', '18'],
@@ -973,8 +972,7 @@ const List<Question> pdfQuestionBank = <Question>[
     options: <String>[
       'Zitarenze 20 kandi dutandukanijwe n\'intera ya metero 10',
       'Zitarenze 10 kandi dutandukanijwe n\'intera ya metero 20',
-      'Zitarenze 10 kandi dutandukanijwe n\'intera ya metero 10',
-      'Zitarenze 20 kandi dutandukanijwe n\'intera ya metero 10'
+      'Zitarenze 10 kandi dutandukanijwe n\'intera ya metero 10'
     ],
     correctIndex: 1,
     explanation: '',
@@ -1515,7 +1513,7 @@ const List<Question> pdfQuestionBank = <Question>[
   ),
   Question(
     id: 'pdf-q-126',
-    categoryId: 'ibimenyetso',
+    categoryId: 'amatara',
     text:
         'Utugarurarumuri turi ku kindi kinyabiziga kitari remoroki ntidushobora gusa n\'igishushanyo cya:',
     options: <String>['Kare', 'Urukiramende', 'Mpandeshatu', 'Uruziga'],
@@ -1524,7 +1522,7 @@ const List<Question> pdfQuestionBank = <Question>[
   ),
   Question(
     id: 'pdf-q-127',
-    categoryId: 'ibimenyetso',
+    categoryId: 'amatara',
     text:
         'Kugira ngo berekane ahantu habi cyane, hakoreshwa ikimenyetso cy\'itara ry\'umuhondo rimyasa. Iryo tara rivuga ibi bikurikira:',
     options: <String>[
@@ -1753,7 +1751,7 @@ const List<Question> pdfQuestionBank = <Question>[
   ),
   Question(
     id: 'pdf-q-144',
-    categoryId: 'imirongo',
+    categoryId: 'amatara',
     text:
         'Ahantu uburyo bwo kugenda mu muhanda bwerekanwa n\'ibimenyetso bimurika, ibinyabiziga bishobora kuhagenda biteganye:',
     options: <String>[
@@ -1877,7 +1875,7 @@ const List<Question> pdfQuestionBank = <Question>[
   ),
   Question(
     id: 'pdf-q-154',
-    categoryId: 'amatara',
+    categoryId: 'ibimenyetso',
     text: 'Ibimenyetso bigenga uburyo bwo kugenda mu muhanda bigizwe na:',
     options: <String>[
       'Ibyapa n\'ibimenyetso bimurika',

@@ -9,7 +9,22 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
+# Reviewed against the PDF's wording: these were filed under a neighbouring
+# category by the number ranges below, so they are moved to the topic they ask about.
+RECATEGORISED = {
+    5: "amategeko",    # orders given by authorised officers (with Q7, Q8)
+    20: "amategeko", 21: "amategeko", 22: "amategeko",  # driver minimum ages
+    23: "amategeko", 24: "amategeko",                   # belong with licence rules
+    126: "amatara",    # reflectors
+    127: "amatara",    # flashing yellow light
+    144: "amatara",    # lit traffic signals
+    154: "ibimenyetso",  # what traffic signals are made of
+}
+
+
 def category_for(number: int) -> str:
+    if number in RECATEGORISED:
+        return RECATEGORISED[number]
     explicit = {
         1: "amategeko", 2: "modoka", 3: "amatara", 4: "modoka", 5: "imyitwarire",
         6: "modoka", 7: "amategeko", 8: "amategeko", 9: "amategeko",
@@ -65,7 +80,15 @@ def main() -> None:
         number = int(question["number"])
         category = category_for(number)
         category_counts[category] = category_counts.get(category, 0) + 1
-        options = question["options"]
+        # The PDF prints the same answer twice in a few questions (Q10, Q78);
+        # keep the first copy so a learner never has two identical choices.
+        options, seen = [], set()
+        for option in question["options"]:
+            key = " ".join(str(option["text"]).lower().split())
+            if key in seen:
+                continue
+            seen.add(key)
+            options.append(option)
         # The PDF's Q92 marks "Metero 10" as correct, but Article 79 requires
         # a visible brake light at 150 m at night and 20 m by day. None of its
         # printed choices states that, so the correct choice is "none".
