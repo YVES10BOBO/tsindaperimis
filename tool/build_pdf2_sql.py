@@ -83,6 +83,19 @@ def main() -> None:
                 f"{'true' if position == correct else 'false'})"
             )
 
+    # Which dashboard #number each PDF row got, so a row can be found by search.
+    numbers = {seq: EXISTING_QUESTIONS + k for k, (seq, _, _, _) in enumerate(rows, start=1)}
+    lines = ["pdf_row,printed_no,dashboard_no,same_question_as"]
+    for seq, q, _, _ in rows:
+        other = ""
+        if q["same_kind"] == "CONFLICT" and "PDF 2 row" in q["same_as"]:
+            ref = int(q["same_as"].split("PDF 2 row ")[1].split(":")[0])
+            other = f"#{numbers[ref]}" if ref in numbers else f"row {ref}"
+        lines.append(f"{seq},{q['n']},#{numbers[seq]},{other}")
+    (REVIEW / "number_map.csv").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    pairs = [(numbers[seq], numbers[int(q['same_as'].split('PDF 2 row ')[1].split(':')[0])]) for seq, q, _, _ in rows
+             if q["same_kind"] == "CONFLICT" and "PDF 2 row" in q["same_as"] and int(q['same_as'].split('PDF 2 row ')[1].split(':')[0]) in numbers]
+
     total = EXISTING_QUESTIONS + len(rows)
     counts = Counter(category for _, _, category, _ in rows)
     SQL_OUT.write_text(f"""-- Adds {len(rows)} questions from AMATEGEKO_YUMUHANDA_IBIBAZO_IBISUBIZO_2.pdf as DRAFTS
@@ -129,6 +142,7 @@ where q.id like 'pdf2-q-%';
     print("By category:", dict(sorted(counts.items())))
     print(f"Pictures copied: {len(copied)} -> assets/images/road_signs/pdf2/ and admin-dashboard/public/road-signs/pdf2/")
     print("With a picture:", sum(1 for _, q, _, _ in rows if q["images"]))
+    print("Same question, different marked answers (compare in the dashboard):", ", ".join(f"#{a} vs #{b}" for a, b in pairs))
 
 
 if __name__ == "__main__":
