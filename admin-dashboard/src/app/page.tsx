@@ -714,7 +714,7 @@ export default function Home() {
           {questionForm.options.length < 4 && <button type="button" className="cm-option-add" onClick={addOption}>+ Ongeramo igisubizo</button>}
         </fieldset>
         <label className="cm-field">Ibisobanuro by’igisubizo<textarea rows={3} placeholder="Sobanura impamvu iki gisubizo ari cyo nyacyo..." value={questionForm.explanation} onChange={e => setQuestionForm({ ...questionForm, explanation: e.target.value })} />{!questionForm.explanation.trim() && <span className="cm-warn-text">Nta bisobanuro: abiga bazabona igisubizo gusa, batamenye impamvu.</span>}</label>
-        <div className="cm-two"><label className="cm-field">Ubwoko bw’icyapa<input placeholder="urugero: danger" value={questionForm.sign_type} onChange={e => setQuestionForm({ ...questionForm, sign_type: e.target.value })} /></label><label className="cm-field">Agaciro/inyandiko<input placeholder="urugero: 10%" value={questionForm.sign_label} onChange={e => setQuestionForm({ ...questionForm, sign_label: e.target.value })} /></label></div>
+        <SignField type={questionForm.sign_type} label={questionForm.sign_label} hasPhoto={!!questionForm.image_path} onChange={(sign_type, sign_label) => setQuestionForm({ ...questionForm, sign_type, sign_label })} />
         <ImageField label="Ifoto y’icyapa" src={imageUrl(questionForm.image_path)} onPick={async e => { try { const path = await uploadImage(e); if (path) setQuestionForm(f => ({ ...f, image_path: path })); } catch (error) { sayError(error); } }} onRemove={() => setQuestionForm({ ...questionForm, image_path: '' })} />
         <AudioField ready={audioReady} label="Amajwi asoma ikibazo (si ngombwa)" src={audioUrl(questionForm.audio_path)} onPick={async e => { try { const path = await uploadAudio(e); if (path) setQuestionForm(f => ({ ...f, audio_path: path })); } catch (error) { sayError(error); } }} onRemove={() => setQuestionForm({ ...questionForm, audio_path: '' })} />
         <div className="cm-checks"><label className="cm-check"><input type="checkbox" checked={questionForm.is_exam_question} onChange={e => setQuestionForm({ ...questionForm, is_exam_question: e.target.checked })} /> Gishobora kujya mu kizamini cy’igerageza</label><label className="cm-check"><input type="checkbox" checked={questionForm.published} onChange={e => setQuestionForm({ ...questionForm, published: e.target.checked })} /> Tangaza: abakoresha ba app bakibone</label></div>
@@ -741,7 +741,7 @@ export default function Home() {
             {open && <div className="cm-section-body">
               <label className="cm-field">Umutwe<input required value={section.heading} onChange={e => patchSection(i, { heading: e.target.value })} /></label>
               <label className="cm-field">Ibisobanuro<textarea required rows={4} value={section.body} onChange={e => patchSection(i, { body: e.target.value })} /></label>
-              <div className="cm-two"><label className="cm-field">Ubwoko bw’icyapa<input placeholder="urugero: stop" value={section.sign_type ?? ''} onChange={e => patchSection(i, { sign_type: e.target.value })} /></label><label className="cm-field">Agaciro/inyandiko<input value={section.sign_label ?? ''} onChange={e => patchSection(i, { sign_label: e.target.value })} /></label></div>
+              <SignField type={section.sign_type ?? ''} label={section.sign_label ?? ''} hasPhoto={!!section.image_path} onChange={(sign_type, sign_label) => patchSection(i, { sign_type, sign_label })} />
               <ImageField label="Ifoto y’icyapa" src={imageUrl(section.image_path)} onPick={async e => { try { const path = await uploadImage(e); if (path) patchSection(i, { image_path: path }); } catch (error) { sayError(error); } }} onRemove={() => patchSection(i, { image_path: '' })} />
               {lessonForm.sections.length > 1 && <button type="button" className="cm-remove" onClick={() => removeSection(i)}>Kuraho iki gice</button>}
             </div>}
@@ -752,6 +752,50 @@ export default function Home() {
       </Drawer>}
     </section>
   </main>;
+}
+
+const SIGN_TYPES: [string, string, 'stop' | 'give' | 'ring' | 'bar' | 'warn' | 'blue' | 'plain'][] = [
+  ['stop', 'STOP', 'stop'], ['giveWay', 'Tanga inzira', 'give'], ['noEntry', 'Ntibyemewe kwinjira', 'bar'], ['speedLimit', 'Umuvuduko ntarengwa', 'ring'],
+  ['noOvertaking', 'Ntukarenge', 'ring'], ['noParking', 'Ntugahagarare', 'ring'], ['noLeftTurn', 'Ntukata ibumoso', 'ring'], ['noUTurn', 'Ntukagaruke inyuma', 'ring'],
+  ['noPedestrians', 'Abanyamaguru ntibemerewe', 'ring'], ['danger', 'Ikibazo imbere (impuguke)', 'warn'], ['children', 'Abana', 'warn'], ['roadWorks', 'Imirimo mu muhanda', 'warn'],
+  ['trafficSignalsAhead', 'Amatara imbere', 'warn'], ['pedestriansAhead', 'Abanyamaguru imbere', 'warn'], ['pedestrianCrossing', 'Aho abanyamaguru bambukira', 'blue'], ['steepAscent', 'Umuhanda uzamuka', 'warn'],
+  ['plainWarningTriangle', 'Impuguke (ubusa)', 'warn'], ['sideRoadRight', 'Umuhanda uhuza iburyo', 'warn'], ['crosswind', 'Umuyaga uturutse ku ruhande', 'warn'], ['deadEnd', 'Umuhanda urangiriye aho', 'warn'],
+  ['railwayCrossing', 'Gari ya moshi', 'warn'], ['twoWayTraffic', 'Imodoka zigenda impande zombi', 'warn'], ['speedBump', 'Ikidogera', 'warn'], ['aheadOnly', 'Genda imbere gusa', 'blue'],
+  ['turnRight', 'Kata iburyo', 'blue'], ['turnLeft', 'Kata ibumoso', 'blue'], ['roundabout', 'Ikizenga', 'blue'], ['parking', 'Aho guhagarara', 'blue'],
+  ['priorityOverOncoming', 'Ufite uburenganzira', 'blue'], ['trafficLight', 'Itara ry’umuhanda', 'plain'],
+];
+function SignField({ type, label, hasPhoto, onChange }: { type: string; label: string; hasPhoto: boolean; onChange: (type: string, label: string) => void }) {
+  const known = SIGN_TYPES.find(([key]) => key === type);
+  const shape = known?.[2];
+  const red = '#d62828', blue = '#1d4ed8';
+  const preview = !type ? null : (
+    <svg viewBox="0 0 100 100" width="72" height="72" role="img" aria-label={known ? known[1] : type}>
+      {shape === 'stop' && <><polygon points="30,4 70,4 96,30 96,70 70,96 30,96 4,70 4,30" fill={red} stroke="#fff" strokeWidth="4" /><text x="50" y="58" textAnchor="middle" fontSize="24" fontWeight="800" fill="#fff">STOP</text></>}
+      {shape === 'give' && <><polygon points="50,94 4,10 96,10" fill="#fff" stroke={red} strokeWidth="9" strokeLinejoin="round" /></>}
+      {shape === 'ring' && <><circle cx="50" cy="50" r="42" fill="#fff" stroke={red} strokeWidth="10" />{type === 'speedLimit' && <text x="50" y="62" textAnchor="middle" fontSize="34" fontWeight="800" fill="#111">{label || '50'}</text>}</>}
+      {shape === 'bar' && <><circle cx="50" cy="50" r="44" fill={red} /><rect x="18" y="42" width="64" height="16" fill="#fff" /></>}
+      {shape === 'warn' && <><polygon points="50,6 96,90 4,90" fill="#fff" stroke={red} strokeWidth="8" strokeLinejoin="round" /><rect x="46" y="34" width="8" height="30" fill="#111" /><circle cx="50" cy="76" r="5" fill="#111" /></>}
+      {shape === 'blue' && <><circle cx="50" cy="50" r="44" fill={blue} /><path d="M50 78V30M34 46l16-16 16 16" stroke="#fff" strokeWidth="9" fill="none" strokeLinecap="round" strokeLinejoin="round" /></>}
+      {(shape === 'plain' || !known) && <><rect x="6" y="6" width="88" height="88" rx="12" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="4" /><text x="50" y="58" textAnchor="middle" fontSize="30" fontWeight="800" fill="#475569">?</text></>}
+    </svg>
+  );
+  return (
+    <div className="cm-sign-field">
+      <div className="cm-two">
+        <label className="cm-field">Ubwoko bw’icyapa
+          <select value={type} onChange={e => onChange(e.target.value, e.target.value === 'speedLimit' ? label : '')}>
+            <option value="">Nta cyapa gishushanywa</option>
+            {SIGN_TYPES.map(([key, name]) => <option key={key} value={key}>{name}</option>)}
+            {type && !known && <option value={type}>{type} (ntizwi)</option>}
+          </select>
+        </label>
+        <label className="cm-field">Agaciro/inyandiko
+          <input placeholder="urugero: 40 (ku muvuduko)" value={label} onChange={e => onChange(type, e.target.value)} />
+        </label>
+      </div>
+      {type && <div className="cm-sign-preview">{preview}<p>{hasPhoto ? 'Ifoto yashyizweho niyo igaragara; icyapa gishushanywa ntikigaragara.' : 'Iki cyapa gishushanywa na app; nta foto ikenewe.'}<br /><small>Iki ni icyitegererezo gusa; app ishushanya icyapa nyacyo.</small></p></div>}
+    </div>
+  );
 }
 
 function ActionIcon({ kind, label, onClick }: { kind: "edit" | "delete"; label: string; onClick: () => void }) { return <button type="button" className={`icon-action ${kind === "delete" ? "danger" : ""}`} title={label} aria-label={label} onClick={onClick}><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{kind === "edit" ? <><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></> : <><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m19 6-1 14H6L5 6"/><path d="M10 11v5M14 11v5"/></>}</svg></button>; }

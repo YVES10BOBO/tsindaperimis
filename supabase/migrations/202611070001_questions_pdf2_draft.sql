@@ -1,12 +1,12 @@
--- Adds 385 questions from AMATEGEKO_YUMUHANDA_IBIBAZO_IBISUBIZO_2.pdf as DRAFTS
+-- Adds 386 questions from AMATEGEKO_YUMUHANDA_IBIBAZO_IBISUBIZO_2.pdf as DRAFTS
 -- (published = false): learners see nothing until you publish them in the dashboard.
--- They are numbered #161 to #545. Pictures are bundled in the app
+-- They are numbered #161 to #546. Pictures are bundled in the app
 -- (assets/images/road_signs/pdf2/). There are no explanations yet.
 --
 -- Run 202611060001_questions_match_pdf.sql FIRST: this file stops unless the
 -- highest question number is exactly 160. It runs as one transaction.
 --
--- Categories: amatara 69, amategeko 76, ibimenyetso 74, imirongo 31, imyitwarire 43, modoka 62, umutekano 30.
+-- Categories: amatara 69, amategeko 76, ibimenyetso 75, imirongo 31, imyitwarire 43, modoka 62, umutekano 30.
 begin;
 
 do $$
@@ -376,35 +376,36 @@ values
 ('pdf2-q-372', 'ibimenyetso', 'Ndashaka gupariki ikinyabiga iburyo kunzira y''abanyamaguru', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q372-111.jpeg', true, 513, false, 514),
 ('pdf2-q-373', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q373-112.jpeg', true, 514, false, 515),
 ('pdf2-q-374', 'ibimenyetso', 'Iki cyapa gisobanura iki mu nkomane ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q374-113.jpeg', true, 515, false, 516),
-('pdf2-q-376', 'imyitwarire', 'Iki cyapa gisobanura iki ?', '', null, null, null, true, 516, false, 517),
-('pdf2-q-377', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q377-116.jpeg', true, 517, false, 518),
-('pdf2-q-378', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q378-117.jpeg', true, 518, false, 519),
-('pdf2-q-379', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q379-118.jpeg', true, 519, false, 520),
-('pdf2-q-380', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q380-119.jpeg', true, 520, false, 521),
-('pdf2-q-381', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q381-120.jpeg', true, 521, false, 522),
-('pdf2-q-382', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q382-121.jpeg', true, 522, false, 523),
-('pdf2-q-383', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q383-122.jpeg', true, 523, false, 524),
-('pdf2-q-384', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q384-123.jpeg', true, 524, false, 525),
-('pdf2-q-385', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q385-124.jpeg', true, 525, false, 526),
-('pdf2-q-386', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q386-125.jpeg', true, 526, false, 527),
-('pdf2-q-387', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q387-126.jpeg', true, 527, false, 528),
-('pdf2-q-388', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q388-127.jpeg', true, 528, false, 529),
-('pdf2-q-389', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q389-128.jpeg', true, 529, false, 530),
-('pdf2-q-390', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q390-129.jpeg', true, 530, false, 531),
-('pdf2-q-391', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q391-130.jpeg', true, 531, false, 532),
-('pdf2-q-392', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q392-131.jpeg', true, 532, false, 533),
-('pdf2-q-393', 'ibimenyetso', 'Mu byapa bikurikira , ni ikihe cyerekana umuhanda udakomeza:', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q393-132.jpeg', true, 533, false, 534),
-('pdf2-q-394', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q394-133.jpeg', true, 534, false, 535),
-('pdf2-q-395', 'ibimenyetso', 'Muri ibi byapa bikurikira ni ikihe cyerekana ko umuyobozi ukibonye yemerewe gutambuka mbere y''abaturutse aho agana mu nzira ifunganye:', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q395-134.jpeg', true, 535, false, 536),
-('pdf2-q-396', 'ibimenyetso', 'Iki cyapa:', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q396-135.jpeg', true, 536, false, 537),
-('pdf2-q-397', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q397-136.jpeg', true, 537, false, 538),
-('pdf2-q-398', 'ibimenyetso', 'Ni ikihe icyapa gisobanura umuhanda w''icyerekezo kimwe:', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q398-137.jpeg', true, 538, false, 539),
-('pdf2-q-399', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q399-138.jpeg', true, 539, false, 540),
-('pdf2-q-400', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q400-139.jpeg', true, 540, false, 541),
-('pdf2-q-401', 'ibimenyetso', 'Iki kimenyetso kiri mu muhanda kivuze iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q401-140.jpeg', true, 541, false, 542),
-('pdf2-q-402', 'imirongo', 'Iki kimenyetso kiri mu muhanda kivuze iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q402-141.jpeg', true, 542, false, 543),
-('pdf2-q-403', 'imirongo', 'Mu gihe utwaye ikinyabiziga uva kuri A ugana kuri B, Iki kimenyetso kiri mu muhanda kivuze iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q403-142.jpeg', true, 543, false, 544),
-('pdf2-q-404', 'imirongo', 'Mu gihe utwaye ikinyabiziga uva kuri A ugana kuri B, Iki kimenyetso kiri mu muhanda kivuze iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q404-143.jpeg', true, 544, false, 545);
+('pdf2-q-375', 'ibimenyetso', 'Iki cyapa gisobanura iki aho banyura bazengurutse ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q375-114.jpeg', true, 516, false, 517),
+('pdf2-q-376', 'imyitwarire', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q376-115.jpeg', true, 517, false, 518),
+('pdf2-q-377', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q377-116.jpeg', true, 518, false, 519),
+('pdf2-q-378', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q378-117.jpeg', true, 519, false, 520),
+('pdf2-q-379', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q379-118.jpeg', true, 520, false, 521),
+('pdf2-q-380', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q380-119.jpeg', true, 521, false, 522),
+('pdf2-q-381', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q381-120.jpeg', true, 522, false, 523),
+('pdf2-q-382', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q382-121.jpeg', true, 523, false, 524),
+('pdf2-q-383', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q383-122.jpeg', true, 524, false, 525),
+('pdf2-q-384', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q384-123.jpeg', true, 525, false, 526),
+('pdf2-q-385', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q385-124.jpeg', true, 526, false, 527),
+('pdf2-q-386', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q386-125.jpeg', true, 527, false, 528),
+('pdf2-q-387', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q387-126.jpeg', true, 528, false, 529),
+('pdf2-q-388', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q388-127.jpeg', true, 529, false, 530),
+('pdf2-q-389', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q389-128.jpeg', true, 530, false, 531),
+('pdf2-q-390', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q390-129.jpeg', true, 531, false, 532),
+('pdf2-q-391', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q391-130.jpeg', true, 532, false, 533),
+('pdf2-q-392', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q392-131.jpeg', true, 533, false, 534),
+('pdf2-q-393', 'ibimenyetso', 'Mu byapa bikurikira , ni ikihe cyerekana umuhanda udakomeza:', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q393-132.jpeg', true, 534, false, 535),
+('pdf2-q-394', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q394-133.jpeg', true, 535, false, 536),
+('pdf2-q-395', 'ibimenyetso', 'Muri ibi byapa bikurikira ni ikihe cyerekana ko umuyobozi ukibonye yemerewe gutambuka mbere y''abaturutse aho agana mu nzira ifunganye:', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q395-134.jpeg', true, 536, false, 537),
+('pdf2-q-396', 'ibimenyetso', 'Iki cyapa:', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q396-135.jpeg', true, 537, false, 538),
+('pdf2-q-397', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q397-136.jpeg', true, 538, false, 539),
+('pdf2-q-398', 'ibimenyetso', 'Ni ikihe icyapa gisobanura umuhanda w''icyerekezo kimwe:', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q398-137.jpeg', true, 539, false, 540),
+('pdf2-q-399', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q399-138.jpeg', true, 540, false, 541),
+('pdf2-q-400', 'ibimenyetso', 'Iki cyapa gisobanura iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q400-139.jpeg', true, 541, false, 542),
+('pdf2-q-401', 'ibimenyetso', 'Iki kimenyetso kiri mu muhanda kivuze iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q401-140.jpeg', true, 542, false, 543),
+('pdf2-q-402', 'imirongo', 'Iki kimenyetso kiri mu muhanda kivuze iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q402-141.jpeg', true, 543, false, 544),
+('pdf2-q-403', 'imirongo', 'Mu gihe utwaye ikinyabiziga uva kuri A ugana kuri B, Iki kimenyetso kiri mu muhanda kivuze iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q403-142.jpeg', true, 544, false, 545),
+('pdf2-q-404', 'imirongo', 'Mu gihe utwaye ikinyabiziga uva kuri A ugana kuri B, Iki kimenyetso kiri mu muhanda kivuze iki ?', '', null, null, 'assets/images/road_signs/pdf2/pdf2-q404-143.jpeg', true, 545, false, 546);
 
 insert into public.question_options (id, question_id, position, option_text, is_correct)
 values
@@ -1832,6 +1833,10 @@ values
 ('pdf2-q-374-1', 'pdf2-q-374', 1, 'Gabanya umuvuduko uhe inzira abanyamaguru.', false),
 ('pdf2-q-374-2', 'pdf2-q-374', 2, 'Tanga inzira ku binyabiziga bigenda mu muhanda munini wegera', true),
 ('pdf2-q-374-3', 'pdf2-q-374', 3, 'Tanga inzira ku ibinyabiziga biturutse iburyo bwawe', false),
+('pdf2-q-375-0', 'pdf2-q-375', 0, 'Tanga inzira ku binyabiziga biri mu muhanda munini', false),
+('pdf2-q-375-1', 'pdf2-q-375', 1, 'Tanga inzira ku binyabiziga biturutse i bumoso', true),
+('pdf2-q-375-2', 'pdf2-q-375', 2, 'Tanga inzira ku ma kamyo na za otobisi', false),
+('pdf2-q-375-3', 'pdf2-q-375', 3, 'Ibinyabiziga byose uretse amapikipiki bigomba gutanga inzira', false),
 ('pdf2-q-376-0', 'pdf2-q-376', 0, 'Komeza imbere gusa', true),
 ('pdf2-q-376-1', 'pdf2-q-376', 1, 'Aho kunyuranaho imbere', false),
 ('pdf2-q-376-2', 'pdf2-q-376', 2, 'Aho guhagarara umwanya munini', false),
@@ -1949,11 +1954,11 @@ values
 ('pdf2-q-404-2', 'pdf2-q-404', 2, 'Umuyobozi w''ikinyabiziga yemerewe kunyuranaho', false),
 ('pdf2-q-404-3', 'pdf2-q-404', 3, 'Abayobozi b''ibinyamitende gusa bemerewe kunyuranaho barenze umurongo wera udacagaguye', false);
 
-select setval('public.questions_number_seq', 545, true);
+select setval('public.questions_number_seq', 546, true);
 
 commit;
 
--- Check: expect 385 drafts numbered 161..545, each with 4 answers and exactly 1 correct.
+-- Check: expect 386 drafts numbered 161..546, each with 4 answers and exactly 1 correct.
 select count(*) as drafts, min(q.number) as first_no, max(q.number) as last_no,
        min(c.answers) as min_answers, max(c.answers) as max_answers, min(c.correct) as min_correct, max(c.correct) as max_correct
 from public.questions q
