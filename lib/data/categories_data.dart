@@ -38,7 +38,7 @@ final List<LearnCategory> _baseLearnCategories = <LearnCategory>[
         sections: <LessonSection>[
           LessonSection('Umuvuduko ntarengwa',
               'Kurikiza umuvuduko ntarengwa werekanwa n\'ibimenyetso byo ku muhanda.',
-              sign: SignType.speedLimit, signLabel: '40'),
+              imagePath: 'assets/images/road_signs/pdf/pdf-sign-31-06.jpeg'),
           LessonSection('Hindura umuvuduko ukurikije ibihe',
               'Iyo imvura iguye, hari igihu, cyangwa hari abanyamaguru benshi, gabanya umuvuduko kandi wongere intera hagati yawe n\'ikinyabiziga kiri imbere.'),
         ],
@@ -67,7 +67,7 @@ final List<LearnCategory> _baseLearnCategories = <LearnCategory>[
               'Kunyuranaho bisanzwe bikorerwa ibumoso bw\'ikinyabiziga unyuraho.'),
           LessonSection('Aho bibujijwe',
               'Ntunyuranaho mu ikorosi, hejuru y\'umusozi, ku nzira y\'abanyamaguru, cyangwa ahantu hose utabona imbere neza.',
-              sign: SignType.noOvertaking),
+              imagePath: 'assets/images/road_signs/pdf/pdf-sign-31-04.jpeg'),
         ],
       ),
       Lesson(
@@ -78,7 +78,7 @@ final List<LearnCategory> _baseLearnCategories = <LearnCategory>[
         sections: <LessonSection>[
           LessonSection('Aho utemerewe guparika',
               'Ntuparike ku nzira y\'abanyamaguru, ku masangano, cyangwa aho ikimenyetso kibibuza.',
-              sign: SignType.noParking),
+              imagePath: 'assets/images/road_signs/pdf/pdf-sign-32-05.jpeg'),
         ],
       ),
     ],
@@ -99,10 +99,10 @@ final List<LearnCategory> _baseLearnCategories = <LearnCategory>[
         sections: <LessonSection>[
           LessonSection('STOP — Hagarara',
               'Hagarara burundu ku murongo wo guhagarara, utange inzira, hanyuma ukomeze igihe nta kaga.',
-              sign: SignType.stop),
+              imagePath: 'assets/images/road_signs/pdf/pdf-sign-26-06.jpeg'),
           LessonSection('Tanga inzira',
               'Gabanya umuvuduko kandi uhe inzira ibinyabiziga biri ku muhanda ugiye kwinjiramo.',
-              sign: SignType.giveWay),
+              imagePath: 'assets/images/road_signs/pdf/pdf-sign-26-05.jpeg'),
         ],
       ),
       Lesson(
@@ -113,13 +113,13 @@ final List<LearnCategory> _baseLearnCategories = <LearnCategory>[
         sections: <LessonSection>[
           LessonSection('Kwinjira birabujijwe',
               'Nta kinyabiziga cyemerewe kwinjira muri uyu muhanda kiturutse kuri uru ruhande.',
-              sign: SignType.noEntry),
+              imagePath: 'assets/images/road_signs/pdf/pdf-sign-28-01.jpeg'),
           LessonSection('Kunyuranaho birabujijwe',
               'Ntiwemerewe kunyuranaho n\'ibindi binyabiziga bifite moteri.',
-              sign: SignType.noOvertaking),
+              imagePath: 'assets/images/road_signs/pdf/pdf-sign-31-04.jpeg'),
           LessonSection('Guparika birabujijwe',
               'Ntiwemerewe gusiga ikinyabiziga cyawe aha.',
-              sign: SignType.noParking),
+              imagePath: 'assets/images/road_signs/pdf/pdf-sign-32-05.jpeg'),
         ],
       ),
       Lesson(
@@ -130,10 +130,10 @@ final List<LearnCategory> _baseLearnCategories = <LearnCategory>[
         sections: <LessonSection>[
           LessonSection('Akaga',
               'Iburira akaga katagaragazwa n\'ikindi kimenyetso. Gabanya umuvuduko kandi witonde.',
-              sign: SignType.danger),
+              imagePath: 'assets/images/road_signs/pdf/pdf-sign-26-03.jpeg'),
           LessonSection('Witondere abana',
               'Hafi aha hari ishuri cyangwa ahantu abana bakunze kwambukira.',
-              sign: SignType.children),
+              imagePath: 'assets/images/road_signs/pdf/pdf-sign-23-02.jpeg'),
         ],
       ),
       Lesson(
@@ -144,12 +144,12 @@ final List<LearnCategory> _baseLearnCategories = <LearnCategory>[
         sections: <LessonSection>[
           LessonSection('Komeza imbere gusa',
               'Ugomba gukomeza imbere; ntiwemerewe gukata.',
-              sign: SignType.aheadOnly),
+              imagePath: 'assets/images/road_signs/pdf2/pdf2-q376-115.jpeg'),
           LessonSection('Kata iburyo', 'Ugomba gukata iburyo.',
-              sign: SignType.turnRight),
+              imagePath: 'assets/images/road_signs/pdf/pdf-sign-33-02.jpeg'),
           LessonSection('Rond-point',
               'Ugomba kuzenguruka ukurikije icyerekezo cy\'imyambi.',
-              sign: SignType.roundabout),
+              imagePath: 'assets/images/road_signs/pdf/pdf-sign-33-04.jpeg'),
         ],
       ),
       Lesson(
@@ -160,7 +160,7 @@ final List<LearnCategory> _baseLearnCategories = <LearnCategory>[
         sections: <LessonSection>[
           LessonSection('Inzira y\'abanyamaguru',
               'Imbere hari inzira abanyamaguru bambukiramo. Itegure kubaha inzira.',
-              sign: SignType.pedestrianCrossing),
+              imagePath: 'assets/images/road_signs/pdf/pdf-sign-35-01.jpeg'),
         ],
       ),
     ],
@@ -276,7 +276,7 @@ final List<LearnCategory> _baseLearnCategories = <LearnCategory>[
         sections: <LessonSection>[
           LessonSection('Hafi y\'amashuri',
               'Gabanya umuvuduko kandi witegure guhagarara igihe icyo ari cyo cyose.',
-              sign: SignType.children),
+              imagePath: 'assets/images/road_signs/pdf/pdf-sign-23-02.jpeg'),
         ],
       ),
     ],

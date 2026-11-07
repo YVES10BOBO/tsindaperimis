@@ -135,25 +135,38 @@ def parse(doc: pymupdf.Document) -> list[dict]:
     questions: list[dict] = []
     current: dict | None = None
     seen_images: dict[str, str] = {}
+    # A picture printed after a question's last (text) answer belongs to the NEXT
+    # question: the pictures of a question sit between its text and its answers.
+    pending: list[str] = []
 
     for page_index, page, kind, payload in read_elements(doc):
         if kind == "img":
             if current is None:
                 continue
+            after_text_answers = len(current["options"]) >= 4 and bool(current["options"][-1]["text"].strip())
+            owner = len(questions) + 1 if after_text_answers else current["seq"]
             digest = hashlib.md5(payload["image"]).hexdigest()
             if digest not in seen_images:
-                name = f"pdf2-q{current['seq']:03d}-{len(seen_images) + 1:03d}.jpeg"
+                name = f"pdf2-q{owner:03d}-{len(seen_images) + 1:03d}.jpeg"
                 pix = page.get_pixmap(clip=pymupdf.Rect(payload["bbox"]), dpi=150)
                 IMAGES.mkdir(parents=True, exist_ok=True)
                 (IMAGES / name).write_bytes(pix.tobytes("jpeg", jpg_quality=85))
                 seen_images[digest] = name
+            if after_text_answers:
+                if seen_images[digest] not in pending:
+                    pending.append(seen_images[digest])
+                continue
             target = current["options"][-1]["images"] if current["options"] else current["images"]
             if seen_images[digest] not in target:
                 target.append(seen_images[digest])
             continue
         raw, ranges = payload
         for text, red in split_merged_line(raw, ranges, questions[-1] if questions else None):
+            before = len(questions)
             current = handle_line(questions, current, text, red, page_index)
+            if len(questions) > before and pending:
+                current["images"].extend(pending)
+                pending.clear()
     return questions
 
 

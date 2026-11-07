@@ -212,7 +212,7 @@ const List<Lesson> drivingLessons = <Lesson>[
     sections: <LessonSection>[
       LessonSection('Kwinjira muri rond-point',
           'Gabanya umuvuduko, kurikiza ibimenyetso biri aho, kandi ukoreshe ikimenyetso cyo gukata usohoka.',
-          sign: SignType.roundabout),
+          imagePath: 'assets/images/road_signs/pdf/pdf-sign-33-04.jpeg'),
       LessonSection('Amasangano',
           'Egera amasangano ugabanya umuvuduko, witegure guhagarara, kandi ntiwinjire niba utazashobora kuyavamo.'),
     ],
