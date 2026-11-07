@@ -44,7 +44,8 @@ insert into public.lesson_sections (id, lesson_id, position, heading, body) valu
 ('modoka-10-1', 'modoka-10', 1, 'Ibinyabiziga bikururana', 'Ikinyabiziga kigendeshwa na moteri n''ikinyabiziga gikururwa n''inyamaswa ntibishobora gukurura ibinyabiziga birenze bibiri. Gushyira mu muhanda ibinyabiziga bikururana birenze bitatu bisaba uruhushya rutangwa na Minisitiri ushinzwe gutwara abantu n''ibintu, kandi igiteranyo cy''uburebure bwabyo ntikigomba kurenga metero 25.'),
 ('modoka-10-2', 'modoka-10', 2, 'Ibizirikisho', 'Ibizirikisho (iminyururu cyangwa insinga) bigaragazwa n''icyapa cyera cya mpande enye zingana, gifite nibura santimetero 30 kuri buri ruhande, kiri ku ruhande rw''imbere rw''ikinyabiziga gikurura.'),
 ('modoka-10-3', 'modoka-10', 3, 'Aho umuyobozi yicara', 'Umuyobozi w''ikinyabiziga, cyangwa w''ikinyamitende gifite moteri gifite ibiziga bitatu cyangwa bine, agomba kugira aho yicara hafite ubugari butari munsi ya santimetero 55.'),
-('modoka-10-4', 'modoka-10', 4, 'Impombo y''ibyotsi', 'Isonga y''impombo yohereza ibyotsi ntishobora kwerekezwa iburyo bw''ikinyabiziga.')
+('modoka-10-4', 'modoka-10', 4, 'Impombo y''ibyotsi', 'Isonga y''impombo yohereza ibyotsi ntishobora kwerekezwa iburyo bw''ikinyabiziga.'),
+('modoka-10-5', 'modoka-10', 5, 'Ubuhagarike', 'Ubuhagarike bw''ikinyabiziga ni metero 4.20. Nta muyobozi wemerewe kugenza cyangwa gukomeza kugenza ikinyabiziga gifite ubuhagarike burengeje metero 4 habariwemo ibyo cyikoreye, keretse byatangiwe uruhushya.')
 on conflict (id) do nothing;
 
 insert into public.lessons (id, category_id, title, minutes, sort_order, is_extra, published)
@@ -77,8 +78,9 @@ on conflict (id) do nothing;
 
 insert into public.lesson_sections (id, lesson_id, position, heading, body) values
 ('modoka-13-0', 'modoka-13', 0, 'Imodoka n''amapikipiki', 'Amapikipiki n''imodoka bifite uburemere ntarengwa bwemewe butarenga ibiro 3500 (uretse amavatiri, amatagisi n''ibitwara abantu hamwe): umuvuduko ntarengwa ni 80 km/h.'),
-('modoka-13-1', 'modoka-13', 1, 'Ibinyabiziga biremereye na velomoteri', 'Imodoka cyangwa ibinyabiziga bikomatanye bifite uburemere ntarengwa bwemewe cyangwa uburemere bugendanwa burenga ibiro 12500, kimwe na velomoteri: umuvuduko ntarengwa ni 50 km/h. Ahatari mu nsisiro, velomoteri ntishobora kurenza 50 km/h.'),
-('modoka-13-2', 'modoka-13', 2, 'Ibinyabiziga by''ubuhinzi', 'Ibinyabiziga by''ubuhinzi, bifite imipira irambuka cyangwa itarambuka, ntibigomba kurenza 25 km/h.')
+('modoka-13-1', 'modoka-13', 1, 'Amavatiri n''amatagisi', 'Imodoka zikoreshwa nk''amavatiri y''ifasi cyangwa amatagisi zifite uburemere bwemewe butarenga ibiro 3500: umuvuduko ntarengwa ni 70 km/h.'),
+('modoka-13-2', 'modoka-13', 2, 'Ibinyabiziga biremereye na velomoteri', 'Imodoka cyangwa ibinyabiziga bikomatanye bifite uburemere ntarengwa bwemewe cyangwa uburemere bugendanwa burenga ibiro 12500, kimwe na velomoteri: umuvuduko ntarengwa ni 50 km/h. Ahatari mu nsisiro, velomoteri ntishobora kurenza 50 km/h.'),
+('modoka-13-3', 'modoka-13', 3, 'Ibinyabiziga by''ubuhinzi', 'Ibinyabiziga by''ubuhinzi, bifite imipira irambuka cyangwa itarambuka, ntibigomba kurenza 25 km/h.')
 on conflict (id) do nothing;
 
 insert into public.lessons (id, category_id, title, minutes, sort_order, is_extra, published)
@@ -87,9 +89,21 @@ on conflict (id) do nothing;
 
 insert into public.lesson_sections (id, lesson_id, position, heading, body) values
 ('modoka-14-0', 'modoka-14', 0, 'Ihoni', 'Ibinyabiziga bishobora kurenga 50 km/h ahategamye bidapakiye bigomba kugira ihoni ryumvikanira mu ntera ya metero 50. Velomoteri igomba kugira ihoni ryumvikanira mu ntera ya metero 20. Ihoni ntirivugirizwa hafi y''ibitaro.'),
-('modoka-14-1', 'modoka-14', 1, 'Inziga n''amapine', 'Birabujijwe kugenza ikinyabiziga gifite inziga zidahagwa cyangwa zikururuka zifite umubyimba uri hasi ya santimetero 4, keretse ibinyabiziga bihinga iyo bigendeshwa mu karere katarenga km 25 uvuye aho biba. Ibiziga bigomba kugira inziga zihagwa zifite amano n''ubujyakuzimu butari munsi ya milimetero imwe.'),
-('modoka-14-2', 'modoka-14', 2, 'Ahanyerera', 'Aho hari urwondo cyangwa hanyerera bidasanzwe, ikinyabiziga gishobora gukoresha iminyururu irwanya ubunyerere ku nziga zacyo.'),
-('modoka-14-3', 'modoka-14', 3, 'Ikinyabiziga gihagaze nijoro', 'Iyo ikinyabiziga gihagaritswe nijoro ku buryo abayobozi bakigana badashobora kumenya ko kibabereye imbogamizi, kigomba kurangirwa kure n''ikimenyetso cyabigenewe kiri ahantu hagaragara, kugira ngo kiburire hakiri kare abandi bayobozi.')
+('modoka-14-1', 'modoka-14', 1, 'Ihoni ku binyabiziga bidapakiye', 'Ibinyabiziga bigendeshwa na moteri (hatarimo velomoteri) n''ibidapakiye, umuvuduko wabyo udashobora kurenga km 50 mu isaha ahateganye, bigomba kugira ihoni ryumvikanira mu ntera ya metero 100.'),
+('modoka-14-2', 'modoka-14', 2, 'Inziga n''amapine', 'Birabujijwe kugenza ikinyabiziga gifite inziga zidahagwa cyangwa zikururuka zifite umubyimba uri hasi ya santimetero 4, keretse ibinyabiziga bihinga iyo bigendeshwa mu karere katarenga km 25 uvuye aho biba. Ibiziga bigomba kugira inziga zihagwa zifite amano n''ubujyakuzimu butari munsi ya milimetero imwe.'),
+('modoka-14-3', 'modoka-14', 3, 'Ahanyerera', 'Aho hari urwondo cyangwa hanyerera bidasanzwe, ikinyabiziga gishobora gukoresha iminyururu irwanya ubunyerere ku nziga zacyo.'),
+('modoka-14-4', 'modoka-14', 4, 'Ikinyabiziga gihagaze nijoro', 'Iyo ikinyabiziga gihagaritswe nijoro ku buryo abayobozi bakigana badashobora kumenya ko kibabereye imbogamizi, kigomba kurangirwa kure n''ikimenyetso cyabigenewe kiri ahantu hagaragara, kugira ngo kiburire hakiri kare abandi bayobozi.')
+on conflict (id) do nothing;
+
+insert into public.lessons (id, category_id, title, minutes, sort_order, is_extra, published)
+values ('modoka-15', 'modoka', 'Inyamaswa n''ibinyabiziga bikururwa nazo', 5, (select coalesce(max(sort_order), 0) + 1 from public.lessons where category_id = 'modoka'), false, true)
+on conflict (id) do nothing;
+
+insert into public.lesson_sections (id, lesson_id, position, heading, body) values
+('modoka-15-0', 'modoka-15', 0, 'Inyamaswa zikurura', 'Umubare w''inyamaswa zikurura ikinyabiziga ntushobora kurenga enye zikurikiranye n''eshatu zibangikanye. Hashyirwaho umuherekeza wunganira umuyobozi iyo umubare w''inyamaswa zikurura urenze 5. Iyo ikinyabiziga gikururwa n''inyamaswa nacyo gikuruye ikindi, uburebure bukaba burenga metero 18 (hatabariwemo icyo kinyabiziga cya mbere), hagomba umuherekeza w''ikinyabiziga cya kabiri.'),
+('modoka-15-1', 'modoka-15', 1, 'Imikumbi', 'Iyo igenda mu nzira nyabagendwa, imikumbi igomba kugabanywamo udutsiko tugizwe n''inyamaswa zitarenze 10, kandi dutandukanijwe n''intera ya metero 20.'),
+('modoka-15-2', 'modoka-15', 2, 'Ibinyabiziga biherekeranyije mu butumwa', 'Ibinyabiziga bikururwa n''inyamaswa biherekeranyije mu butumwa bigomba kugabanywamo amatsinda afite uburebure butarengeje metero 500, kandi hagati yayo hakaba nibura metero 30. Amagambo "ATTENTION CONVOI" yanditse ku cyapa cy''umuhondo mu nyuguti zitukura, ashyirwa ku kinyabiziga cya mbere, agomba gusomeka neza ku manywa mu ntera ya metero 100. Ku mateme, hagati y''ibinyabiziga bifite ibimenyetso byerekana umuvuduko hagomba kuba nibura metero 10.'),
+('modoka-15-3', 'modoka-15', 3, 'Inyamaswa idatuje', 'Igihe umuyobozi w''inyamaswa, ifite inyamaswa idatuje, asaba ko ibinyabiziga bihagarara, umuyobozi w''ikinyabiziga agomba guhagarara.')
 on conflict (id) do nothing;
 
 
