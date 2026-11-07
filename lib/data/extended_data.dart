@@ -160,6 +160,8 @@ const List<Lesson> _allVehicleLessons = <Lesson>[
           'Umuyobozi w\'ikinyabiziga, cyangwa w\'ikinyamitende gifite moteri gifite ibiziga bitatu cyangwa bine, agomba kugira aho yicara hafite ubugari butari munsi ya santimetero 55.'),
       LessonSection('Impombo y\'ibyotsi',
           'Isonga y\'impombo yohereza ibyotsi ntishobora kwerekezwa iburyo bw\'ikinyabiziga.'),
+      LessonSection('Ubuhagarike',
+          'Ubuhagarike bw\'ikinyabiziga ni metero 4.20. Nta muyobozi wemerewe kugenza cyangwa gukomeza kugenza ikinyabiziga gifite ubuhagarike burengeje metero 4 habariwemo ibyo cyikoreye, keretse byatangiwe uruhushya.'),
     ],
   ),
   Lesson(
@@ -206,6 +208,8 @@ const List<Lesson> _allVehicleLessons = <Lesson>[
     sections: <LessonSection>[
       LessonSection('Imodoka n\'amapikipiki',
           'Amapikipiki n\'imodoka bifite uburemere ntarengwa bwemewe butarenga ibiro 3500 (uretse amavatiri, amatagisi n\'ibitwara abantu hamwe): umuvuduko ntarengwa ni 80 km/h.'),
+      LessonSection('Amavatiri n\'amatagisi',
+          'Imodoka zikoreshwa nk\'amavatiri y\'ifasi cyangwa amatagisi zifite uburemere bwemewe butarenga ibiro 3500: umuvuduko ntarengwa ni 70 km/h.'),
       LessonSection('Ibinyabiziga biremereye na velomoteri',
           'Imodoka cyangwa ibinyabiziga bikomatanye bifite uburemere ntarengwa bwemewe cyangwa uburemere bugendanwa burenga ibiro 12500, kimwe na velomoteri: umuvuduko ntarengwa ni 50 km/h. Ahatari mu nsisiro, velomoteri ntishobora kurenza 50 km/h.'),
       LessonSection('Ibinyabiziga by\'ubuhinzi',
@@ -220,12 +224,30 @@ const List<Lesson> _allVehicleLessons = <Lesson>[
     sections: <LessonSection>[
       LessonSection('Ihoni',
           'Ibinyabiziga bishobora kurenga 50 km/h ahategamye bidapakiye bigomba kugira ihoni ryumvikanira mu ntera ya metero 50. Velomoteri igomba kugira ihoni ryumvikanira mu ntera ya metero 20. Ihoni ntirivugirizwa hafi y\'ibitaro.'),
+      LessonSection('Ihoni ku binyabiziga bidapakiye',
+          'Ibinyabiziga bigendeshwa na moteri (hatarimo velomoteri) n\'ibidapakiye, umuvuduko wabyo udashobora kurenga km 50 mu isaha ahateganye, bigomba kugira ihoni ryumvikanira mu ntera ya metero 100.'),
       LessonSection('Inziga n\'amapine',
           'Birabujijwe kugenza ikinyabiziga gifite inziga zidahagwa cyangwa zikururuka zifite umubyimba uri hasi ya santimetero 4, keretse ibinyabiziga bihinga iyo bigendeshwa mu karere katarenga km 25 uvuye aho biba. Ibiziga bigomba kugira inziga zihagwa zifite amano n\'ubujyakuzimu butari munsi ya milimetero imwe.'),
       LessonSection('Ahanyerera',
           'Aho hari urwondo cyangwa hanyerera bidasanzwe, ikinyabiziga gishobora gukoresha iminyururu irwanya ubunyerere ku nziga zacyo.'),
       LessonSection('Ikinyabiziga gihagaze nijoro',
           'Iyo ikinyabiziga gihagaritswe nijoro ku buryo abayobozi bakigana badashobora kumenya ko kibabereye imbogamizi, kigomba kurangirwa kure n\'ikimenyetso cyabigenewe kiri ahantu hagaragara, kugira ngo kiburire hakiri kare abandi bayobozi.'),
+    ],
+  ),
+  Lesson(
+    id: 'modoka-15',
+    categoryId: 'modoka',
+    title: 'Inyamaswa n\'ibinyabiziga bikururwa nazo',
+    minutes: 5,
+    sections: <LessonSection>[
+      LessonSection('Inyamaswa zikurura',
+          'Umubare w\'inyamaswa zikurura ikinyabiziga ntushobora kurenga enye zikurikiranye n\'eshatu zibangikanye. Hashyirwaho umuherekeza wunganira umuyobozi iyo umubare w\'inyamaswa zikurura urenze 5. Iyo ikinyabiziga gikururwa n\'inyamaswa nacyo gikuruye ikindi, uburebure bukaba burenga metero 18 (hatabariwemo icyo kinyabiziga cya mbere), hagomba umuherekeza w\'ikinyabiziga cya kabiri.'),
+      LessonSection('Imikumbi',
+          'Iyo igenda mu nzira nyabagendwa, imikumbi igomba kugabanywamo udutsiko tugizwe n\'inyamaswa zitarenze 10, kandi dutandukanijwe n\'intera ya metero 20.'),
+      LessonSection('Ibinyabiziga biherekeranyije mu butumwa',
+          'Ibinyabiziga bikururwa n\'inyamaswa biherekeranyije mu butumwa bigomba kugabanywamo amatsinda afite uburebure butarengeje metero 500, kandi hagati yayo hakaba nibura metero 30. Amagambo "ATTENTION CONVOI" yanditse ku cyapa cy\'umuhondo mu nyuguti zitukura, ashyirwa ku kinyabiziga cya mbere, agomba gusomeka neza ku manywa mu ntera ya metero 100. Ku mateme, hagati y\'ibinyabiziga bifite ibimenyetso byerekana umuvuduko hagomba kuba nibura metero 10.'),
+      LessonSection('Inyamaswa idatuje',
+          'Igihe umuyobozi w\'inyamaswa, ifite inyamaswa idatuje, asaba ko ibinyabiziga bihagarara, umuyobozi w\'ikinyabiziga agomba guhagarara.'),
     ],
   ),
 ];
