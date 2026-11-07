@@ -18,6 +18,7 @@ class ProgressScreen extends StatelessWidget {
     LearnCategory? weakest;
     double low = 2;
     for (final LearnCategory c in repo.categories) {
+      if (repo.questionsFor(c.id).isEmpty) continue;
       final double lessons =
           c.lessons.isEmpty ? 0 : state.completedIn(c) / c.lessons.length;
       final double score = (lessons + state.categoryAccuracy(c.id)) / 2;

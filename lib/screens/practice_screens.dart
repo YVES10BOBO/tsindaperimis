@@ -143,6 +143,7 @@ class PracticeHomeScreen extends StatelessWidget {
           SectionTitle('Hitamo icyiciro'),
           SizedBox(height: 8),
           for (final LearnCategory c in repo.categories)
+            if (repo.questionsFor(c.id).isNotEmpty)
             Padding(
               padding: EdgeInsets.only(bottom: 10),
               child: AppCard(

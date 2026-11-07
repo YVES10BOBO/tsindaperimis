@@ -9,10 +9,10 @@ import 'models.dart';
 // ---------------------------------------------------------------------
 // AMASOMO: Ubumenyi ku Modoka
 // ---------------------------------------------------------------------
-const List<Lesson> vehicleLessons = <Lesson>[
+const List<Lesson> _allVehicleLessons = <Lesson>[
   Lesson(
     id: 'modoka-1',
-    categoryId: 'modoka',
+    categoryId: 'inyongera',
     title: 'Igenzura rya buri munsi',
     minutes: 5,
     sections: <LessonSection>[
@@ -26,7 +26,7 @@ const List<Lesson> vehicleLessons = <Lesson>[
   ),
   Lesson(
     id: 'modoka-2',
-    categoryId: 'modoka',
+    categoryId: 'inyongera',
     title: 'Amavuta ya moteri',
     minutes: 6,
     sections: <LessonSection>[
@@ -44,7 +44,7 @@ const List<Lesson> vehicleLessons = <Lesson>[
   ),
   Lesson(
     id: 'modoka-3',
-    categoryId: 'modoka',
+    categoryId: 'inyongera',
     title: 'Amazi akonjesha moteri',
     minutes: 5,
     sections: <LessonSection>[
@@ -64,19 +64,23 @@ const List<Lesson> vehicleLessons = <Lesson>[
     title: 'Feri',
     minutes: 5,
     sections: <LessonSection>[
-      LessonSection('Feri y\'ikirenge',
-          'Ni yo uhagarikisha imodoka. Iyo pedale yoroshye cyane cyangwa igera hasi, cyangwa imodoka ikururira ku ruhande rumwe ufashe feri, ntukagende utabanje kuyisuzumisha.'),
-      LessonSection('Amavuta ya feri',
-          'Urwego rwayo rugenzurwa mu kabindi kayo. Iyo agabanutse cyane bishobora kuba ikimenyetso cy\'uko hari aho ava.'),
-      LessonSection('Feri y\'intoki',
-          'Ikoreshwa iyo uparitse, cyane cyane ku musozi, kugira ngo imodoka itamanuka.'),
-      LessonSection('Amatara ya feri',
-          'Yaka inyuma iyo ukandagiye feri, akamenyesha abari inyuma ko ugabanya umuvuduko. Agomba guhora akora.'),
+      LessonSection('Ubwoko butatu bwa feri',
+          'Ikinyabiziga kigira feri y\'urugendo, feri yo guhagarara umwanya munini, na feri yo gutabara. Buri bwoko bufite icyo bukora, kandi ibibazo byo mu kizamini bibaza ayo mazina.'),
+      LessonSection('Feri y\'urugendo',
+          'Ni yo ituma imodoka igenda buhoro kandi igahagarara neza kandi vuba, uko yaba yikoreye kose, yaba iri ahacuramye cyangwa ahaterera. Mu muhanda ufite uruhererekane rw\'amakoni, feri y\'urugendo ikoreshwa mbere ya buri koni.'),
+      LessonSection('Feri yo guhagarara umwanya munini',
+          'Ituma imodoka iguma aho iri uko yaba yikoreye kose, ku muzamuko cyangwa ku gacuri bya 16%. Imyanya ya feri igomba gufata igakomeza kwegera mu buryo bw\'ibyuma, nubwo umuyobozi yaba adahari.'),
+      LessonSection('Feri yo gutabara',
+          'Ikoreshwa kugira ngo ikinyabiziga kigende gahoro igihe feri y\'urugendo idakora neza.'),
+      LessonSection('Kurekura feri',
+          'Nta mwanya n\'umwe feri ifungirwaho ushobora kurekurana n\'ibiziga, keretse iyo kurekurana ari iby\'akanya gato, nk\'igihe cyo guhinduranya vitensi. Ikinyabiziga ntigishobora kugenda mu muhanda moteri itaka cyangwa vitensi idakora, keretse iyo gikuruwe n\'ikindi kinyabiziga.'),
+      LessonSection('Romoruki idafite feri y\'urugendo',
+          'Uburemere ntarengwa bwa romoruki idafite feri y\'urugendo ntibushobora kurenga kimwe cya kabiri cy\'uburemere bw\'ikinyabiziga gikurura n\'umuyobozi wacyo. Romoruki ntoya ni iyo ifite uburemere butarenga ibiro 750.'),
     ],
   ),
   Lesson(
     id: 'modoka-5',
-    categoryId: 'modoka',
+    categoryId: 'inyongera',
     title: 'Amapine',
     minutes: 5,
     sections: <LessonSection>[
@@ -91,24 +95,8 @@ const List<Lesson> vehicleLessons = <Lesson>[
     ],
   ),
   Lesson(
-    id: 'modoka-6',
-    categoryId: 'modoka',
-    title: 'Amatara y\'imodoka',
-    minutes: 6,
-    sections: <LessonSection>[
-      LessonSection('Amatara magufi n\'amaremare',
-          'Nijoro, iyo uhuye n\'ikinyabiziga kiza imbere cyangwa ukurikiye ikindi hafi, koresha amatara magufi kugira ngo udahuma abandi.'),
-      LessonSection('Ibimenyetso byo gukata (indicators)',
-          'Bicane mbere y\'igihe kugira ngo abandi bamenye ko ugiye gukata cyangwa guhindura inzira.'),
-      LessonSection('Amatara y\'akaga (hazard)',
-          'Akoreshwa iyo imodoka yapfuye cyangwa ihagaze ahantu hateje akaga.'),
-      LessonSection('Igenzura',
-          'Genzura kenshi ko amatara yose akora: imbere, inyuma, aya feri n\'ibimenyetso byo gukata. Itara rimwe rizimye nijoro rituma abandi bakwibeshyaho.'),
-    ],
-  ),
-  Lesson(
     id: 'modoka-7',
-    categoryId: 'modoka',
+    categoryId: 'inyongera',
     title: 'Dashboard n\'amatara yo kuburira',
     minutes: 6,
     sections: <LessonSection>[
@@ -126,7 +114,7 @@ const List<Lesson> vehicleLessons = <Lesson>[
   ),
   Lesson(
     id: 'modoka-8',
-    categoryId: 'modoka',
+    categoryId: 'inyongera',
     title: 'Bateri, lisansi n\'ibindi',
     minutes: 5,
     sections: <LessonSection>[
@@ -142,7 +130,7 @@ const List<Lesson> vehicleLessons = <Lesson>[
   ),
   Lesson(
     id: 'modoka-9',
-    categoryId: 'modoka',
+    categoryId: 'inyongera',
     title: 'Ibikoresho by\'ubutabazi mu modoka',
     minutes: 4,
     sections: <LessonSection>[
@@ -156,6 +144,102 @@ const List<Lesson> vehicleLessons = <Lesson>[
           'Genzura amabwiriza agezweho y\'ibikoresho bisabwa mu modoka mu Rwanda.'),
     ],
   ),
+  Lesson(
+    id: 'modoka-10',
+    categoryId: 'modoka',
+    title: 'Ibipimo by\'ibinyabiziga',
+    minutes: 6,
+    sections: <LessonSection>[
+      LessonSection('Uburebure',
+          'Ikinyabiziga gifite umutambiko umwe uhuza imipira: uburebure ntiburenza metero 7. Ikinyabiziga gifite imitambiko ibiri cyangwa irenga hadashyizweho icyuma gifata, kikaba gikuruwe n\'ikindi cyangwa n\'inyamaswa: uburebure bugarukira kuri metero 11. Makuzungu: uburebure ntiburenza metero 17.40. Ibinyabiziga bikururana, icya mbere gikururwa n\'inyamaswa: metero 18.'),
+      LessonSection('Ibinyabiziga bikururana',
+          'Ikinyabiziga kigendeshwa na moteri n\'ikinyabiziga gikururwa n\'inyamaswa ntibishobora gukurura ibinyabiziga birenze bibiri. Gushyira mu muhanda ibinyabiziga bikururana birenze bitatu bisaba uruhushya rutangwa na Minisitiri ushinzwe gutwara abantu n\'ibintu, kandi igiteranyo cy\'uburebure bwabyo ntikigomba kurenga metero 25.'),
+      LessonSection('Ibizirikisho',
+          'Ibizirikisho (iminyururu cyangwa insinga) bigaragazwa n\'icyapa cyera cya mpande enye zingana, gifite nibura santimetero 30 kuri buri ruhande, kiri ku ruhande rw\'imbere rw\'ikinyabiziga gikurura.'),
+      LessonSection('Aho umuyobozi yicara',
+          'Umuyobozi w\'ikinyabiziga, cyangwa w\'ikinyamitende gifite moteri gifite ibiziga bitatu cyangwa bine, agomba kugira aho yicara hafite ubugari butari munsi ya santimetero 55.'),
+      LessonSection('Impombo y\'ibyotsi',
+          'Isonga y\'impombo yohereza ibyotsi ntishobora kwerekezwa iburyo bw\'ikinyabiziga.'),
+    ],
+  ),
+  Lesson(
+    id: 'modoka-11',
+    categoryId: 'modoka',
+    title: 'Uburemere ntarengwa',
+    minutes: 5,
+    sections: <LessonSection>[
+      LessonSection('Ubwikorezi ntarengwa',
+          'Ubwikorezi ntarengwa ku binyabiziga bikururana ni toni 16. Kuri buri mutambiko ufungirwaho ibiziga bine ku mitambiko ibiri ikurikiranye, ubwikorezi ntarengwa ni toni 16.'),
+      LessonSection('Imitambiko itatu cyangwa irenga',
+          'Uretse mu mijyi no ku yindi mihanda igenwa na Minisitiri ushinzwe gutwara abantu n\'ibintu, uburemere ntarengwa ku binyabiziga bifite imitambiko itatu cyangwa irenga (hatarimo makuzungu) ni toni 16. Ku binyabiziga bifatanye bifite imitambiko itatu, ni toni 12. Mu mijyi no ku mihanda y\'igihugu igenwa na Minisitiri, ku mitambiko itatu ifungwaho ibiziga bine, ni toni 24.'),
+      LessonSection('Amateme n\'ibyome',
+          'Uretse igihe icyapa kibyerekana ukundi, uburemere ntarengwa ku mateme akozwe mu ngiga z\'ibiti cyangwa imbaho ni toni 8. Uburemere ntarengwa bwemewe kujya ku cyome bwerekanwa n\'ibyapa biri kuri buri nkombe.'),
+      LessonSection('Uburemere bwanditse ku ikarita',
+          'Ntibyemewe gushyira no gukomeza kugendesha imodoka cyangwa romoruki mu muhanda iyo uburemere bw\'ibyikorewe burenze uburemere ntarengwa bwemewe n\'ikarita iranga ikinyabiziga, keretse byatangiwe uruhushya. Birabujijwe gutwara ku ntebe z\'ikinyabiziga abantu barenze umubare wateganijwe n\'uwayikoze.'),
+    ],
+  ),
+  Lesson(
+    id: 'modoka-12',
+    categoryId: 'modoka',
+    title: 'Imizigo n\'abagenzi',
+    minutes: 6,
+    sections: <LessonSection>[
+      LessonSection('Ubugari bw\'imizigo ku binyabiziga bito',
+          'Amagare na velomoteri (hamwe na remoroki zikuruwe nabyo): ubugari bw\'imizigo ntiburenza santimetero 75. Ipikipiki idafite akanyabiziga ko ku ruhande: metero 1.25. Ipikipiki ifite akanyabiziga ko ku ruhande: santimetero 30 ku bugari bw\'icyo kinyabiziga kidapakiye.'),
+      LessonSection('Ubugari bw\'imizigo ku bindi binyabiziga',
+          'Ibinyamitende bitatu n\'ibinyamitende bine bifite cyangwa bidafite moteri: ubugari bw\'imizigo ntibushobora kurenga santimetero 30 ku bugari bw\'icyo kinyabiziga kidapakiye, kandi ubugari bwose budakuka ni metero 2 na santimetero 50.'),
+      LessonSection('Imizigo y\'ibinyampeke n\'ubwatsi',
+          'Imizigo igizwe n\'ibinyampeke, ikawa, ipamba idatonoye, ibishara, ibyatsi, ibishami cyangwa ubwatsi bw\'amatungo bidahambiriye (uretse amapaki afunze): ubugari bushobora kugera kuri metero 2.75. Iyo imizigo ijyanwa mu karere katarenga km 25 uvuye aho yapakiriwe, ubugari bushobora kugera kuri metero 3. Ibinyabiziga bijya mu mirima cyangwa bitahuka, bitarengeje km 20 mu isaha, bishobora kugera ku bugari bwa metero 3.'),
+      LessonSection('Imizigo irenga inyuma',
+          'Amagare, velomoteri, amapikipiki n\'ibinyamitende bitatu n\'ibine ntibishobora gutwara imizigo irenga santimetero 50 inyuma. Ikinyabiziga gitwaye ibintu birebire bidashobora kugabanywa: imizigo ntishobora kurenga santimetero 300 (metero 3) mu mpera y\'inyuma.'),
+      LessonSection('Ibimenyetso by\'impera y\'imizigo',
+          'Ibimenyetso berekana impera y\'inyuma y\'imizigo ntibishobora gushyirwa ku buhagarike burenze metero 1 na santimetero 55 uhereye ku butaka. Iyo uburebure bw\'imizigo iri ku kanyamizigo gakururwa burenga metero 12, hagomba umuherekeza ukurikiye ako kanyamizigo ku maguru. Iyo akanyamizigo gasunikwa cyangwa ibyo gatwaye bidatuma umuyobozi abona imbere neza, agomba gukurura ikinyabiziga cye.'),
+      LessonSection('Abana ku ntebe y\'imbere',
+          'Igihe harimo indi myanya, birabujijwe gutwara ku ntebe y\'imbere y\'imodoka abana badafite imyaka 12.'),
+    ],
+  ),
+  Lesson(
+    id: 'modoka-13',
+    categoryId: 'modoka',
+    title: 'Umuvuduko ku bwoko bw\'ikinyabiziga',
+    minutes: 4,
+    sections: <LessonSection>[
+      LessonSection('Imodoka n\'amapikipiki',
+          'Amapikipiki n\'imodoka bifite uburemere ntarengwa bwemewe butarenga ibiro 3500 (uretse amavatiri, amatagisi n\'ibitwara abantu hamwe): umuvuduko ntarengwa ni 80 km/h.'),
+      LessonSection('Ibinyabiziga biremereye na velomoteri',
+          'Imodoka cyangwa ibinyabiziga bikomatanye bifite uburemere ntarengwa bwemewe cyangwa uburemere bugendanwa burenga ibiro 12500, kimwe na velomoteri: umuvuduko ntarengwa ni 50 km/h. Ahatari mu nsisiro, velomoteri ntishobora kurenza 50 km/h.'),
+      LessonSection('Ibinyabiziga by\'ubuhinzi',
+          'Ibinyabiziga by\'ubuhinzi, bifite imipira irambuka cyangwa itarambuka, ntibigomba kurenza 25 km/h.'),
+    ],
+  ),
+  Lesson(
+    id: 'modoka-14',
+    categoryId: 'modoka',
+    title: 'Ihoni, amapine n\'igihe ikinyabiziga gihagaze',
+    minutes: 5,
+    sections: <LessonSection>[
+      LessonSection('Ihoni',
+          'Ibinyabiziga bishobora kurenga 50 km/h ahategamye bidapakiye bigomba kugira ihoni ryumvikanira mu ntera ya metero 50. Velomoteri igomba kugira ihoni ryumvikanira mu ntera ya metero 20. Ihoni ntirivugirizwa hafi y\'ibitaro.'),
+      LessonSection('Inziga n\'amapine',
+          'Birabujijwe kugenza ikinyabiziga gifite inziga zidahagwa cyangwa zikururuka zifite umubyimba uri hasi ya santimetero 4, keretse ibinyabiziga bihinga iyo bigendeshwa mu karere katarenga km 25 uvuye aho biba. Ibiziga bigomba kugira inziga zihagwa zifite amano n\'ubujyakuzimu butari munsi ya milimetero imwe.'),
+      LessonSection('Ahanyerera',
+          'Aho hari urwondo cyangwa hanyerera bidasanzwe, ikinyabiziga gishobora gukoresha iminyururu irwanya ubunyerere ku nziga zacyo.'),
+      LessonSection('Ikinyabiziga gihagaze nijoro',
+          'Iyo ikinyabiziga gihagaritswe nijoro ku buryo abayobozi bakigana badashobora kumenya ko kibabereye imbogamizi, kigomba kurangirwa kure n\'ikimenyetso cyabigenewe kiri ahantu hagaragara, kugira ngo kiburire hakiri kare abandi bayobozi.'),
+    ],
+  ),
+];
+
+/// Amasomo y'ikizamini y'icyiciro cya "Ubumenyi ku Modoka".
+final List<Lesson> vehicleLessons = <Lesson>[
+  for (final Lesson l in _allVehicleLessons)
+    if (l.categoryId == 'modoka') l,
+];
+
+/// Amasomo y'icyiciro cy'"Ubumenyi bw'inyongera" (nta bibazo, ntibijya mu myitozo cyangwa mu kizamini).
+final List<Lesson> extraKnowledgeLessons = <Lesson>[
+  for (final Lesson l in _allVehicleLessons)
+    if (l.categoryId == 'inyongera') l,
 ];
 
 // ---------------------------------------------------------------------
