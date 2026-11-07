@@ -22,4 +22,5 @@ const Set<String> extraLessonIds = <String>{
 
 bool isExamQuestion(Question q) =>
     q.isExamQuestion && !extraQuestionIds.contains(q.id);
-bool isExtraLesson(Lesson l) => l.isExtra || extraLessonIds.contains(l.id);
+bool isExtraLesson(Lesson l) =>
+    l.isExtra || l.categoryId == 'inyongera' || extraLessonIds.contains(l.id);
