@@ -31,7 +31,9 @@ class CategoryScreen extends StatelessWidget {
             child: Container(
               width: 84,
               height: 84,
-              decoration: BoxDecoration(color: AppColors.tint(category.color, category.softColor), shape: BoxShape.circle),
+              decoration: BoxDecoration(
+                  color: AppColors.tint(category.color, category.softColor),
+                  shape: BoxShape.circle),
               child: Icon(category.icon, color: category.color, size: 44),
             ),
           ),
@@ -55,7 +57,8 @@ class CategoryScreen extends StatelessWidget {
             ],
           ),
           SizedBox(height: 8),
-          AppProgressBar(value: total == 0 ? 0 : done / total, color: category.color),
+          AppProgressBar(
+              value: total == 0 ? 0 : done / total, color: category.color),
           SizedBox(height: 20),
           SectionTitle('Amasomo'),
           SizedBox(height: 8),
@@ -123,7 +126,8 @@ class _LessonRow extends StatelessWidget {
             ),
             child: done
                 ? Icon(Icons.check, color: AppColors.success, size: 20)
-                : Text('${index + 1}', style: TextStyle(fontWeight: FontWeight.w700)),
+                : Text('${index + 1}',
+                    style: TextStyle(fontWeight: FontWeight.w700)),
           ),
           SizedBox(width: 12),
           Expanded(
@@ -131,7 +135,8 @@ class _LessonRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(lesson.title,
-                    style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w600)),
+                    style:
+                        TextStyle(fontSize: 15.5, fontWeight: FontWeight.w600)),
                 SizedBox(height: 2),
                 if (isExtraLesson(lesson)) ...<Widget>[
                   SizedBox(height: 4),

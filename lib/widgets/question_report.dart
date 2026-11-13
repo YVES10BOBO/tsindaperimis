@@ -242,7 +242,8 @@ class _ReportSheetState extends State<_ReportSheet> {
               enabled: !_sending,
               decoration: InputDecoration(
                 labelText: 'Igitekerezo (si ngombwa)',
-                hintText: 'Andika icyo ubona kitari cyo, n\'igisubizo ubona ari cyo',
+                hintText:
+                    'Andika icyo ubona kitari cyo, n\'igisubizo ubona ari cyo',
               ),
             ),
             if (_error != null) ...<Widget>[
@@ -251,7 +252,8 @@ class _ReportSheetState extends State<_ReportSheet> {
                   style: TextStyle(color: AppColors.error, fontSize: 13)),
             ],
             SizedBox(height: 12),
-            ElevatedButton(
+            PressScale(
+                child: ElevatedButton(
               onPressed: _reason == null || _sending ? null : _send,
               child: _sending
                   ? SizedBox(
@@ -261,7 +263,7 @@ class _ReportSheetState extends State<_ReportSheet> {
                           strokeWidth: 2.5, color: Colors.white),
                     )
                   : Text('Ohereza'),
-            ),
+            )),
           ],
         ),
       ),

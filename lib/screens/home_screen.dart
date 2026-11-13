@@ -32,7 +32,8 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text('Muraho, ${state.displayName}',
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800)),
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.w800)),
                     SizedBox(height: 4),
                     Text('Komeza wige, witegure utsinde!',
                         style: TextStyle(color: AppColors.muted, fontSize: 14)),
@@ -46,7 +47,8 @@ class HomeScreen extends StatelessWidget {
                   backgroundColor: AppColors.surface,
                 ),
                 onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(builder: (_) => NotificationsScreen()),
+                  MaterialPageRoute<void>(
+                      builder: (_) => NotificationsScreen()),
                 ),
                 icon: Icon(Icons.notifications_none),
               ),
@@ -60,7 +62,8 @@ class HomeScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text('Iterambere ryawe',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
+                    style:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
                 SizedBox(height: 14),
                 Row(
                   children: <Widget>[
@@ -72,7 +75,8 @@ class HomeScreen extends StatelessWidget {
                           _StatRow('Amasomo warangije',
                               '${state.completedLessons.length} / ${repo.totalLessons}'),
                           _StatRow('Ibibazo wakoze', '${state.totalAnswered}'),
-                          _StatRow('Ibizamini wakoze', '${state.examResults.length}'),
+                          _StatRow('Ibizamini wakoze',
+                              '${state.examResults.length}'),
                         ],
                       ),
                     ),
@@ -81,11 +85,13 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: 14),
                 SizedBox(
                   height: 42,
-                  child: ElevatedButton(
+                  child: PressScale(
+                      child: ElevatedButton(
                     style: ElevatedButton.styleFrom(minimumSize: Size(0, 42)),
                     onPressed: () => onOpenTab(3),
-                    child: Text('Reba iterambere', style: TextStyle(fontSize: 14)),
-                  ),
+                    child:
+                        Text('Reba iterambere', style: TextStyle(fontSize: 14)),
+                  )),
                 ),
               ],
             ),
@@ -115,7 +121,8 @@ class HomeScreen extends StatelessWidget {
               color: AppColors.warningSoft,
               borderColor: AppColors.warningBorder,
               onTap: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(builder: (_) => AuthScreen(isRegister: true)),
+                MaterialPageRoute<void>(
+                    builder: (_) => AuthScreen(isRegister: true)),
               ),
               child: Row(
                 children: <Widget>[
@@ -124,7 +131,8 @@ class HomeScreen extends StatelessWidget {
                   Expanded(
                     child: Text(
                       'Uri gukoresha app nka Mushyitsi. Iyandikishe kugira ngo iterambere ryawe ribikwe.',
-                      style: TextStyle(color: AppColors.warningText, height: 1.4),
+                      style:
+                          TextStyle(color: AppColors.warningText, height: 1.4),
                     ),
                   ),
                   Icon(Icons.chevron_right, color: AppColors.warningIcon),
@@ -149,7 +157,8 @@ class HomeScreen extends StatelessWidget {
                 CategoryTile(
                   category: c,
                   onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(builder: (_) => CategoryScreen(category: c)),
+                    MaterialPageRoute<void>(
+                        builder: (_) => CategoryScreen(category: c)),
                   ),
                 ),
             ],
@@ -239,12 +248,15 @@ class _QuickAction extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          IconBadge(icon: icon, color: Colors.white, background: color, size: 40),
+          IconBadge(
+              icon: icon, color: Colors.white, background: color, size: 40),
           SizedBox(height: 10),
-          Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+          Text(title,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
           SizedBox(height: 4),
           Text(subtitle,
-              style: TextStyle(fontSize: 12.5, color: AppColors.muted, height: 1.35)),
+              style: TextStyle(
+                  fontSize: 12.5, color: AppColors.muted, height: 1.35)),
         ],
       ),
     );

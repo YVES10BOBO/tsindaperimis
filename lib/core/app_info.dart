@@ -5,7 +5,8 @@ class AppInfo {
   AppInfo._();
 
   static const String name = "Amategeko y'Umuhanda";
-  static const String tagline = 'Iga. Witoze. Tsinda.\nMenya amategeko, urinde ubuzima.';
+  static const String tagline =
+      'Iga. Witoze. Tsinda.\nMenya amategeko, urinde ubuzima.';
   static const String version = '0.2.0';
 
   /// Premium ihishwe kugeza kwishyura nyabyo (MTN MoMo / Airtel Money) bihujwe.

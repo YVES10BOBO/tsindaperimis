@@ -46,11 +46,26 @@ class _MainShellState extends State<MainShell> {
           selectedFontSize: 12,
           unselectedFontSize: 12,
           items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(icon: Icon(Icons.home_outlined), activeIcon: Icon(Icons.home), label: 'Ahabanza'),
-            BottomNavigationBarItem(icon: Icon(Icons.edit_note_outlined), activeIcon: Icon(Icons.edit_note), label: 'Imyitozo'),
-            BottomNavigationBarItem(icon: Icon(Icons.assignment_outlined), activeIcon: Icon(Icons.assignment), label: 'Ikizamini'),
-            BottomNavigationBarItem(icon: Icon(Icons.insights_outlined), activeIcon: Icon(Icons.insights), label: 'Iterambere'),
-            BottomNavigationBarItem(icon: Icon(Icons.menu), activeIcon: Icon(Icons.menu_open), label: 'Ibindi'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.home_outlined),
+                activeIcon: Icon(Icons.home),
+                label: 'Ahabanza'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.edit_note_outlined),
+                activeIcon: Icon(Icons.edit_note),
+                label: 'Imyitozo'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.assignment_outlined),
+                activeIcon: Icon(Icons.assignment),
+                label: 'Ikizamini'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.insights_outlined),
+                activeIcon: Icon(Icons.insights),
+                label: 'Iterambere'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.menu),
+                activeIcon: Icon(Icons.menu_open),
+                label: 'Ibindi'),
           ],
         ),
       ),

@@ -1,7 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../core/app_colors.dart';
 import '../data/models.dart';
+
+/// Makes any tappable widget shrink slightly while it is pressed, so the user
+/// sees at once that the tap was received. It only listens to touches (it never
+/// steals them), so buttons, cards and lists keep working as before.
+class PressScale extends StatefulWidget {
+  const PressScale({
+    super.key,
+    required this.child,
+    this.enabled = true,
+    this.scale = 0.965,
+  });
+
+  final Widget child;
+  final bool enabled;
+  final double scale;
+
+  @override
+  State<PressScale> createState() => _PressScaleState();
+}
+
+class _PressScaleState extends State<PressScale> {
+  bool _down = false;
+
+  void _set(bool value) {
+    if (widget.enabled && _down != value) setState(() => _down = value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Listener(
+      onPointerDown: (_) => _set(true),
+      onPointerUp: (_) => _set(false),
+      onPointerCancel: (_) => _set(false),
+      child: AnimatedScale(
+        scale: (_down && widget.enabled) ? widget.scale : 1,
+        duration: const Duration(milliseconds: 110),
+        curve: Curves.easeOut,
+        child: widget.child,
+      ),
+    );
+  }
+}
 
 class AppCard extends StatelessWidget {
   const AppCard({
@@ -23,16 +66,24 @@ class AppCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: color ?? AppColors.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(radius),
-        side: BorderSide(color: borderColor ?? AppColors.border),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(padding: padding, child: child),
+    return PressScale(
+      enabled: onTap != null,
+      child: Material(
+        color: color ?? AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radius),
+          side: BorderSide(color: borderColor ?? AppColors.border),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap == null
+              ? null
+              : () {
+                  HapticFeedback.selectionClick();
+                  onTap!();
+                },
+          child: Padding(padding: padding, child: child),
+        ),
       ),
     );
   }
@@ -52,9 +103,12 @@ class SectionTitle extends StatelessWidget {
         Expanded(
           child: Text(title,
               style: TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.text)),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.text)),
         ),
-        if (action != null) TextButton(onPressed: onAction, child: Text(action!)),
+        if (action != null)
+          TextButton(onPressed: onAction, child: Text(action!)),
       ],
     );
   }
@@ -152,7 +206,9 @@ class ProgressRing extends StatelessWidget {
             child: Text(
               label ?? '${(value * 100).round()}%',
               style: TextStyle(
-                  fontSize: fontSize, fontWeight: FontWeight.w800, color: AppColors.text),
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.text),
             ),
           ),
         ],
@@ -198,7 +254,8 @@ class CategoryTile extends StatelessWidget {
 }
 
 class StatTile extends StatelessWidget {
-  const StatTile({super.key, required this.value, required this.label, this.color});
+  const StatTile(
+      {super.key, required this.value, required this.label, this.color});
 
   final String value;
   final String label;
@@ -213,7 +270,9 @@ class StatTile extends StatelessWidget {
         children: <Widget>[
           Text(value,
               style: TextStyle(
-                  fontSize: 22, fontWeight: FontWeight.w800, color: color ?? AppColors.text)),
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  color: color ?? AppColors.text)),
           const SizedBox(height: 2),
           Text(label, style: TextStyle(fontSize: 13, color: AppColors.muted)),
         ],
@@ -294,16 +353,20 @@ class OptionTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(letter,
-                  style: TextStyle(fontWeight: FontWeight.w800, color: badgeFg)),
+                  style:
+                      TextStyle(fontWeight: FontWeight.w800, color: badgeFg)),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(text, style: TextStyle(fontSize: 15.5, height: 1.35, color: fg)),
+              child: Text(text,
+                  style: TextStyle(fontSize: 15.5, height: 1.35, color: fg)),
             ),
             if (trailing != null) ...<Widget>[
               const SizedBox(width: 8),
               Icon(trailing,
-                  color: state == OptionState.correct ? AppColors.success : AppColors.error),
+                  color: state == OptionState.correct
+                      ? AppColors.success
+                      : AppColors.error),
             ],
           ],
         ),
@@ -315,7 +378,11 @@ class OptionTile extends StatelessWidget {
 String optionLetter(int i) => String.fromCharCode(65 + i);
 
 class EmptyState extends StatelessWidget {
-  const EmptyState({super.key, required this.icon, required this.title, required this.message});
+  const EmptyState(
+      {super.key,
+      required this.icon,
+      required this.title,
+      required this.message});
 
   final IconData icon;
   final String title;
@@ -331,7 +398,8 @@ class EmptyState extends StatelessWidget {
           const SizedBox(height: 12),
           Text(title,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+              style:
+                  const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
           const SizedBox(height: 6),
           Text(message,
               textAlign: TextAlign.center,
@@ -344,7 +412,11 @@ class EmptyState extends StatelessWidget {
 
 /// Ishusho y'umukoresha (inyuguti ya mbere y'izina ku ibara yahisemo).
 class UserAvatar extends StatelessWidget {
-  const UserAvatar({super.key, required this.name, required this.colorIndex, this.radius = 28});
+  const UserAvatar(
+      {super.key,
+      required this.name,
+      required this.colorIndex,
+      this.radius = 28});
 
   final String name;
   final int colorIndex;
@@ -354,13 +426,16 @@ class UserAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color c =
         AppColors.avatarColors[colorIndex % AppColors.avatarColors.length];
-    final String initial = name.trim().isEmpty ? '?' : name.trim()[0].toUpperCase();
+    final String initial =
+        name.trim().isEmpty ? '?' : name.trim()[0].toUpperCase();
     return CircleAvatar(
       radius: radius,
       backgroundColor: c,
       child: Text(initial,
           style: TextStyle(
-              fontSize: radius * 0.8, fontWeight: FontWeight.w800, color: Colors.white)),
+              fontSize: radius * 0.8,
+              fontWeight: FontWeight.w800,
+              color: Colors.white)),
     );
   }
 }
@@ -422,7 +497,8 @@ class ExtraKnowledgeBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: compact ? 8 : 10, vertical: compact ? 3 : 6),
+      padding: EdgeInsets.symmetric(
+          horizontal: compact ? 8 : 10, vertical: compact ? 3 : 6),
       decoration: BoxDecoration(
         color: AppColors.purpleSoft,
         borderRadius: BorderRadius.circular(20),
@@ -431,13 +507,18 @@ class ExtraKnowledgeBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(Icons.lightbulb_outline, size: compact ? 13 : 15, color: AppColors.purple),
+          Icon(Icons.lightbulb_outline,
+              size: compact ? 13 : 15, color: AppColors.purple),
           const SizedBox(width: 4),
           Flexible(
             child: Text(
-              compact ? "Ubumenyi bw'inyongera" : "Ubumenyi bw'inyongera · ntibikunze kubazwa mu kizamini",
+              compact
+                  ? "Ubumenyi bw'inyongera"
+                  : "Ubumenyi bw'inyongera · ntibikunze kubazwa mu kizamini",
               style: TextStyle(
-                  fontSize: compact ? 11 : 12, fontWeight: FontWeight.w700, color: AppColors.purple),
+                  fontSize: compact ? 11 : 12,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.purple),
             ),
           ),
         ],

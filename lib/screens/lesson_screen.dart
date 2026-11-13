@@ -102,13 +102,14 @@ class LessonScreen extends StatelessWidget {
               ),
             )
           else
-            ElevatedButton(
+            PressScale(
+                child: ElevatedButton(
               onPressed: () {
                 state.completeLesson(lesson.id);
                 Navigator.of(context).pop();
               },
               child: Text('Narangije iri somo'),
-            ),
+            )),
         ],
       ),
     );

@@ -146,7 +146,8 @@ class _CategoryProgress extends StatelessWidget {
     final double acc = state.categoryAccuracy(category.id);
     final int answered = state.answeredByCategory[category.id] ?? 0;
 
-    return InkWell(
+    return PressScale(
+        child: InkWell(
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute<void>(
             builder: (_) => CategoryScreen(category: category)),
@@ -178,6 +179,6 @@ class _CategoryProgress extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 }

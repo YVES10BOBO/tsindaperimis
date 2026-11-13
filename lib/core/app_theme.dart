@@ -25,6 +25,10 @@ ThemeData buildAppTheme({required bool dark}) {
       onSurface: text,
     ),
     scaffoldBackgroundColor: background,
+    // A clearly visible ripple and highlight on every tap.
+    splashFactory: InkRipple.splashFactory,
+    splashColor: AppColors.primary.withAlpha(60),
+    highlightColor: AppColors.primary.withAlpha(28),
   );
 
   return base.copyWith(
@@ -49,20 +53,22 @@ ThemeData buildAppTheme({required bool dark}) {
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+        overlayColor: Colors.black.withAlpha(45),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: dark ? const Color(0xFF93B4FF) : AppColors.primary,
+        foregroundColor: dark ? const Color(0xFF6CC8F3) : AppColors.primary,
         minimumSize: const Size.fromHeight(52),
-        side: BorderSide(color: dark ? const Color(0xFF93B4FF) : AppColors.primary),
+        side: BorderSide(
+            color: dark ? const Color(0xFF6CC8F3) : AppColors.primary),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: dark ? const Color(0xFF93B4FF) : AppColors.primary,
+        foregroundColor: dark ? const Color(0xFF6CC8F3) : AppColors.primary,
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(

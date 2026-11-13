@@ -242,7 +242,8 @@ final List<LearnCategory> _baseLearnCategories = <LearnCategory>[
   LearnCategory(
     id: 'inyongera',
     title: 'Ubumenyi bw\'inyongera',
-    subtitle: 'Kwita ku binyabiziga no gutwara utekanye (ntibibazwa mu kizamini)',
+    subtitle:
+        'Kwita ku binyabiziga no gutwara utekanye (ntibibazwa mu kizamini)',
     icon: Icons.build_circle,
     color: Color(0xFF0E7490),
     softColor: Color(0xFFE0F4F8),

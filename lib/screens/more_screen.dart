@@ -149,11 +149,12 @@ class MoreScreen extends StatelessWidget {
                   ),
                 ),
                 if (state.isGuest)
-                  TextButton(
+                  PressScale(
+                      child: TextButton(
                     onPressed: () =>
                         _push(context, const AuthScreen(isRegister: true)),
                     child: Text('Iyandikishe'),
-                  )
+                  ))
                 else
                   Icon(Icons.edit_outlined, color: AppColors.muted),
               ],
@@ -182,7 +183,7 @@ class MoreScreen extends StatelessWidget {
                         SizedBox(height: 2),
                         Text('Ibizamini byose, ibibazo byinshi, nta matangazo',
                             style: TextStyle(
-                                color: Color(0xFFC7D2FE), fontSize: 13)),
+                                color: Color(0xFFBFE3F7), fontSize: 13)),
                       ],
                     ),
                   ),
@@ -638,7 +639,8 @@ class _PremiumScreenState extends State<PremiumScreen> {
             ),
           ),
           SizedBox(height: 20),
-          ElevatedButton(onPressed: _pay, child: Text('Ishyura')),
+          PressScale(
+              child: ElevatedButton(onPressed: _pay, child: Text('Ishyura'))),
           SizedBox(height: 10),
           Text(
             'Uzakira ubutumwa kuri telefoni bwo kwemeza kwishyura.',

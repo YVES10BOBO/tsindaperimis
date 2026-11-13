@@ -9,12 +9,13 @@ class AppColors {
   static bool isDark = false;
 
   // ---------- Brand (kimwe muri modes zombi) ----------
-  static const Color primary = Color(0xFF2563EB);
-  static const Color primaryDark = Color(0xFF1E3A8A);
+  static const Color primary = Color(0xFF1877B5);
+  static const Color primaryDark = Color(0xFF0F4C81);
   static const Color success = Color(0xFF16A34A);
   static const Color error = Color(0xFFDC2626);
   static const Color warning = Color(0xFFF59E0B);
-  static const Color purple = Color(0xFF1D4ED8); // ubu ni ubururu (aho hose hari move)
+  static const Color purple =
+      Color(0xFF1368A8); // ubu ni ubururu (aho hose hari move)
 
   static const Color signRed = Color(0xFFD32F2F);
   static const Color signBlue = Color(0xFF1565C0);
@@ -43,28 +44,42 @@ class AppColors {
   static Color get bodyText => isDark ? _dBody : _lBody;
   static Color get muted => isDark ? _dMuted : _lMuted;
 
-  static Color get primarySoft => isDark ? const Color(0xFF1B2B4F) : const Color(0xFFEAF1FF);
-  static Color get successSoft => isDark ? const Color(0xFF12301F) : const Color(0xFFEAF8EE);
-  static Color get errorSoft => isDark ? const Color(0xFF3A1717) : const Color(0xFFFDECEC);
-  static Color get warningSoft => isDark ? const Color(0xFF3A2A0E) : const Color(0xFFFFF4E0);
-  static Color get purpleSoft => isDark ? const Color(0xFF1B2B4F) : const Color(0xFFEAF1FF);
+  static Color get primarySoft =>
+      isDark ? const Color(0xFF12303F) : const Color(0xFFE3F4FD);
+  static Color get successSoft =>
+      isDark ? const Color(0xFF12301F) : const Color(0xFFEAF8EE);
+  static Color get errorSoft =>
+      isDark ? const Color(0xFF3A1717) : const Color(0xFFFDECEC);
+  static Color get warningSoft =>
+      isDark ? const Color(0xFF3A2A0E) : const Color(0xFFFFF4E0);
+  static Color get purpleSoft =>
+      isDark ? const Color(0xFF12303F) : const Color(0xFFE3F4FD);
 
-  static Color get successBorder => isDark ? const Color(0xFF1F5A35) : const Color(0xFFBBF7D0);
-  static Color get errorBorder => isDark ? const Color(0xFF6B2323) : const Color(0xFFFBCACA);
-  static Color get warningBorder => isDark ? const Color(0xFF6B4E14) : const Color(0xFFFDE2B3);
-  static Color get purpleBorder => isDark ? const Color(0xFF2B4A8A) : const Color(0xFFBFD3FF);
+  static Color get successBorder =>
+      isDark ? const Color(0xFF1F5A35) : const Color(0xFFBBF7D0);
+  static Color get errorBorder =>
+      isDark ? const Color(0xFF6B2323) : const Color(0xFFFBCACA);
+  static Color get warningBorder =>
+      isDark ? const Color(0xFF6B4E14) : const Color(0xFFFDE2B3);
+  static Color get purpleBorder =>
+      isDark ? const Color(0xFF21566F) : const Color(0xFFB7DEF5);
 
-  static Color get successText => isDark ? const Color(0xFF86EFAC) : const Color(0xFF14532D);
-  static Color get errorText => isDark ? const Color(0xFFFCA5A5) : const Color(0xFF7F1D1D);
-  static Color get warningText => isDark ? const Color(0xFFFCD34D) : const Color(0xFF78350F);
-  static Color get warningIcon => isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309);
+  static Color get successText =>
+      isDark ? const Color(0xFF86EFAC) : const Color(0xFF14532D);
+  static Color get errorText =>
+      isDark ? const Color(0xFFFCA5A5) : const Color(0xFF7F1D1D);
+  static Color get warningText =>
+      isDark ? const Color(0xFFFCD34D) : const Color(0xFF78350F);
+  static Color get warningIcon =>
+      isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309);
 
   /// Ibara ryoroheje ry'icyiciro: pastel muri Light, ibara ry'umwijima rikeye muri Dark.
-  static Color tint(Color color, Color soft) => isDark ? color.withAlpha(46) : soft;
+  static Color tint(Color color, Color soft) =>
+      isDark ? color.withAlpha(46) : soft;
 
   /// Amabara umukoresha ashobora guhitamo ku ishusho ye (avatar).
   static const List<Color> avatarColors = <Color>[
-    Color(0xFF2563EB),
+    Color(0xFF1877B5),
     Color(0xFF16A34A),
     Color(0xFFDB2777),
     Color(0xFFD97706),

@@ -9,11 +9,36 @@ import 'password_screens.dart';
 
 /// Uturere 30 tw'u Rwanda.
 const List<String> rwandaDistricts = <String>[
-  'Bugesera', 'Burera', 'Gakenke', 'Gasabo', 'Gatsibo', 'Gicumbi',
-  'Gisagara', 'Huye', 'Kamonyi', 'Karongi', 'Kayonza', 'Kicukiro',
-  'Kirehe', 'Muhanga', 'Musanze', 'Ngoma', 'Ngororero', 'Nyabihu',
-  'Nyagatare', 'Nyamagabe', 'Nyamasheke', 'Nyanza', 'Nyarugenge', 'Nyaruguru',
-  'Rubavu', 'Ruhango', 'Rulindo', 'Rusizi', 'Rutsiro', 'Rwamagana',
+  'Bugesera',
+  'Burera',
+  'Gakenke',
+  'Gasabo',
+  'Gatsibo',
+  'Gicumbi',
+  'Gisagara',
+  'Huye',
+  'Kamonyi',
+  'Karongi',
+  'Kayonza',
+  'Kicukiro',
+  'Kirehe',
+  'Muhanga',
+  'Musanze',
+  'Ngoma',
+  'Ngororero',
+  'Nyabihu',
+  'Nyagatare',
+  'Nyamagabe',
+  'Nyamasheke',
+  'Nyanza',
+  'Nyarugenge',
+  'Nyaruguru',
+  'Rubavu',
+  'Ruhango',
+  'Rulindo',
+  'Rusizi',
+  'Rutsiro',
+  'Rwamagana',
 ];
 
 /// Ubwoko bw'uruhushya umukoresha yitegura.
@@ -142,7 +167,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         button: true,
                         selected: i == _avatar,
                         label: 'Ibara rya ${i + 1}',
-                        child: InkWell(
+                        child: PressScale(
+                            child: InkWell(
                           customBorder: const CircleBorder(),
                           onTap: () => setState(() => _avatar = i),
                           child: Container(
@@ -152,15 +178,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               color: AppColors.avatarColors[i],
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: i == _avatar ? AppColors.text : Colors.transparent,
+                                color: i == _avatar
+                                    ? AppColors.text
+                                    : Colors.transparent,
                                 width: 3,
                               ),
                             ),
                             child: i == _avatar
-                                ? const Icon(Icons.check, color: Colors.white, size: 20)
+                                ? const Icon(Icons.check,
+                                    color: Colors.white, size: 20)
                                 : null,
                           ),
-                        ),
+                        )),
                       ),
                     ),
                 ],
@@ -175,8 +204,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   labelText: 'Amazina yawe',
                   prefixIcon: Icon(Icons.person_outline),
                 ),
-                validator: (String? v) =>
-                    (v == null || v.trim().length < 2) ? 'Andika amazina yawe' : null,
+                validator: (String? v) => (v == null || v.trim().length < 2)
+                    ? 'Andika amazina yawe'
+                    : null,
               ),
               const SizedBox(height: 14),
               TextFormField(
@@ -197,7 +227,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 enabled: false,
                 decoration: const InputDecoration(
                   labelText: 'Email yo kwinjira',
-                  helperText: 'Email ukoresha winjira ntishobora guhindurwa hano.',
+                  helperText:
+                      'Email ukoresha winjira ntishobora guhindurwa hano.',
                   prefixIcon: Icon(Icons.email_outlined),
                 ),
               ),
@@ -225,7 +256,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 spacing: 8,
                 runSpacing: 8,
                 children: <Widget>[
-                  for (final MapEntry<String, String> e in licenseCategories.entries)
+                  for (final MapEntry<String, String> e
+                      in licenseCategories.entries)
                     ChoiceChip(
                       label: Text('${e.key} · ${e.value}'),
                       selected: _license == e.key,
@@ -236,23 +268,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               if (_error != null) ...<Widget>[
                 const SizedBox(height: 20),
                 Text(_error!,
-                    style: const TextStyle(color: AppColors.error, fontSize: 13)),
+                    style:
+                        const TextStyle(color: AppColors.error, fontSize: 13)),
               ],
               const SizedBox(height: 32),
-              ElevatedButton(
+              PressScale(
+                  child: ElevatedButton(
                 onPressed: _saving ? null : _save,
                 child: _saving
                     ? const SizedBox(
                         width: 22,
                         height: 22,
-                        child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2.5, color: Colors.white),
                       )
                     : const Text('Bika impinduka'),
-              ),
+              )),
               const SizedBox(height: 12),
               OutlinedButton.icon(
                 onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(builder: (_) => const ChangePasswordScreen()),
+                  MaterialPageRoute<void>(
+                      builder: (_) => const ChangePasswordScreen()),
                 ),
                 icon: const Icon(Icons.lock_reset),
                 label: const Text('Hindura ijambo ry\'ibanga'),

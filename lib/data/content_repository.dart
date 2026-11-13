@@ -108,10 +108,12 @@ class ContentRepository {
             if (oldVersion < 5) await _createNotificationsTable(db);
             if (oldVersion < 6) await _createSettingsTable(db);
             if (oldVersion < 7) {
-              await db.execute('ALTER TABLE questions ADD COLUMN number INTEGER');
+              await db
+                  .execute('ALTER TABLE questions ADD COLUMN number INTEGER');
             }
             if (oldVersion < 8) {
-              await db.execute('ALTER TABLE lessons ADD COLUMN audio_path TEXT');
+              await db
+                  .execute('ALTER TABLE lessons ADD COLUMN audio_path TEXT');
               await db
                   .execute('ALTER TABLE questions ADD COLUMN audio_path TEXT');
             }

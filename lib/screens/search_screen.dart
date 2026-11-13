@@ -64,7 +64,8 @@ class _SearchScreenState extends State<SearchScreen> {
               subtitle: Text(repo.categoryById(l.categoryId).title),
               trailing: Icon(Icons.chevron_right),
               onTap: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(builder: (_) => LessonScreen(lesson: l)),
+                MaterialPageRoute<void>(
+                    builder: (_) => LessonScreen(lesson: l)),
               ),
             ),
       if (questions.isNotEmpty)

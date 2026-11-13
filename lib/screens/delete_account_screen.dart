@@ -50,8 +50,8 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
       }
       // Asking for the password again stops anyone holding an unlocked phone
       // from deleting the owner's account.
-      await client.auth.signInWithPassword(
-          email: email, password: _password.text);
+      await client.auth
+          .signInWithPassword(email: email, password: _password.text);
       await client.rpc('delete_my_account');
       await state.forgetDeletedAccount();
       navigator.pushAndRemoveUntil(
@@ -156,7 +156,8 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                         color: AppColors.error, fontWeight: FontWeight.w600)),
               ],
               SizedBox(height: 20),
-              ElevatedButton(
+              PressScale(
+                  child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.error,
                     foregroundColor: Colors.white),
@@ -169,13 +170,13 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                             strokeWidth: 2.5, color: Colors.white),
                       )
                     : Text('Siba konti burundu'),
-              ),
+              )),
               SizedBox(height: 10),
-              OutlinedButton(
-                onPressed:
-                    _deleting ? null : () => Navigator.of(context).pop(),
+              PressScale(
+                  child: OutlinedButton(
+                onPressed: _deleting ? null : () => Navigator.of(context).pop(),
                 child: Text('Reka, singisiba'),
-              ),
+              )),
             ],
           ),
         ),

@@ -32,8 +32,7 @@ String? validateNewPassword(String? v) {
 String passwordUpdateError(AuthException error) => switch (error.code) {
       'same_password' => 'Rigomba gutandukana n\'irya mbere.',
       'weak_password' => 'Ijambo ry\'ibanga rishya ntirikomeye bihagije.',
-      'reauthentication_needed' =>
-        'Ongera winjire, hanyuma wongere ugerageze.',
+      'reauthentication_needed' => 'Ongera winjire, hanyuma wongere ugerageze.',
       _ => error.message,
     };
 
@@ -227,7 +226,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   Text(_error!, style: const TextStyle(color: Colors.red)),
                   const SizedBox(height: 8),
                 ],
-                ElevatedButton(
+                PressScale(
+                    child: ElevatedButton(
                   onPressed: _sending ? null : _send,
                   child: _sending
                       ? const SizedBox(
@@ -237,13 +237,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               strokeWidth: 2.5, color: Colors.white),
                         )
                       : const Text('Ohereza kode'),
-                ),
+                )),
               ],
               const SizedBox(height: 12),
-              TextButton(
+              PressScale(
+                  child: TextButton(
                 onPressed: () => Navigator.of(context).pop(),
                 child: const Text('Wibutse ijambo ry\'ibanga? Injira'),
-              ),
+              )),
             ],
           ),
         ),
@@ -357,7 +358,8 @@ class _OtpScreenState extends State<OtpScreen> {
       }
     } catch (_) {
       if (mounted) {
-        setState(() => _error = 'Ntibyashobotse kugenzura kode. Reba internet.');
+        setState(
+            () => _error = 'Ntibyashobotse kugenzura kode. Reba internet.');
       }
     } finally {
       if (mounted) setState(() => _verifying = false);
@@ -449,7 +451,8 @@ class _OtpScreenState extends State<OtpScreen> {
                   style: const TextStyle(color: AppColors.error, fontSize: 13)),
             ],
             const SizedBox(height: 24),
-            ElevatedButton(
+            PressScale(
+                child: ElevatedButton(
               onPressed: _verifying ? null : _verify,
               child: _verifying
                   ? const SizedBox(
@@ -459,7 +462,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           strokeWidth: 2.5, color: Colors.white),
                     )
                   : const Text('Emeza kode'),
-            ),
+            )),
             const SizedBox(height: 16),
             Center(
               child: _secondsLeft > 0
@@ -467,15 +470,17 @@ class _OtpScreenState extends State<OtpScreen> {
                       'Ushobora gusaba indi kode nyuma y\'amasegonda $_secondsLeft',
                       style: TextStyle(color: AppColors.muted),
                     )
-                  : TextButton(
+                  : PressScale(
+                      child: TextButton(
                       onPressed: _resend,
                       child: const Text('Ntiwabonye kode? Ohereza indi'),
-                    ),
+                    )),
             ),
-            TextButton(
+            PressScale(
+                child: TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: const Text('Hindura email'),
-            ),
+            )),
           ],
         ),
       ),
@@ -568,10 +573,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               if (_error != null) ...<Widget>[
                 const SizedBox(height: 12),
                 Text(_error!,
-                    style: const TextStyle(color: AppColors.error, fontSize: 13)),
+                    style:
+                        const TextStyle(color: AppColors.error, fontSize: 13)),
               ],
               const SizedBox(height: 28),
-              ElevatedButton(
+              PressScale(
+                  child: ElevatedButton(
                 onPressed: _saving ? null : _save,
                 child: _saving
                     ? const SizedBox(
@@ -581,7 +588,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             strokeWidth: 2.5, color: Colors.white),
                       )
                     : const Text('Bika ijambo ry\'ibanga'),
-              ),
+              )),
             ],
           ),
         ),
@@ -624,14 +631,15 @@ class PasswordResetSuccessScreen extends StatelessWidget {
                     color: AppColors.muted, fontSize: 15, height: 1.45),
               ),
               const Spacer(),
-              ElevatedButton(
+              PressScale(
+                  child: ElevatedButton(
                 onPressed: () => Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute<void>(
                       builder: (_) => const AuthScreen(isRegister: false)),
                   (Route<dynamic> r) => r.isFirst,
                 ),
                 child: const Text('Injira'),
-              ),
+              )),
             ],
           ),
         ),
@@ -679,8 +687,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       final auth = Supabase.instance.client.auth;
       final String? email = auth.currentUser?.email;
       if (email == null) {
-        setState(() =>
-            _error = 'Banza winjire muri konti yawe, hanyuma wongere ugerageze.');
+        setState(() => _error =
+            'Banza winjire muri konti yawe, hanyuma wongere ugerageze.');
         return;
       }
       // Checking the current password first stops anyone holding an unlocked
@@ -727,13 +735,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ),
               Align(
                 alignment: Alignment.centerRight,
-                child: TextButton(
+                child: PressScale(
+                    child: TextButton(
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute<void>(
                         builder: (_) => const ForgotPasswordScreen()),
                   ),
                   child: const Text('Wibagiwe ijambo ry\'ibanga?'),
-                ),
+                )),
               ),
               const SizedBox(height: 4),
               PasswordField(
@@ -761,10 +770,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               if (_error != null) ...<Widget>[
                 const SizedBox(height: 12),
                 Text(_error!,
-                    style: const TextStyle(color: AppColors.error, fontSize: 13)),
+                    style:
+                        const TextStyle(color: AppColors.error, fontSize: 13)),
               ],
               const SizedBox(height: 28),
-              ElevatedButton(
+              PressScale(
+                  child: ElevatedButton(
                 onPressed: _saving ? null : _save,
                 child: _saving
                     ? const SizedBox(
@@ -774,7 +785,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             strokeWidth: 2.5, color: Colors.white),
                       )
                     : const Text('Bika impinduka'),
-              ),
+              )),
             ],
           ),
         ),

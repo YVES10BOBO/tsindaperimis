@@ -137,7 +137,8 @@ class ExamIntroScreen extends StatelessWidget {
                 padding: EdgeInsets.only(bottom: 10),
                 child: ExamHistoryTile(result: r),
               ),
-          if (state.examResults.length > 5) SeeAllExamsButton(count: state.examResults.length),
+          if (state.examResults.length > 5)
+            SeeAllExamsButton(count: state.examResults.length),
         ],
       ),
     );
@@ -375,15 +376,18 @@ class _ExamScreenState extends State<ExamScreen> {
         ].join('\n\n')),
         actions: <Widget>[
           if (missing.isNotEmpty)
-            TextButton(
-                onPressed: () => Navigator.pop(ctx, 'review'),
-                child: Text('Subira ku cya ${missing.first + 1}'))
+            PressScale(
+                child: TextButton(
+                    onPressed: () => Navigator.pop(ctx, 'review'),
+                    child: Text('Subira ku cya ${missing.first + 1}')))
           else
-            TextButton(
-                onPressed: () => Navigator.pop(ctx), child: Text('Oya')),
-          TextButton(
-              onPressed: () => Navigator.pop(ctx, 'submit'),
-              child: Text('Soza')),
+            PressScale(
+                child: TextButton(
+                    onPressed: () => Navigator.pop(ctx), child: Text('Oya'))),
+          PressScale(
+              child: TextButton(
+                  onPressed: () => Navigator.pop(ctx, 'submit'),
+                  child: Text('Soza'))),
         ],
       ),
     );
@@ -401,10 +405,14 @@ class _ExamScreenState extends State<ExamScreen> {
         title: Text('Kuva mu kizamini?'),
         content: Text('Ibisubizo byawe ntibizabikwa.'),
         actions: <Widget>[
-          TextButton(
-              onPressed: () => Navigator.pop(ctx, false), child: Text('Guma')),
-          TextButton(
-              onPressed: () => Navigator.pop(ctx, true), child: Text('Va mo')),
+          PressScale(
+              child: TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: Text('Guma'))),
+          PressScale(
+              child: TextButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: Text('Va mo'))),
         ],
       ),
     );
@@ -577,14 +585,16 @@ class _ExamScreenState extends State<ExamScreen> {
                   ),
                   SizedBox(width: 8),
                   Expanded(
-                    child: OutlinedButton(
+                    child: PressScale(
+                        child: OutlinedButton(
                       onPressed: _index == 0 ? null : () => _goTo(_index - 1),
                       child: Text('Ibanza'),
-                    ),
+                    )),
                   ),
                   SizedBox(width: 8),
                   Expanded(
-                    child: ElevatedButton(
+                    child: PressScale(
+                        child: ElevatedButton(
                       style: last
                           ? ElevatedButton.styleFrom(
                               backgroundColor: AppColors.purple)
@@ -592,7 +602,7 @@ class _ExamScreenState extends State<ExamScreen> {
                       onPressed:
                           last ? _confirmSubmit : () => _goTo(_index + 1),
                       child: Text(last ? 'Soza' : 'Ikurikira'),
-                    ),
+                    )),
                   ),
                 ],
               ),
@@ -646,7 +656,8 @@ class _ExamProgress extends StatelessWidget {
       excludeSemantics: true,
       label: 'Wasubije $answered kuri ${states.length}, wasimbutse $skipped, '
           'uzagaruka $flagged. Kanda urebe ibibazo byose.',
-      child: InkWell(
+      child: PressScale(
+          child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(10),
         child: Padding(
@@ -701,7 +712,7 @@ class _ExamProgress extends StatelessWidget {
             ],
           ),
         ),
-      ),
+      )),
     );
   }
 }
@@ -724,7 +735,8 @@ class _NavCell extends StatelessWidget {
     final bool filled = state != _QuestionState.unseen;
     final Color bg = filled ? state.color : AppColors.background;
     final Color fg = filled ? Colors.white : AppColors.text;
-    return InkWell(
+    return PressScale(
+        child: InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(10),
       child: Container(
@@ -741,7 +753,7 @@ class _NavCell extends StatelessWidget {
         child: Text('$number',
             style: TextStyle(fontWeight: FontWeight.w700, color: fg)),
       ),
-    );
+    ));
   }
 }
 
@@ -866,15 +878,17 @@ class ExamResultScreen extends StatelessWidget {
               label: Text('Reba amakosa yawe ($wrong)'),
             ),
           SizedBox(height: 12),
-          OutlinedButton(
+          PressScale(
+              child: OutlinedButton(
             onPressed: () => startExam(context, replace: true),
             child: Text('Ongera ugerageze'),
-          ),
+          )),
           SizedBox(height: 4),
-          TextButton(
+          PressScale(
+              child: TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: Text('Subira inyuma'),
-          ),
+          )),
         ],
       ),
     );

@@ -14,7 +14,8 @@ class AmategekoApp extends StatefulWidget {
   State<AmategekoApp> createState() => _AmategekoAppState();
 }
 
-class _AmategekoAppState extends State<AmategekoApp> with WidgetsBindingObserver {
+class _AmategekoAppState extends State<AmategekoApp>
+    with WidgetsBindingObserver {
   final AppState _state = AppState();
 
   // Chosen once at launch: a learner whose login is saved goes straight in.

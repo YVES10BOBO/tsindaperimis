@@ -48,11 +48,13 @@ class _DocumentScreen extends StatelessWidget {
           Text('Byavuguruwe: $kLastUpdated',
               style: TextStyle(color: AppColors.muted, fontSize: 13)),
           const SizedBox(height: 12),
-          Text(intro, style: TextStyle(height: 1.55, color: AppColors.bodyText)),
+          Text(intro,
+              style: TextStyle(height: 1.55, color: AppColors.bodyText)),
           const SizedBox(height: 16),
           for (int i = 0; i < sections.length; i++) ...<Widget>[
             Text('${i + 1}. ${sections[i].title}',
-                style: const TextStyle(fontSize: 16.5, fontWeight: FontWeight.w800)),
+                style: const TextStyle(
+                    fontSize: 16.5, fontWeight: FontWeight.w800)),
             const SizedBox(height: 6),
             Text(sections[i].body,
                 style: TextStyle(height: 1.55, color: AppColors.bodyText)),
@@ -75,7 +77,8 @@ class FaqScreen extends StatelessWidget {
         'Igufasha kwiga amategeko y\'umuhanda, ibimenyetso, amatara n\'imirongo yo ku muhanda, no kwitoza ibibazo kugira ngo witegure ikizamini cy\'uruhushya rwo gutwara rw\'agateganyo.'),
     _DocSection('Ese iyi app ni iya Polisi y\'u Rwanda?',
         'Oya. Ni app yigenga yo kwigiraho. Ntisimbura amasomo y\'ishuri ryigisha gutwara cyangwa amabwiriza yemewe ya Polisi y\'u Rwanda.'),
-    _DocSection('Ese ibibazo biri muri app ni byo bibazwa mu kizamini nyirizina?',
+    _DocSection(
+        'Ese ibibazo biri muri app ni byo bibazwa mu kizamini nyirizina?',
         'Ibibazo biri muri app ni iby\'imyitozo bishingiye ku mategeko y\'umuhanda. Ntitwemeza ko ari byo bizabazwa mu kizamini nyirizina.'),
     _DocSection('Imyitozo n\'ikizamini cy\'igerageza bitandukaniye he?',
         'Mu myitozo, uhita ubona niba igisubizo ari cyo n\'impamvu yacyo. Mu kizamini cy\'igerageza, usubiza ibibazo byose mu gihe kigenwe, hanyuma ukabona amanota n\'amakosa yawe urangije.'),
@@ -115,16 +118,21 @@ class FaqScreen extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 radius: 14,
                 child: Theme(
-                  data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                  data: Theme.of(context)
+                      .copyWith(dividerColor: Colors.transparent),
                   child: ExpansionTile(
-                    tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                    tilePadding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
                     childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     iconColor: AppColors.primary,
                     title: Text(f.title,
-                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w700, fontSize: 15)),
                     expandedCrossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(f.body, style: TextStyle(height: 1.55, color: AppColors.bodyText)),
+                      Text(f.body,
+                          style: TextStyle(
+                              height: 1.55, color: AppColors.bodyText)),
                     ],
                   ),
                 ),
@@ -139,7 +147,8 @@ class FaqScreen extends StatelessWidget {
                 const Icon(Icons.mail_outline, color: AppColors.primary),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text('Ntiwabonye igisubizo? Twandikire kuri $kContactEmail',
+                  child: Text(
+                      'Ntiwabonye igisubizo? Twandikire kuri $kContactEmail',
                       style: TextStyle(color: AppColors.text, height: 1.4)),
                 ),
               ],
@@ -174,7 +183,7 @@ class TermsScreen extends StatelessWidget {
             'Ntiwemerewe gukoporora, kugurisha cyangwa gukwirakwiza ibirimo muri app utabiherewe uburenganzira, kugerageza kwinjira mu buryo butemewe, cyangwa gukoresha app mu buryo bunyuranyije n\'amategeko.'),
         if (AppInfo.premiumEnabled)
           _DocSection('Premium no kwishyura',
-            'Bimwe mu bikoresho bishobora gusaba kwishyura. Igiciro, igihe ifatabuguzi rimara n\'uko ryongerwa bizagaragazwa mbere yo kwishyura. Kwishyura bikorwa binyuze kuri MTN Mobile Money cyangwa Airtel Money. [Andika hano amabwiriza yo gusubizwa amafaranga.]'),
+              'Bimwe mu bikoresho bishobora gusaba kwishyura. Igiciro, igihe ifatabuguzi rimara n\'uko ryongerwa bizagaragazwa mbere yo kwishyura. Kwishyura bikorwa binyuze kuri MTN Mobile Money cyangwa Airtel Money. [Andika hano amabwiriza yo gusubizwa amafaranga.]'),
         _DocSection('Uburenganzira ku bihangano',
             'Ibirimo byose muri app (inyandiko, amashusho, ibibazo, ikirango) ni umutungo wa $kCompanyName cyangwa ab\'abatanze uburenganzira bwo kubikoresha.'),
         _DocSection('Aho inshingano zacu zigarukira',
