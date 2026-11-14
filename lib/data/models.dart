@@ -89,6 +89,16 @@ class LessonSection {
   final String? imagePath;
 }
 
+/// An option that starts with letters, e.g. "a na b ni ibisubizo by'ukuri".
+final RegExp _comboOption =
+    RegExp(r'^\s*([A-Da-d](?:\s*(?:,|na|&)\s*[A-Da-d])+)(?![A-Za-z])');
+
+/// "All of the above" / "none of the above" options.
+final RegExp _positionOption = RegExp(
+  r"(ibisubizo byose|ibyo byose|byose (?:nibyo|ni byo|ni ukuri)|nta gisubizo|nta ?na ?kimwe|nta kimwe)",
+  caseSensitive: false,
+);
+
 class Question {
   const Question({
     required this.id,
@@ -128,21 +138,42 @@ class Question {
   /// Isubiza ikibazo kimwe ariko ibisubizo bivanze, kugira ngo
   /// igisubizo nyacyo kitajya kiba ahantu hamwe buri gihe.
   Question shuffled(Random random) {
-    final List<int> order = List<int>.generate(options.length, (int i) => i)
-      ..shuffle(random);
+    // Options that depend on their position ("A na B ni ibisubizo by'ukuri",
+    // "Ibisubizo byose nibyo", "Nta gisubizo cy'ukuri") stay at the end, in
+    // their original order, so they still make sense after shuffling.
+    bool anchored(String text) =>
+        _comboOption.hasMatch(text) || _positionOption.hasMatch(text);
+    final List<int> movable = <int>[
+      for (int i = 0; i < options.length; i++)
+        if (!anchored(options[i])) i
+    ]..shuffle(random);
+    final List<int> order = <int>[
+      ...movable,
+      for (int i = 0; i < options.length; i++)
+        if (anchored(options[i])) i,
+    ];
     const List<String> letters = <String>['A', 'B', 'C', 'D'];
 
+    // "a na b ni ibisubizo by'ukuri": point at the options' NEW letters.
+    // Only options that start with the letters are changed, so "uruhushya
+    // rwa A na B" inside a sentence is never touched.
     String remapReferences(String text) {
-      return text.replaceAllMapped(
-        RegExp(r'\b([A-D](?:\s*(?:,|na|&)\s*[A-D])+)\b'),
-        (Match match) => match.group(1)!.replaceAllMapped(
-          RegExp(r'[A-D]'),
-          (Match letterMatch) {
-            final int oldIndex = letters.indexOf(letterMatch.group(0)!);
-            return letters[order.indexOf(oldIndex)];
-          },
-        ),
-      );
+      final Match? m = _comboOption.firstMatch(text);
+      if (m == null) return text;
+      final String group = m.group(1)!;
+      final bool lower = group.trim().toLowerCase() == group.trim();
+      final List<String> mapped = RegExp(r'\b[A-Da-d]\b')
+          .allMatches(group)
+          .map((Match l) => letters[
+              order.indexOf(letters.indexOf(l.group(0)!.toUpperCase()))])
+          .toList()
+        ..sort();
+      final List<String> shown =
+          mapped.map((String l) => lower ? l.toLowerCase() : l).toList();
+      final String joined = shown.length <= 2
+          ? shown.join(' na ')
+          : '${shown.sublist(0, shown.length - 1).join(', ')} na ${shown.last}';
+      return text.replaceRange(m.start, m.start + group.length, joined);
     }
 
     final RegExp answerLetter = RegExp(
