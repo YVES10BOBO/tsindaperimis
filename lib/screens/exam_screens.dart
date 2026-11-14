@@ -379,7 +379,9 @@ class _ExamScreenState extends State<ExamScreen> {
       timeUsed: _limit - _left,
       passScore: ExamConfig.passScore,
     );
-    AppScope.of(context).addExamResult(result);
+    final AppState appState = AppScope.of(context);
+    appState.addExamResult(result);
+    appState.consumeGoalReached();
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(builder: (_) => ExamResultScreen(result: result)),
     );

@@ -5,6 +5,7 @@ import '../data/content_repository.dart';
 import '../data/models.dart';
 import '../state/app_state.dart';
 import '../widgets/common.dart';
+import '../widgets/daily_goal.dart';
 import 'auth_screen.dart';
 import 'category_screen.dart';
 import 'more_screen.dart';
@@ -55,6 +56,10 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           SizedBox(height: 18),
+
+          // ---------- Daily goal ----------
+          DailyGoalCard(onPractice: () => onOpenTab(1)),
+          SizedBox(height: 16),
 
           // ---------- Progress ----------
           AppCard(

@@ -8,6 +8,7 @@ import '../state/app_state.dart';
 import '../widgets/audio_button.dart';
 import '../widgets/celebration.dart';
 import '../widgets/common.dart';
+import '../widgets/daily_goal.dart';
 import '../widgets/question_report.dart';
 import '../widgets/road_sign.dart';
 
@@ -33,6 +34,11 @@ class PracticeHomeScreen extends StatelessWidget {
         if (repo.questionById(id) != null) repo.questionById(id)!,
     ];
 
+    final List<Question> saved = <Question>[
+      for (final String id in state.bookmarkedQuestions)
+        if (repo.questionById(id) != null) repo.questionById(id)!,
+    ];
+
     return SafeArea(
       child: ListView(
         padding: EdgeInsets.fromLTRB(20, 16, 20, 24),
@@ -45,7 +51,9 @@ class PracticeHomeScreen extends StatelessWidget {
             style:
                 TextStyle(color: AppColors.muted, fontSize: 14.5, height: 1.4),
           ),
-          SizedBox(height: 18),
+          SizedBox(height: 16),
+          const DailyGoalCard(),
+          SizedBox(height: 16),
           AppCard(
             color: AppColors.primary,
             borderColor: AppColors.primary,
@@ -131,6 +139,41 @@ class PracticeHomeScreen extends StatelessWidget {
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w800)),
                       Text('Ibibazo ${wrong.length} wakoze nabi',
+                          style:
+                              TextStyle(color: AppColors.muted, fontSize: 13)),
+                    ],
+                  ),
+                ),
+                Icon(Icons.chevron_right, color: AppColors.muted),
+              ],
+            ),
+          ),
+          SizedBox(height: 12),
+          AppCard(
+            color: AppColors.warningSoft,
+            borderColor: AppColors.warningBorder,
+            onTap: saved.isEmpty
+                ? () => showComingSoon(context,
+                    'Nta kibazo urabika. Kanda ikimenyetso cyo kubika ku kibazo.')
+                : () => _start(context, 'Ibibazo nabitse', saved),
+            child: Row(
+              children: <Widget>[
+                IconBadge(
+                    icon: Icons.bookmark,
+                    color: Colors.white,
+                    background: AppColors.warning),
+                SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text('Itoze ibibazo nabitse',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w800)),
+                      Text(
+                          saved.isEmpty
+                              ? 'Nta kibazo urabika'
+                              : 'Ibibazo ${saved.length} wabitse',
                           style:
                               TextStyle(color: AppColors.muted, fontSize: 13)),
                     ],
@@ -283,7 +326,11 @@ class _PracticeQuizScreenState extends State<PracticeQuizScreen> {
     if (_selected != null) return;
     final bool ok = i == _q.correctIndex;
     setState(() => _answers[_index] = i);
-    AppScope.of(context).recordAnswer(_q, ok);
+    final AppState state = AppScope.of(context);
+    state.recordAnswer(_q, ok);
+    if (state.consumeGoalReached()) {
+      showGoalReachedMessage(context, state.streak);
+    }
   }
 
   void _next() {
