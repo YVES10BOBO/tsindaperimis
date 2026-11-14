@@ -1,15 +1,18 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../core/app_colors.dart';
 import '../core/exam_config.dart';
 import '../data/content_repository.dart';
 import '../data/models.dart';
 import '../state/app_state.dart';
+import '../widgets/celebration.dart';
 import '../widgets/common.dart';
 import '../widgets/question_report.dart';
 import '../widgets/road_sign.dart';
+import '../widgets/sign_backdrop.dart';
 
 String formatDuration(Duration d) {
   final String m = d.inMinutes.toString().padLeft(2, '0');
@@ -31,8 +34,8 @@ void startExam(BuildContext context, {bool replace = false}) {
     );
     return;
   }
-  final MaterialPageRoute<void> route =
-      MaterialPageRoute<void>(builder: (_) => ExamScreen(questions: questions));
+  final MaterialPageRoute<void> route = MaterialPageRoute<void>(
+      builder: (_) => ExamCountdownScreen(questions: questions));
   if (replace) {
     Navigator.of(context).pushReplacement(route);
   } else {
@@ -309,8 +312,33 @@ class _ExamScreenState extends State<ExamScreen> {
         _submit();
       } else {
         setState(() => _left -= Duration(seconds: 1));
+        _timeWarning(_left.inSeconds);
       }
     });
+  }
+
+  /// Warns the learner when time is running out (message + vibration).
+  void _timeWarning(int seconds) {
+    if (seconds == 300 || seconds == 120 || seconds == 60) {
+      HapticFeedback.heavyImpact();
+      final String text = seconds == 300
+          ? 'Hasigaye iminota 5'
+          : (seconds == 120 ? 'Hasigaye iminota 2' : 'Hasigaye umunota 1');
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(
+          content: Row(children: <Widget>[
+            const Icon(Icons.timer_outlined, color: Colors.white),
+            const SizedBox(width: 10),
+            Text(text, style: const TextStyle(fontWeight: FontWeight.w700)),
+          ]),
+          backgroundColor:
+              seconds <= 120 ? AppColors.error : const Color(0xFFD97706),
+          duration: const Duration(seconds: 3),
+        ));
+    } else if (seconds <= 10 && seconds > 0) {
+      HapticFeedback.heavyImpact();
+    }
   }
 
   @override
@@ -474,7 +502,11 @@ class _ExamScreenState extends State<ExamScreen> {
     final Question q = widget.questions[_index];
     final int total = widget.questions.length;
     final bool last = _index == total - 1;
-    final bool lowTime = _left.inSeconds <= 120;
+    final int secsLeft = _left.inSeconds;
+    // Dark blue normally, orange from 5 minutes left, red from 2 minutes left.
+    final Color timeColor = secsLeft <= 120
+        ? AppColors.error
+        : (secsLeft <= 300 ? const Color(0xFFD97706) : AppColors.primaryDark);
     final bool flagged = _flagged.contains(_index);
 
     return Scaffold(
@@ -493,7 +525,7 @@ class _ExamScreenState extends State<ExamScreen> {
               margin: EdgeInsets.only(right: 12),
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: lowTime ? AppColors.error : AppColors.primaryDark,
+                color: timeColor,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -811,86 +843,373 @@ class ExamResultScreen extends StatelessWidget {
         automaticallyImplyLeading: fromHistory,
         title: Text('Ibisubizo'),
       ),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(20, 8, 20, 24),
+      body: Stack(
         children: <Widget>[
-          Center(
-            child: ProgressRing(
-              value: result.ratio,
+          ListView(
+            padding: EdgeInsets.fromLTRB(20, 8, 20, 24),
+            children: <Widget>[
+              _ResultHero(result: result, animate: !fromHistory),
+              SizedBox(height: 20),
+              AppCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text('Uko witwaye mu byiciro',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w800, fontSize: 16)),
+                    SizedBox(height: 12),
+                    for (final MapEntry<String, List<int>> e
+                        in byCat.entries) ...<Widget>[
+                      Row(
+                        children: <Widget>[
+                          Expanded(child: Text(repo.categoryById(e.key).title)),
+                          Text('${e.value[0]}/${e.value[1]}',
+                              style: TextStyle(fontWeight: FontWeight.w700)),
+                        ],
+                      ),
+                      SizedBox(height: 6),
+                      AppProgressBar(
+                        value: e.value[0] / e.value[1],
+                        color: e.value[0] / e.value[1] >= 0.6
+                            ? AppColors.success
+                            : AppColors.warning,
+                      ),
+                      SizedBox(height: 12),
+                    ],
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
+              if (wrong > 0)
+                ElevatedButton.icon(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                        builder: (_) => ExamReviewScreen(result: result)),
+                  ),
+                  icon: Icon(Icons.fact_check_outlined),
+                  label: Text('Reba amakosa yawe ($wrong)'),
+                ),
+              SizedBox(height: 12),
+              PressScale(
+                  child: OutlinedButton(
+                onPressed: () => startExam(context, replace: true),
+                child: Text('Ongera ugerageze'),
+              )),
+              SizedBox(height: 4),
+              PressScale(
+                  child: TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('Subira inyuma'),
+              )),
+            ],
+          ),
+          if (passed && !fromHistory)
+            const Positioned.fill(child: Celebration()),
+        ],
+      ),
+    );
+  }
+}
+
+// =====================================================================
+// Kubara 3-2-1 mbere y'ikizamini
+// =====================================================================
+class ExamCountdownScreen extends StatefulWidget {
+  const ExamCountdownScreen({super.key, required this.questions});
+
+  final List<Question> questions;
+
+  @override
+  State<ExamCountdownScreen> createState() => _ExamCountdownScreenState();
+}
+
+class _ExamCountdownScreenState extends State<ExamCountdownScreen>
+    with TickerProviderStateMixin {
+  late final AnimationController _pop = AnimationController(
+      vsync: this, duration: const Duration(milliseconds: 800));
+  late final AnimationController _loop =
+      AnimationController(vsync: this, duration: const Duration(seconds: 24));
+  Timer? _timer;
+  int _step = 3; // 3, 2, 1, then 0 = "Tangira!"
+
+  @override
+  void initState() {
+    super.initState();
+    _loop.repeat();
+    _show();
+    _timer = Timer.periodic(const Duration(milliseconds: 900), (Timer t) {
+      if (!mounted) {
+        t.cancel();
+        return;
+      }
+      if (_step == 0) {
+        t.cancel();
+        Navigator.of(context).pushReplacement(
+          PageRouteBuilder<void>(
+            transitionDuration: const Duration(milliseconds: 350),
+            pageBuilder: (_, __, ___) =>
+                ExamScreen(questions: widget.questions),
+            transitionsBuilder: (_, Animation<double> a, __, Widget child) =>
+                FadeTransition(opacity: a, child: child),
+          ),
+        );
+        return;
+      }
+      setState(() => _step--);
+      _show();
+    });
+  }
+
+  void _show() {
+    if (_step == 0) {
+      HapticFeedback.heavyImpact();
+    } else {
+      HapticFeedback.selectionClick();
+    }
+    _pop.forward(from: 0);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _pop.dispose();
+    _loop.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Animation<double> scale = Tween<double>(begin: 0.45, end: 1)
+        .animate(CurvedAnimation(parent: _pop, curve: Curves.elasticOut));
+    final Animation<double> ring =
+        CurvedAnimation(parent: _pop, curve: Curves.easeOut);
+    return Scaffold(
+      backgroundColor: AppColors.primaryDark,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: <Color>[
+              Color(0xFF0B3C66),
+              Color(0xFF0F4C81),
+              Color(0xFF14609F)
+            ],
+          ),
+        ),
+        child: Stack(
+          children: <Widget>[
+            Positioned.fill(child: SignBackdrop(animation: _loop)),
+            SafeArea(
+              child: Column(
+                children: <Widget>[
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton(
+                      style:
+                          TextButton.styleFrom(foregroundColor: Colors.white),
+                      onPressed: () => Navigator.of(context).maybePop(),
+                      child: const Text('Reka'),
+                    ),
+                  ),
+                  const Spacer(),
+                  const Text('Ikizamini kigiye gutangira',
+                      style: TextStyle(
+                          color: Color(0xFFBFE3F7),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    height: 190,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      clipBehavior: Clip.none,
+                      children: <Widget>[
+                        // Ring that expands and fades on every number.
+                        AnimatedBuilder(
+                          animation: ring,
+                          builder: (BuildContext context, Widget? child) =>
+                              Opacity(
+                            opacity: (1 - ring.value) * 0.6,
+                            child: Container(
+                              width: 120 + ring.value * 90,
+                              height: 120 + ring.value * 90,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                    color: const Color(0xFF6CC8F3), width: 3),
+                              ),
+                            ),
+                          ),
+                        ),
+                        ScaleTransition(
+                          scale: scale,
+                          child: Text(
+                            _step == 0 ? 'Tangira!' : '$_step',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: _step == 0 ? 48 : 120,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    '${ExamConfig.questionCount} ibibazo · ${ExamConfig.durationMinutes} iminota',
+                    style:
+                        const TextStyle(color: Color(0xFFBFE3F7), fontSize: 15),
+                  ),
+                  const Spacer(),
+                  const Spacer(),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// =====================================================================
+// Umutwe w'ibisubizo: impeta yuzura, igikombe, n'ubutumwa
+// =====================================================================
+class _ResultHero extends StatefulWidget {
+  const _ResultHero({required this.result, required this.animate});
+
+  final ExamResult result;
+  final bool animate;
+
+  @override
+  State<_ResultHero> createState() => _ResultHeroState();
+}
+
+class _ResultHeroState extends State<_ResultHero>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(
+      vsync: this, duration: const Duration(milliseconds: 1800));
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.animate) {
+      _c.forward();
+      if (widget.result.passed) {
+        HapticFeedback.heavyImpact();
+      } else {
+        HapticFeedback.mediumImpact();
+      }
+    } else {
+      _c.value = 1;
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (MediaQuery.of(context).disableAnimations) _c.value = 1;
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  Animation<double> _part(double begin, double end,
+          [Curve curve = Curves.easeOutCubic]) =>
+      CurvedAnimation(parent: _c, curve: Interval(begin, end, curve: curve));
+
+  @override
+  Widget build(BuildContext context) {
+    final bool passed = widget.result.passed;
+    final Color color = passed ? AppColors.success : AppColors.error;
+    final Animation<double> badge = _part(0.0, 0.5, Curves.elasticOut);
+    final Animation<double> ringIn = _part(0.1, 0.7);
+    final Animation<double> text = _part(0.55, 0.95);
+
+    return AnimatedBuilder(
+      animation: _c,
+      builder: (BuildContext context, Widget? _) {
+        return Column(
+          children: <Widget>[
+            const SizedBox(height: 8),
+            // Award badge: a golden cup when passed, an encouraging arrow when not.
+            Transform.scale(
+              scale: badge.value.clamp(0.0, 1.3),
+              child: Container(
+                width: 76,
+                height: 76,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: passed
+                        ? const <Color>[Color(0xFFFFD84D), Color(0xFFF59E0B)]
+                        : const <Color>[Color(0xFFFFB46B), Color(0xFFEF6C3E)],
+                  ),
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                        color: (passed
+                                ? const Color(0xFFF59E0B)
+                                : const Color(0xFFEF6C3E))
+                            .withAlpha(110),
+                        blurRadius: 22,
+                        offset: const Offset(0, 8)),
+                  ],
+                ),
+                child: Icon(passed ? Icons.emoji_events : Icons.trending_up,
+                    size: 40, color: Colors.white),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ProgressRing(
+              value: widget.result.ratio * ringIn.value,
               size: 150,
               stroke: 12,
               fontSize: 30,
-              color: passed ? AppColors.success : AppColors.error,
-              label: '${result.score}/${result.total}',
+              color: color,
+              label: '${widget.result.score}/${widget.result.total}',
             ),
-          ),
-          SizedBox(height: 16),
-          Text(passed ? 'Watsinze!' : 'Ntiwatsinze',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
-                  color: passed ? AppColors.success : AppColors.error)),
-          SizedBox(height: 6),
-          Text(
-            '${(result.ratio * 100).round()}% · Igihe wakoresheje: ${formatDuration(result.timeUsed)}',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: AppColors.muted),
-          ),
-          SizedBox(height: 20),
-          AppCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text('Uko witwaye mu byiciro',
-                    style:
-                        TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
-                SizedBox(height: 12),
-                for (final MapEntry<String, List<int>> e
-                    in byCat.entries) ...<Widget>[
-                  Row(
-                    children: <Widget>[
-                      Expanded(child: Text(repo.categoryById(e.key).title)),
-                      Text('${e.value[0]}/${e.value[1]}',
-                          style: TextStyle(fontWeight: FontWeight.w700)),
-                    ],
-                  ),
-                  SizedBox(height: 6),
-                  AppProgressBar(
-                    value: e.value[0] / e.value[1],
-                    color: e.value[0] / e.value[1] >= 0.6
-                        ? AppColors.success
-                        : AppColors.warning,
-                  ),
-                  SizedBox(height: 12),
-                ],
-              ],
-            ),
-          ),
-          SizedBox(height: 20),
-          if (wrong > 0)
-            ElevatedButton.icon(
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                    builder: (_) => ExamReviewScreen(result: result)),
+            const SizedBox(height: 16),
+            Opacity(
+              opacity: text.value,
+              child: Transform.translate(
+                offset: Offset(0, (1 - text.value) * 14),
+                child: Column(
+                  children: <Widget>[
+                    Text(passed ? 'Watsinze!' : 'Ntiwatsinze',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w800,
+                            color: color)),
+                    const SizedBox(height: 6),
+                    Text(
+                      passed
+                          ? 'Wabikoze neza! Ufite amanota ahagije yo gutsinda.'
+                          : 'Ntucike intege. Reba amakosa yawe, hanyuma wongere ugerageze.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: AppColors.bodyText, fontSize: 15, height: 1.4),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '${(widget.result.ratio * 100).round()}% · Igihe wakoresheje: ${formatDuration(widget.result.timeUsed)}',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: AppColors.muted),
+                    ),
+                  ],
+                ),
               ),
-              icon: Icon(Icons.fact_check_outlined),
-              label: Text('Reba amakosa yawe ($wrong)'),
             ),
-          SizedBox(height: 12),
-          PressScale(
-              child: OutlinedButton(
-            onPressed: () => startExam(context, replace: true),
-            child: Text('Ongera ugerageze'),
-          )),
-          SizedBox(height: 4),
-          PressScale(
-              child: TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('Subira inyuma'),
-          )),
-        ],
-      ),
+          ],
+        );
+      },
     );
   }
 }

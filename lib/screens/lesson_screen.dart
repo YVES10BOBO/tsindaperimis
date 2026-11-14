@@ -8,6 +8,7 @@ import '../state/app_state.dart';
 import '../widgets/audio_button.dart';
 import '../widgets/common.dart';
 import '../widgets/road_sign.dart';
+import 'completion_screen.dart';
 
 class LessonScreen extends StatelessWidget {
   const LessonScreen({super.key, required this.lesson});
@@ -106,7 +107,18 @@ class LessonScreen extends StatelessWidget {
                 child: ElevatedButton(
               onPressed: () {
                 state.completeLesson(lesson.id);
-                Navigator.of(context).pop();
+                // Celebrate: fireworks, or a gift when the whole category is done.
+                final bool categoryDone = category.lessons
+                    .every((Lesson l) => state.isLessonDone(l.id));
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute<void>(
+                    builder: (_) => CompletionScreen(
+                      lesson: lesson,
+                      category: category,
+                      categoryCompleted: categoryDone,
+                    ),
+                  ),
+                );
               },
               child: Text('Narangije iri somo'),
             )),

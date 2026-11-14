@@ -6,6 +6,7 @@ import '../data/exam_scope.dart';
 import '../data/models.dart';
 import '../state/app_state.dart';
 import '../widgets/audio_button.dart';
+import '../widgets/celebration.dart';
 import '../widgets/common.dart';
 import '../widgets/question_report.dart';
 import '../widgets/road_sign.dart';
@@ -475,75 +476,111 @@ class _PracticeQuizScreenState extends State<PracticeQuizScreen> {
         ),
         title: Text(widget.title, style: const TextStyle(fontSize: 17)),
       ),
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-          children: <Widget>[
-            SegmentedProgress(results: _results, current: -1),
-            const SizedBox(height: 28),
-            Center(
-              child: ProgressRing(
-                value: ratio,
-                size: 150,
-                stroke: 12,
-                fontSize: 30,
-                color: good ? AppColors.success : AppColors.warning,
-                label: '$correct/$total',
-              ),
-            ),
-            const SizedBox(height: 18),
-            Text(good ? 'Wakoze neza!' : 'Komeza witoze!',
-                textAlign: TextAlign.center,
-                style:
-                    const TextStyle(fontSize: 26, fontWeight: FontWeight.w800)),
-            const SizedBox(height: 16),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: StatTile(
-                      value: '$correct',
-                      label: 'Wasubije neza',
-                      color: AppColors.success),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: StatTile(
-                      value: '$wrong',
-                      label: 'Wakoze nabi',
-                      color: AppColors.error),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => PracticeReviewScreen(
-                    title: widget.title,
-                    questions: _questions,
-                    answers: _answers,
+      body: Stack(children: <Widget>[
+        SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+            children: <Widget>[
+              SegmentedProgress(results: _results, current: -1),
+              const SizedBox(height: 20),
+              // Award badge pops in: a golden cup when the result is good.
+              Center(
+                child: TweenAnimationBuilder<double>(
+                  tween: Tween<double>(begin: 0, end: 1),
+                  duration: const Duration(milliseconds: 900),
+                  curve: Curves.elasticOut,
+                  builder: (BuildContext context, double v, Widget? child) =>
+                      Transform.scale(scale: v.clamp(0.0, 1.3), child: child),
+                  child: Container(
+                    width: 72,
+                    height: 72,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: good
+                            ? const <Color>[
+                                Color(0xFFFFD84D),
+                                Color(0xFFF59E0B)
+                              ]
+                            : const <Color>[
+                                Color(0xFFFFB46B),
+                                Color(0xFFEF6C3E)
+                              ],
+                      ),
+                    ),
+                    child: Icon(good ? Icons.emoji_events : Icons.trending_up,
+                        size: 38, color: Colors.white),
                   ),
                 ),
               ),
-              icon: const Icon(Icons.fact_check_outlined),
-              label: const Text('Reba ibisubizo byose'),
-            ),
-            const SizedBox(height: 12),
-            OutlinedButton.icon(
-              onPressed: () => setState(_newSession),
-              icon: const Icon(Icons.refresh),
-              label: Text(
-                  'Ibindi bibazo ${widget.count < widget.source.length ? widget.count : widget.source.length}'),
-            ),
-            const SizedBox(height: 4),
-            PressScale(
-                child: TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Subira inyuma'),
-            )),
-          ],
+              const SizedBox(height: 16),
+              Center(
+                child: ProgressRing(
+                  value: ratio,
+                  size: 150,
+                  stroke: 12,
+                  fontSize: 30,
+                  color: good ? AppColors.success : AppColors.warning,
+                  label: '$correct/$total',
+                ),
+              ),
+              const SizedBox(height: 18),
+              Text(good ? 'Wakoze neza!' : 'Komeza witoze!',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontSize: 26, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 16),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: StatTile(
+                        value: '$correct',
+                        label: 'Wasubije neza',
+                        color: AppColors.success),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: StatTile(
+                        value: '$wrong',
+                        label: 'Wakoze nabi',
+                        color: AppColors.error),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => PracticeReviewScreen(
+                      title: widget.title,
+                      questions: _questions,
+                      answers: _answers,
+                    ),
+                  ),
+                ),
+                icon: const Icon(Icons.fact_check_outlined),
+                label: const Text('Reba ibisubizo byose'),
+              ),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () => setState(_newSession),
+                icon: const Icon(Icons.refresh),
+                label: Text(
+                    'Ibindi bibazo ${widget.count < widget.source.length ? widget.count : widget.source.length}'),
+              ),
+              const SizedBox(height: 4),
+              PressScale(
+                  child: TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Subira inyuma'),
+              )),
+            ],
+          ),
         ),
-      ),
+        const Positioned.fill(child: Celebration()),
+      ]),
     );
   }
 }

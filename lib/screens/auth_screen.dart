@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/app_colors.dart';
 import '../state/app_state.dart';
 import '../widgets/road_scene.dart';
+import '../widgets/sign_backdrop.dart';
 import 'info_screens.dart';
 import 'main_shell.dart';
 import 'password_screens.dart';
@@ -402,6 +403,13 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         ),
         child: Stack(
           children: <Widget>[
+            // Faint road signs drifting slowly behind everything.
+            Positioned.fill(
+              child: FadeTransition(
+                opacity: _intro,
+                child: SignBackdrop(animation: _loop),
+              ),
+            ),
             // Animated road at the bottom, behind the card (hidden while typing).
             if (!keyboardOpen)
               Positioned(
@@ -426,19 +434,11 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   child: ConstrainedBox(
                     constraints: BoxConstraints(minHeight: box.maxHeight),
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                      // Balanced so the visible logo and card edges sit evenly top and bottom.
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: IconButton(
-                              tooltip: 'Garuka',
-                              icon: const Icon(Icons.arrow_back,
-                                  color: Colors.white),
-                              onPressed: () => Navigator.of(context).maybePop(),
-                            ),
-                          ),
                           ScaleTransition(
                             scale: CurvedAnimation(
                               parent: _intro,
@@ -447,7 +447,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                             ),
                             child: SizedBox(
                               width: 96,
-                              height: 96,
+                              height: 70,
                               child: AnimatedBuilder(
                                 animation: _loop,
                                 builder: (BuildContext context, Widget? logo) {
@@ -460,6 +460,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                                       : 0;
                                   return Stack(
                                     alignment: Alignment.center,
+                                    clipBehavior: Clip.none,
                                     children: <Widget>[
                                       // Soft ring that expands and fades, like a signal.
                                       Opacity(
@@ -564,11 +565,20 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                             ),
                             from: const Offset(0, 0.18),
                           ),
-                          const SizedBox(height: 120),
                         ],
                       ),
                     ),
                   ),
+                ),
+              ),
+            ),
+            SafeArea(
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: IconButton(
+                  tooltip: 'Garuka',
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () => Navigator.of(context).maybePop(),
                 ),
               ),
             ),
