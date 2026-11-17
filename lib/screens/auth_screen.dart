@@ -107,8 +107,13 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       if (mounted) setState(() => _error = error.message);
     } catch (error) {
       if (mounted) {
-        setState(() => _error =
-            'Ntibyashobotse kwinjira. Reba internet na Supabase Auth settings.');
+        // "Not initialized" means the app was built without the Supabase
+        // address/key; anything else is most likely a network problem.
+        final bool notConfigured =
+            error is AssertionError || error.toString().contains('initialize');
+        setState(() => _error = notConfigured
+            ? 'App ntihujwe na seriveri. Ifunge uyifungure, cyangwa uyubake ukoresheje supabase.local.json.'
+            : 'Ntibyashobotse kwinjira. Reba ko ufite internet, hanyuma ugerageze nanone.');
       }
       debugPrint('Supabase authentication failed: $error');
     } finally {

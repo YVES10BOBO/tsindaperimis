@@ -16,9 +16,9 @@ import '../widgets/common.dart';
 //  - shyira Politiki y'Ibanga ku rubuga (URL) kuko Play Store iyisaba.
 // =====================================================================
 
-const String kContactEmail = '[EMAIL Y\'UBUFASHA]';
-const String kCompanyName = '[IZINA RY\'IKIGO / NYIRI APP]';
-const String kLastUpdated = '[ITARIKI]';
+const String kContactEmail = 'yvesrutembeza@gmail.com';
+const String kCompanyName = 'Yves Rutembeza';
+const String kLastUpdated = '17/11/2026';
 
 class _DocSection {
   const _DocSection(this.title, this.body);
@@ -215,15 +215,15 @@ class PrivacyScreen extends StatelessWidget {
           '$kCompanyName yubaha ubuzima bwite bwawe. Iyi politiki isobanura amakuru dukusanya muri app "${AppInfo.name}", impamvu tuyakusanya, uko tuyarinda n\'uburenganzira ufite.',
       sections: <_DocSection>[
         _DocSection('Amakuru dukusanya',
-            'Amakuru utanga: amazina, nimero ya telefoni, email (si ngombwa), akarere n\'ubwoko bw\'uruhushya witegura.\n\nAmakuru y\'imyigire: amasomo warangije, ibisubizo by\'imyitozo n\'ibizamini, n\'ibyo wabitse.\n\nAmakuru yo kwishyura: nimero ya Mobile Money n\'aho ubwishyu bugeze. Ntitubika umubare w\'ibanga (PIN) wa Mobile Money.\n\nAmakuru ya tekiniki: ubwoko bwa telefoni, verisiyo ya app na raporo z\'amakosa, kugira ngo tunoze app.'),
+            'Amakuru utanga: amazina, email, nimero ya telefoni (si ngombwa), akarere n\'ubwoko bw\'uruhushya witegura.\n\nAmakuru y\'imyigire: amasomo warangije, ibisubizo by\'imyitozo n\'ibizamini, intego ya buri munsi, n\'ibyo wabitse.\n\nAmakuru ya tekiniki: ubwoko bwa telefoni, verisiyo ya app na raporo z\'amakosa, kugira ngo tunoze app.\n\nApp ni ubuntu ubu: ntidukusanya amakuru yo kwishyura.'),
         _DocSection('Impamvu tuyakusanya',
-            'Kugufungurira konti no kuyirinda, kubika iterambere ryawe, kukwereka ibyo ugomba gusubiramo, gutunganya ubwishyu, kukoherereza ubutumwa wemeye (nk\'inzibutso zo kwiga), no kunoza app.'),
+            'Kugufungurira konti no kuyirinda, kubika iterambere ryawe, kukwereka ibyo ugomba gusubiramo, kukoherereza imeri zo kwemeza konti no guhindura ijambobanga, no kunoza app.'),
         _DocSection('Aho amakuru abikwa',
-            'Amakuru amwe abikwa kuri telefoni yawe, andi akabikwa kuri seriveri zacu. [Andika aho seriveri ziri n\'ingamba z\'umutekano zikoreshwa.]'),
+            'Amakuru amwe abikwa kuri telefoni yawe, andi akabikwa kuri seriveri za Supabase, serivisi yo kubika amakuru ikoreshwa na app. Amakuru yoherezwa mu buryo bwizewe (HTTPS), kandi konti irindwa n\'ijambobanga ryawe.'),
         _DocSection('Abo dusangiza amakuru',
-            'Ntitugurisha amakuru yawe. Tuyasangiza gusa ababidufashamo mu kazi (nk\'abatanga serivisi zo kwishyura MTN MoMo / Airtel Money, serivisi zo kohereza ubutumwa, cyangwa iz\'isesengura), cyangwa inzego za Leta iyo amategeko abisaba.'),
+            'Ntitugurisha amakuru yawe. Tuyasangiza gusa ababidufashamo mu kazi (nka Supabase ibika amakuru, na serivisi yohereza imeri), cyangwa inzego za Leta iyo amategeko abisaba.'),
         _DocSection('Igihe tubika amakuru',
-            'Tubika amakuru igihe cyose konti yawe ikiriho cyangwa igihe amategeko abidusaba. Iyo usibye konti, amakuru yawe arasibwa cyangwa agahindurwa ntamenyekane. [Andika igihe nyacyo.]'),
+            'Tubika amakuru yawe kugeza usibye konti yawe. Iyo usibye konti, amakuru yawe arasibwa.'),
         _DocSection('Uburenganzira bwawe',
             'Ufite uburenganzira bwo kumenya amakuru tugufiteho, kuyakosora, gusaba ko asibwa, no kwanga ko akoreshwa mu bikorwa bimwe na bimwe, nk\'uko biteganywa n\'Itegeko rirengera amakuru bwite n\'ubuzima bwite mu Rwanda. Ushobora gusiba konti yawe ubwawe muri app (Ibindi → Siba konti), cyangwa ukatwandikira kuri $kContactEmail.'),
         _DocSection('Umutekano',
@@ -233,7 +233,7 @@ class PrivacyScreen extends StatelessWidget {
         _DocSection('Impinduka kuri iyi politiki',
             'Tuzakumenyesha muri app impinduka zikomeye kuri iyi politiki.'),
         _DocSection('Twandikire',
-            'Ku bibazo bijyanye n\'ibanga ry\'amakuru yawe: $kContactEmail. [Andika aderesi y\'ikigo.]'),
+            'Ku bibazo bijyanye n\'ibanga ry\'amakuru yawe: $kContactEmail. Utegura app: RUTEMBEZA Yves, u Rwanda.'),
       ],
     );
   }
