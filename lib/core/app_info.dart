@@ -4,7 +4,7 @@
 class AppInfo {
   AppInfo._();
 
-  static const String name = "Amategeko y'Umuhanda";
+  static const String name = 'Genda Neza';
   static const String tagline =
       'Iga. Witoze. Tsinda.\nMenya amategeko, urinde ubuzima.';
   static const String version = '0.2.0';

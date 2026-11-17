@@ -238,27 +238,80 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                 child: const Text('Iyandikishe'),
                               )),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 14),
                             _reveal(
                               begin: 0.75,
                               end: 1.0,
                               from: const Offset(0, 0.6),
                               child: PressScale(
-                                  child: TextButton(
-                                style: TextButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  minimumSize: const Size.fromHeight(48),
+                                child: Material(
+                                  color: Colors.white.withAlpha(30),
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(16),
+                                    splashColor: Colors.white24,
+                                    onTap: () {
+                                      AppScope.of(context).continueAsGuest();
+                                      Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute<void>(
+                                            builder: (_) => const MainShell()),
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(
+                                            color: Colors.white.withAlpha(90)),
+                                      ),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Container(
+                                            width: 38,
+                                            height: 38,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white.withAlpha(40),
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: const Icon(
+                                                Icons.person_outline,
+                                                color: Colors.white,
+                                                size: 22),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          const Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text('Komeza utiyandikishije',
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 15.5,
+                                                        fontWeight:
+                                                            FontWeight.w800)),
+                                                SizedBox(height: 2),
+                                                Text(
+                                                    'Nta konti ikenewe. Ushobora kwiyandikisha nyuma.',
+                                                    style: TextStyle(
+                                                        color:
+                                                            Color(0xFFBFE3F7),
+                                                        fontSize: 12.5,
+                                                        height: 1.3)),
+                                              ],
+                                            ),
+                                          ),
+                                          const Icon(
+                                              Icons.arrow_forward_rounded,
+                                              color: Colors.white,
+                                              size: 22),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                                onPressed: () {
-                                  AppScope.of(context).continueAsGuest();
-                                  Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute<void>(
-                                        builder: (_) => const MainShell()),
-                                  );
-                                },
-                                child: const Text(
-                                    'Komeza nka Mushyitsi (utiyandikishije)'),
-                              )),
+                              ),
                             ),
                           ],
                         ),

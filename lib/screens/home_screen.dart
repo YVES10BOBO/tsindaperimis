@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../core/app_colors.dart';
+import '../core/exam_config.dart';
 import '../data/content_repository.dart';
 import '../data/models.dart';
 import '../state/app_state.dart';
@@ -59,6 +60,38 @@ class HomeScreen extends StatelessWidget {
 
           // ---------- Daily goal ----------
           DailyGoalCard(onPractice: () => onOpenTab(1)),
+          SizedBox(height: 16),
+
+          // ---------- Practice and exam: first thing the learner sees ----------
+          SectionTitle('Itegure ikizamini'),
+          SizedBox(height: 10),
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Expanded(
+                  child: _QuickAction(
+                    icon: Icons.edit_note,
+                    colors: <Color>[Color(0xFF2FA8E8), AppColors.primary],
+                    title: 'Imyitozo',
+                    subtitle: 'Subiza ibibazo, uhite ubona igisubizo',
+                    onTap: () => onOpenTab(1),
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: _QuickAction(
+                    icon: Icons.assignment,
+                    colors: <Color>[AppColors.primary, AppColors.primaryDark],
+                    title: 'Ikizamini',
+                    subtitle:
+                        "Ibibazo ${ExamConfig.questionCount} mu minota ${ExamConfig.durationMinutes}, nk'ukuri",
+                    onTap: () => onOpenTab(2),
+                  ),
+                ),
+              ],
+            ),
+          ),
           SizedBox(height: 16),
 
           // ---------- Progress ----------
@@ -168,36 +201,6 @@ class HomeScreen extends StatelessWidget {
                 ),
             ],
           ),
-          SizedBox(height: 22),
-
-          // ---------- Quick actions ----------
-          SectionTitle('Witoze kandi wipime'),
-          SizedBox(height: 10),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: _QuickAction(
-                  icon: Icons.edit_note,
-                  color: AppColors.primary,
-                  soft: AppColors.primarySoft,
-                  title: 'Imyitozo',
-                  subtitle: 'Ikibazo kimwe kimwe, igisubizo ako kanya',
-                  onTap: () => onOpenTab(1),
-                ),
-              ),
-              SizedBox(width: 12),
-              Expanded(
-                child: _QuickAction(
-                  icon: Icons.assignment,
-                  color: AppColors.primary,
-                  soft: AppColors.primarySoft,
-                  title: 'Ikizamini',
-                  subtitle: 'Ikizamini cy\'igerageza gifite igihe',
-                  onTap: () => onOpenTab(2),
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );
@@ -230,39 +233,81 @@ class _StatRow extends StatelessWidget {
 class _QuickAction extends StatelessWidget {
   const _QuickAction({
     required this.icon,
-    required this.color,
-    required this.soft,
+    required this.colors,
     required this.title,
     required this.subtitle,
     required this.onTap,
   });
 
   final IconData icon;
-  final Color color;
-  final Color soft;
+  final List<Color> colors;
   final String title;
   final String subtitle;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return AppCard(
-      onTap: onTap,
-      color: soft,
-      borderColor: color.withAlpha(50),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          IconBadge(
-              icon: icon, color: Colors.white, background: color, size: 40),
-          SizedBox(height: 10),
-          Text(title,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
-          SizedBox(height: 4),
-          Text(subtitle,
-              style: TextStyle(
-                  fontSize: 12.5, color: AppColors.muted, height: 1.35)),
-        ],
+    return PressScale(
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+        child: Ink(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: colors,
+            ),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: colors.last.withAlpha(70),
+                  blurRadius: 14,
+                  offset: Offset(0, 6)),
+            ],
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(20),
+            splashColor: Colors.white24,
+            onTap: onTap,
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withAlpha(46),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Icon(icon, color: Colors.white, size: 26),
+                      ),
+                      Spacer(),
+                      Icon(Icons.arrow_forward_rounded,
+                          color: Colors.white, size: 22),
+                    ],
+                  ),
+                  SizedBox(height: 14),
+                  Text(title,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800)),
+                  SizedBox(height: 4),
+                  Text(subtitle,
+                      style: TextStyle(
+                          fontSize: 12.5,
+                          color: Color(0xFFE3F4FD),
+                          height: 1.35)),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

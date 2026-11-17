@@ -1,5 +1,5 @@
 name: amategeko_app
-description: "Amategeko y'Umuhanda - app yo kwiga no kwitegura ikizamini cy'uruhushya rwo gutwara."
+description: "Genda Neza - app yo kwiga no kwitegura ikizamini cy'uruhushya rwo gutwara."
 publish_to: 'none'
 version: 0.1.0+1
 
@@ -13,6 +13,7 @@ dependencies:
   path: ^1.9.1
   sqflite: ^2.4.2+1
   supabase_flutter: ^2.18.3
+  url_launcher: ^6.3.3
 
 dev_dependencies:
   flutter_test:

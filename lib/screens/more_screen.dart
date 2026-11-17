@@ -13,6 +13,7 @@ import 'info_screens.dart';
 import 'lesson_screen.dart';
 import 'password_screens.dart';
 import 'profile_screen.dart';
+import 'sources_screen.dart';
 import 'welcome_screen.dart';
 
 // =====================================================================
@@ -258,6 +259,11 @@ class MoreScreen extends StatelessWidget {
                   icon: Icons.help_outline,
                   title: 'Ibibazo bikunze kubazwa (FAQ)',
                   onTap: () => _push(context, const FaqScreen()),
+                ),
+                _MenuTile(
+                  icon: Icons.gavel,
+                  title: "Inkomoko z'amategeko",
+                  onTap: () => _push(context, const SourcesScreen()),
                 ),
                 _MenuTile(
                   icon: Icons.description_outlined,
