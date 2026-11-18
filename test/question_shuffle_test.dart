@@ -90,4 +90,15 @@ void main() {
       expect(s.correctIndex, 3);
     }
   });
+
+  test('a question with missing options never crashes the shuffle', () {
+    // Only two options arrived, but the combo answer mentions letters C and D.
+    final Question q = _q(<String>['Alpha', "b na d ni ibisubizo by'ukuri"], 1);
+    for (int seed = 0; seed < 50; seed++) {
+      final Question s = q.shuffled(Random(seed));
+      expect(s.options.length, 2);
+    }
+    // One option only.
+    expect(_q(<String>['Alpha'], 0).shuffled(Random(1)).options, <String>['Alpha']);
+  });
 }

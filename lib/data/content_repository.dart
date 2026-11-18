@@ -843,6 +843,21 @@ class ContentRepository {
     }).toList();
   }
 
+  /// Reads every row of a table. The server returns at most 1000 rows per
+  /// request, so a long table (like the ~2,200 answer options) has to be read
+  /// page by page, otherwise questions end up with missing options.
+  Future<List<Map<String, dynamic>>> _fetchAll(
+      Future<List<dynamic>> Function(int from, int to) page) async {
+    const int size = 1000;
+    final List<Map<String, dynamic>> all = <Map<String, dynamic>>[];
+    for (int from = 0;; from += size) {
+      final List<dynamic> rows = await page(from, from + size - 1);
+      all.addAll(rows.cast<Map<String, dynamic>>());
+      if (rows.length < size) break;
+    }
+    return all;
+  }
+
   Future<void> _refreshFromSupabase() async {
     const url = String.fromEnvironment('SUPABASE_URL');
     const key = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
@@ -860,14 +875,26 @@ class ContentRepository {
             .select()
             .eq('published', true)
             .order('sort_order'),
-        client.from('lesson_sections').select().order('position'),
-        client
+        _fetchAll((int a, int b) => client
+            .from('lesson_sections')
+            .select()
+            .order('lesson_id')
+            .order('position')
+            .range(a, b)),
+        _fetchAll((int a, int b) => client
             .from('questions')
             .select()
             .eq('published', true)
-            .order('sort_order'),
-        client.from('question_options').select().order('position'),
-      ]).timeout(const Duration(seconds: 8));
+            .order('sort_order')
+            .order('id')
+            .range(a, b)),
+        _fetchAll((int a, int b) => client
+            .from('question_options')
+            .select()
+            .order('question_id')
+            .order('position')
+            .range(a, b)),
+      ]).timeout(const Duration(seconds: 30));
       final remoteCategories = remote[0];
       final remoteLessons = remote[1];
       final remoteSections = remote[2];
@@ -907,24 +934,37 @@ class ContentRepository {
                     .toList(),
               ))
           .toList();
-      final hydratedQuestions = questionsList.map<Question>((q) {
-        final List<Map<String, dynamic>> opts =
-            optionList.where((o) => o['question_id'] == q['id']).toList();
-        final correct = opts.indexWhere((o) => o['is_correct'] == true);
-        return Question(
-            id: q['id'] as String,
-            categoryId: q['category_id'] as String,
-            text: q['prompt'] as String,
-            explanation: q['explanation'] as String? ?? '',
-            options: opts.map((o) => o['option_text'] as String).toList(),
-            correctIndex: correct < 0 ? 0 : correct,
-            sign: _sign(q['sign_type'] as String?),
-            signLabel: q['sign_label'] as String?,
-            imagePath: q['image_path'] as String?,
-            isExamQuestion: q['is_exam_question'] as bool? ?? true,
-            number: (q['number'] as num?)?.toInt(),
-            audioPath: q['audio_path'] as String?);
-      }).toList();
+      // Group the options once (instead of scanning the whole list per question).
+      final Map<String, List<Map<String, dynamic>>> optionsByQuestion =
+          <String, List<Map<String, dynamic>>>{};
+      for (final Map<String, dynamic> o in optionList) {
+        optionsByQuestion
+            .putIfAbsent(
+                o['question_id'] as String, () => <Map<String, dynamic>>[])
+            .add(o);
+      }
+      final hydratedQuestions = questionsList
+          .map<Question>((q) {
+            final List<Map<String, dynamic>> opts =
+                optionsByQuestion[q['id']] ?? <Map<String, dynamic>>[];
+            final correct = opts.indexWhere((o) => o['is_correct'] == true);
+            return Question(
+                id: q['id'] as String,
+                categoryId: q['category_id'] as String,
+                text: q['prompt'] as String,
+                explanation: q['explanation'] as String? ?? '',
+                options: opts.map((o) => o['option_text'] as String).toList(),
+                correctIndex: correct < 0 ? 0 : correct,
+                sign: _sign(q['sign_type'] as String?),
+                signLabel: q['sign_label'] as String?,
+                imagePath: q['image_path'] as String?,
+                isExamQuestion: q['is_exam_question'] as bool? ?? true,
+                number: (q['number'] as num?)?.toInt(),
+                audioPath: q['audio_path'] as String?);
+          })
+          // A question needs at least two answers to be playable.
+          .where((Question q) => q.options.length >= 2)
+          .toList();
       if (hydratedCategories.isNotEmpty && hydratedQuestions.isNotEmpty) {
         _categories = hydratedCategories;
         _all = hydratedQuestions;

@@ -162,10 +162,17 @@ class Question {
       if (m == null) return text;
       final String group = m.group(1)!;
       final bool lower = group.trim().toLowerCase() == group.trim();
-      final List<String> mapped = RegExp(r'\b[A-Da-d]\b')
+      // A letter that points at a missing option is left as it was, instead
+      // of crashing the whole question (the app must never show a blank page).
+      final List<String> named = RegExp(r'\b[A-Da-d]\b')
           .allMatches(group)
-          .map((Match l) => letters[
-              order.indexOf(letters.indexOf(l.group(0)!.toUpperCase()))])
+          .map((Match l) => l.group(0)!.toUpperCase())
+          .toList();
+      if (named.any((String l) => !order.contains(letters.indexOf(l)))) {
+        return text;
+      }
+      final List<String> mapped = named
+          .map((String l) => letters[order.indexOf(letters.indexOf(l))])
           .toList()
         ..sort();
       final List<String> shown =
@@ -184,7 +191,9 @@ class Question {
       answerLetter,
       (Match match) {
         final int oldIndex = letters.indexOf(match.group(2)!.toUpperCase());
-        return '${match.group(1)}${letters[order.indexOf(oldIndex)]}';
+        final int newIndex = order.indexOf(oldIndex);
+        if (newIndex < 0) return match.group(0)!;
+        return '${match.group(1)}${letters[newIndex]}';
       },
     );
     return Question(

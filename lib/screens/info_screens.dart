@@ -233,7 +233,7 @@ class PrivacyScreen extends StatelessWidget {
         _DocSection('Impinduka kuri iyi politiki',
             'Tuzakumenyesha muri app impinduka zikomeye kuri iyi politiki.'),
         _DocSection('Twandikire',
-            'Ku bibazo bijyanye n\'ibanga ry\'amakuru yawe: $kContactEmail. Utegura app: RUTEMBEZA Yves, u Rwanda.'),
+            'Ku bibazo bijyanye n\'ibanga ry\'amakuru yawe: $kContactEmail. Utegura app: RUTEMBEZA Yves.'),
       ],
     );
   }
